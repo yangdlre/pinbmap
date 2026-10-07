@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>핀볼 맛집 검색 v0.11</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
+#app{height:100%;display:flex;flex-direction:column}
+header{padding:10px 12px 8px;display:flex;gap:7px;flex-wrap:wrap;background:#fff;z-index:30}
+#areaSearch{display:flex;gap:6px;flex:1 1 100%}#areaInput{flex:1;min-width:0;font:inherit;padding:10px 11px;border:1px solid #cfd3d9;border-radius:12px}#locBtn{white-space:nowrap}
+select,button{font:inherit;padding:10px 11px;border:1px solid #cfd3d9;border-radius:12px;background:#fff}
+select:focus{outline:2px solid #222}
+#status{padding:7px 12px;background:#f5f6f7;font-size:12px;min-height:31px}
+#map{flex:1;min-height:480px;position:relative}
+#mapFloatTools{position:absolute;right:10px;top:10px;z-index:45;display:flex;gap:5px;background:#fffE;padding:5px;border-radius:12px;box-shadow:0 2px 10px #0002}
+#mapFloatTools button{padding:7px 10px;font-size:11px;border-radius:9px}
+#mapFloatTools button.active{background:#111;color:#fff;border-color:#111}
+#restoreTools{position:absolute;right:10px;top:56px;z-index:45;display:flex;gap:5px}
+#restoreTools button{padding:6px 8px;font-size:10px;border-radius:8px;background:#fffE}
+#restoreTools button:disabled{opacity:.42}
+#sourceInfo{margin-top:8px;padding:9px 10px;background:#f7f8fa;border-radius:11px;font-size:11px;line-height:1.55;color:#4d535c}
+#sourceInfo b{color:#111}
+.sourceBtn{display:flex;min-height:49px;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.sourceBtn span{display:block;font-size:12px;font-weight:650}
+.sourceBtn small{display:block;font-size:9px;color:#6f7680;font-weight:500}
+#extTools{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;margin-top:8px}
+#extTools button{padding:9px 4px;font-size:12px;border-radius:10px}
+.wrap{position:absolute;width:0;height:0;overflow:visible}
+.pin{position:absolute;left:-19px;top:-19px;width:38px;height:38px;border-radius:50%;background:#111;color:#fff;border:3px solid #fff;display:grid;place-items:center;font-weight:800;box-shadow:0 2px 8px #0005;z-index:5}
+.arm{position:absolute;left:0;top:-1px;height:2px;background:#222;transform-origin:0 50%;z-index:2;pointer-events:none}
+.card{position:absolute;width:158px;min-height:66px;background:#fff;border:1px solid #d6d9de;border-radius:12px;padding:9px 10px;box-shadow:0 3px 12px #0003;z-index:4;user-select:none;-webkit-user-select:none;touch-action:none;cursor:grab}
+.card.dragging{cursor:grabbing;box-shadow:0 5px 18px #0005}
+.card b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card small{display:block;margin-top:4px;font-size:11px;line-height:1.35;color:#666}
+#detail{position:fixed;left:8px;right:8px;bottom:8px;z-index:80;background:#fff;border:1px solid #d6d9de;border-radius:18px;box-shadow:0 8px 28px #0005;padding:14px;display:none;max-height:52vh;overflow:auto}
+#detail.open{display:block}
+#detailHead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+#detail h3{margin:0 0 3px;font-size:17px}
+#detailMeta{font-size:12px;color:#666}
+#closeDetail{padding:5px 9px;border-radius:9px}
+#sourceGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}
+#sourceGrid button,#mapTools button{padding:9px 4px;font-size:12px;border-radius:10px}
+#mapTools{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:8px}
+#webQueries{display:flex;gap:6px;overflow:auto;margin-top:8px;padding-bottom:2px}
+#webQueries button{white-space:nowrap;font-size:11px;padding:7px 9px}
+#rankNote{margin-top:9px;padding:8px 9px;background:#f5f6f7;border-radius:10px;font-size:11px;line-height:1.45;color:#555}
+#roadPanel{display:none;margin-top:8px;border-radius:12px;overflow:hidden;border:1px solid #ddd}
+#roadPanel.open{display:block}
+#roadview{height:260px;background:#eee}
+#evidence{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+#evidence button{font-size:11px;padding:7px 9px}
+#evidence button.on{background:#111;color:#fff;border-color:#111}
+#centerHandle{position:absolute;z-index:26;left:50%;top:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:#1677ff;color:#fff;border:3px solid #fff;box-shadow:0 2px 10px #0005;display:grid;place-items:center;font-size:16px;touch-action:none;cursor:grab}#centerHandle.dragging{cursor:grabbing;transform:translate(-50%,-50%) scale(1.12)}
+#hint{position:absolute;z-index:25;left:10px;bottom:12px;background:#fffE;padding:7px 9px;border-radius:9px;font-size:11px;box-shadow:0 2px 8px #0002;pointer-events:none}
+</style>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=47e6f1005ee8102053deac6824764b3a&libraries=services"></script>
+</head>
+<body>
+<div id="app">
+<header>
+<select id="theme">
+<option value="FD6">음식점</option><option value="CE7">카페</option>
+<option value="횟집">횟집</option><option value="고깃집">고깃집</option><option value="술집">술집</option>
+<option value="한식">한식</option><option value="일식">일식</option><option value="중식">중식</option><option value="베이커리">베이커리</option>
+</select>
+<select id="radius">
+<option value="100">100m</option><option value="200">200m</option><option value="300">300m</option><option value="500">500m</option><option value="1000" selected>1km</option><option value="2000">2km</option>
+<option value="3000">3km</option><option value="5000">5km</option><option value="10000">10km</option>
+</select>
+<select id="rank"><option value="recommend" selected>추천</option><option value="near">가까운순</option><option value="local">🏠 현지인</option><option value="hot">🔥 지금인기</option><option value="web">🌐 웹TOP5</option></select>
+<select id="cnt"><option value="5" selected>TOP 5</option><option value="10">TOP 10</option></select>
+<button id="again">이 지역 다시 검색</button>
+<div id="areaSearch"><input id="areaInput" placeholder="지역/동/역 검색 (예: 서면, 해운대역)"><button id="areaBtn">지역 이동</button><button id="locBtn">GPS</button></div>
+</header>
+<div id="status">현재 위치 확인 중…</div>
+<div id="map">
+  <div id="mapFloatTools"><button id="roadMapBtn" class="active">일반</button><button id="hybridMapBtn">위성</button></div>
+  <div id="restoreTools"><button id="undoExcludeBtn" disabled>↶ 1개 복원</button><button id="restoreAllBtn" disabled>전체 복원</button></div>
+  <div id="centerHandle" title="검색 중심 이동">◎</div><div id="hint">◎ 검색중심 드래그 · 반투명 원 = 검색반경 · 카드 탭 = 상세 · 카드 드래그 = 360° 회전</div>
+</div>
+</div>
+<div id="detail">
+  <div id="detailHead"><div><h3 id="detailName"></h3><div id="detailMeta"></div></div><button id="closeDetail">닫기</button></div>
+  <div id="sourceGrid"></div>
+  <div id="sourceInfo"></div>
+  <div id="mapTools"><button id="satBtn">🛰 위성지도</button><button id="roadBtn">🛣 카카오 로드뷰</button><button id="deleteBtn">✕ 이번 검색에서 제외</button></div>
+  <div id="extTools"><button id="kakaoRoadBtn">↗ 카카오 로드뷰 앱</button><button id="extRoadBtn">↗ Google 스트리트뷰</button></div>
+  <div id="roadPanel"><div id="roadview"></div></div>
+  <div id="webQueries"></div>
+  <div id="evidence"></div>
+  <div id="rankNote"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let map, ps, searchCenter, centerMarker, radiusCircle;
+let overlays=[], angles={}, searchToken=0, currentPlace=null, hybridOn=false, roadview=null, roadClient=null;
+let lastItems=[], excluded=new Set(), excludedHistory=[], centerDragging=false;
+
+function setStatus(t){$('status').textContent=t}
+function clearPlaces(){overlays.forEach(o=>o.setMap(null));overlays=[]}
+function updateRestoreButtons(){
+  const has=excluded.size>0;
+  $('undoExcludeBtn').disabled=!excludedHistory.length;
+  $('restoreAllBtn').disabled=!has;
+}
+function clearExclusions(){ excluded.clear(); excludedHistory=[]; updateRestoreButtons(); }
+function excludePlace(id){ if(!excluded.has(id)){ excluded.add(id); excludedHistory.push(id); } updateRestoreButtons(); }
+function undoExclude(){
+  while(excludedHistory.length){ const id=excludedHistory.pop(); if(excluded.delete(id)) break; }
+  updateRestoreButtons(); renderFromLast();
+}
+function restoreAll(){ excluded.clear(); excludedHistory=[]; updateRestoreButtons(); renderFromLast(); }
+function setMapMode(mode){
+  if(!map)return;
+  hybridOn=(mode==='hybrid');
+  map.setMapTypeId(hybridOn?kakao.maps.MapTypeId.HYBRID:kakao.maps.MapTypeId.ROADMAP);
+  $('roadMapBtn').classList.toggle('active',!hybridOn);
+  $('hybridMapBtn').classList.toggle('active',hybridOn);
+  $('satBtn').textContent=hybridOn?'🗺 일반지도':'🛰 위성지도';
+}
+
+
+function updateRadiusCircle(){
+  if(!map||!searchCenter)return;
+  const r=+$('radius').value;
+  if(!radiusCircle){
+    radiusCircle=new kakao.maps.Circle({
+      center:searchCenter, radius:r,
+      strokeWeight:2, strokeColor:'#1677ff', strokeOpacity:.78, strokeStyle:'solid',
+      fillColor:'#1677ff', fillOpacity:.12, zIndex:1
+    });
+    radiusCircle.setMap(map);
+  }else{
+    radiusCircle.setPosition(searchCenter);
+    radiusCircle.setRadius(r);
+    if(!radiusCircle.getMap()) radiusCircle.setMap(map);
+  }
+}
+
+function radiusBounds(center,radius){
+  const lat=center.getLat(), lng=center.getLng();
+  const dLat=radius/111320;
+  const dLng=radius/(111320*Math.max(.2,Math.cos(lat*Math.PI/180)));
+  const b=new kakao.maps.LatLngBounds();
+  b.extend(new kakao.maps.LatLng(lat-dLat,lng-dLng));
+  b.extend(new kakao.maps.LatLng(lat+dLat,lng+dLng));
+  return b;
+}
+
+function init(lat,lng){
+  searchCenter=new kakao.maps.LatLng(lat,lng);
+  map=new kakao.maps.Map($('map'),{center:searchCenter,level:5});
+  ps=new kakao.maps.services.Places();
+  centerMarker=new kakao.maps.Marker({map,position:searchCenter,draggable:true});
+  updateRadiusCircle();
+  kakao.maps.event.addListener(centerMarker,'dragend',()=>{searchCenter=centerMarker.getPosition();map.setCenter(searchCenter);updateRadiusCircle();clearExclusions();searchPlaces(true);});
+  setupCenterHandle();
+  searchPlaces(true);
+  kakao.maps.event.addListener(map,'dragend',()=>setStatus('지도를 이동했습니다. “이 지역 다시 검색”을 누르면 지도 중심 기준으로 검색합니다.'));
+}
+
+function distanceM(lat1,lng1,lat2,lng2){
+  const R=6371000, p=Math.PI/180;
+  const a=Math.sin((lat2-lat1)*p/2)**2 + Math.cos(lat1*p)*Math.cos(lat2*p)*Math.sin((lng2-lng1)*p/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+
+function searchPlaces(keepCenter){
+  if(!map||!ps)return;
+  const token=++searchToken;
+  clearPlaces();
+  if(!keepCenter) searchCenter=map.getCenter();
+  centerMarker.setPosition(searchCenter);
+  updateRadiusCircle();
+
+  const radius=+$('radius').value, theme=$('theme').value, wanted=+$('cnt').value;
+  setStatus('반경 전체 후보 수집 중…');
+
+  const collected=new Map();
+  let pending=0, finished=false;
+
+  // Kakao Places search returns limited pages. To make larger radii genuinely different,
+  // sample the search circle at multiple centers, merge duplicates, then choose places
+  // spread across the requested radius instead of simply nearest-N.
+  // Dense downtown areas can exceed Kakao's first 45 distance-sorted results very quickly.
+  // Sample several points INSIDE the requested circle even for 200m~1km, then merge/dedupe.
+  // This prevents 100m/500m/1km from all showing the same nearest 5 places.
+  const offsets = radius<=150
+    ? [[0,0]]
+    : radius<=500
+      ? [[0,0],[.52,0],[-.52,0],[0,.52],[0,-.52]]
+      : [[0,0],[.54,0],[-.54,0],[0,.54],[0,-.54],[.38,.38],[-.38,.38],[.38,-.38],[-.38,-.38]];
+  const pagesPerSample = radius<=150 ? 3 : radius<=1000 ? 2 : 3;
+
+  const lat0=searchCenter.getLat(), lng0=searchCenter.getLng();
+  function offsetLatLng(xf,yf){
+    const north=yf*radius, east=xf*radius;
+    return new kakao.maps.LatLng(lat0+north/111320, lng0+east/(111320*Math.cos(lat0*Math.PI/180)));
+  }
+
+  function oneSearch(loc){
+    pending++;
+    const sampleRadius = radius<=150 ? radius : Math.min(Math.ceil(radius*.62),20000);
+    const opts={location:loc,radius:sampleRadius,sort:kakao.maps.services.SortBy.DISTANCE,size:15};
+    const cb=(data,status,pagination)=>{
+      if(token!==searchToken)return;
+      if(status===kakao.maps.services.Status.OK){
+        data.forEach(p=>{
+          const d=distanceM(lat0,lng0,+p.y,+p.x);
+          if(d<=radius) collected.set(p.id,{...p,_dist:d});
+        });
+        // Collect enough pages at each sample point, then merge by place id.
+        if(pagination && pagination.hasNextPage && pagination.current<pagesPerSample){
+          pagination.nextPage(); return;
+        }
+      }
+      pending--;
+      if(pending===0&&!finished){finished=true;renderCollected([...collected.values()],radius,wanted)}
+    };
+    if(theme==='FD6'||theme==='CE7') ps.categorySearch(theme,cb,opts);
+    else ps.keywordSearch(theme,cb,opts);
+  }
+  offsets.forEach(([x,y])=>oneSearch(offsetLatLng(x,y)));
+}
+
+function chooseSpread(items,radius,n){
+  if(items.length<=n) return [...items].sort((a,b)=>a._dist-b._dist);
+  const pool=[...items].sort((a,b)=>a._dist-b._dist);
+  const picked=[], used=new Set();
+
+  // Until external quality scores are connected, "추천" deliberately samples
+  // the whole requested radius. Each slot targets a different distance band.
+  // Therefore widening 100m -> 500m -> 1km actually exposes new candidates.
+  for(let i=0;i<n;i++){
+    const target=radius*((i+.5)/n);
+    let best=null, bestScore=Infinity;
+    for(const p of pool){
+      if(used.has(p.id))continue;
+      const score=Math.abs(p._dist-target);
+      if(score<bestScore){best=p;bestScore=score}
+    }
+    if(best){picked.push(best);used.add(best.id)}
+  }
+  while(picked.length<n){
+    const p=pool.find(x=>!used.has(x.id));
+    if(!p)break;
+    picked.push(p);used.add(p.id);
+  }
+  return picked.sort((a,b)=>a._dist-b._dist);
+}
+
+function renderCollected(items,radius,wanted){
+  lastItems=items;
+  renderFromLast(radius,wanted);
+}
+function renderFromLast(radius=+$('radius').value,wanted=+$('cnt').value){
+  clearPlaces();
+  const items=lastItems.filter(p=>!excluded.has(p.id));
+  if(!items.length){setStatus('선택한 반경에서 남은 검색 결과가 없습니다.');return}
+  const mode=$('rank').value;
+  let selected;
+  if(mode==='near') selected=[...items].sort((a,b)=>a._dist-b._dist).slice(0,wanted);
+  else selected=chooseSpread(items,radius,wanted);
+  selected.forEach((p,i)=>addPlace(p,i));
+  fitResults(selected,radius);
+  const label=$('theme').selectedOptions[0].text;
+  const rankLabel=$('rank').selectedOptions[0].text;
+  setStatus(`${label} · ${rankLabel} · 반경 ${radius>=1000?(radius/1000)+'km':radius+'m'} · 후보 ${lastItems.length}곳 · 제외 ${excluded.size}곳 · ${selected.length}곳 표시`);
+  updateRestoreButtons();
+}
+
+function fitResults(items,radius){
+  // Always frame the ACTUAL requested radius, not merely the 5 chosen pins.
+  // This makes 100m/200m/... visually comparable and keeps the translucent circle visible.
+  const lat=searchCenter.getLat(), lng=searchCenter.getLng();
+  const dLat=radius/111320;
+  const dLng=radius/(111320*Math.max(.2,Math.cos(lat*Math.PI/180)));
+  const bounds=new kakao.maps.LatLngBounds();
+  bounds.extend(new kakao.maps.LatLng(lat-dLat,lng-dLng));
+  bounds.extend(new kakao.maps.LatLng(lat+dLat,lng+dLng));
+  items.forEach(p=>bounds.extend(new kakao.maps.LatLng(+p.y,+p.x)));
+  map.setBounds(bounds,55,55,55,55);
+}
+
+function addPlace(p,i){
+  const el=document.createElement('div'); el.className='wrap';
+  const cat=(p.category_name||'').split(' > ').pop();
+  const d=Math.round(p._dist);
+  const dist=d<1000?d+'m':(d/1000).toFixed(1)+'km';
+  el.innerHTML=`<div class="pin">${i+1}</div><div class="arm"></div><div class="card"><b>${escapeHtml(p.place_name)}</b><small>${dist} · ${escapeHtml(cat)}</small></div>`;
+
+  // Critical fix: each overlay is anchored to the PLACE coordinates.
+  const ov=new kakao.maps.CustomOverlay({
+    position:new kakao.maps.LatLng(+p.y,+p.x),
+    content:el,xAnchor:0.5,yAnchor:0.5,zIndex:10
+  });
+  ov.setMap(map); overlays.push(ov);
+
+  const pin=el.querySelector('.pin'), card=el.querySelector('.card'), arm=el.querySelector('.arm');
+  let a=angles[p.id] ?? ((i*73-30)%360);
+  function place(v){
+    a=v; angles[p.id]=v;
+    const rad=v*Math.PI/180, R=78, x=Math.cos(rad)*R, y=Math.sin(rad)*R;
+    arm.style.width=R+'px'; arm.style.transform=`rotate(${v}deg)`;
+    card.style.left=(x+(x<0?-158:6))+'px'; card.style.top=(y-33)+'px';
+  }
+  place(a);
+
+  // One gesture handler does BOTH jobs: short tap opens detail, drag rotates the card.
+  // v0.10 had two pointerup listeners. The first one called stopImmediatePropagation(),
+  // so the detail-opening listener never ran on real devices.
+  let dragging=false, pointerId=null, moved=false, downX=0, downY=0;
+  const TAP_SLOP=9;
+  function blockMap(e, immediate=false){
+    e.preventDefault();
+    e.stopPropagation();
+    if(immediate && e.stopImmediatePropagation)e.stopImmediatePropagation();
+  }
+  function restoreMapGesture(){
+    dragging=false;
+    card.classList.remove('dragging');
+    map.setDraggable(true);
+    map.setZoomable(true);
+    try{if(pointerId!==null && card.hasPointerCapture(pointerId))card.releasePointerCapture(pointerId)}catch(_){}
+    pointerId=null;
+  }
+  card.addEventListener('pointerdown',e=>{
+    blockMap(e);
+    dragging=true; moved=false; pointerId=e.pointerId;
+    downX=e.clientX; downY=e.clientY;
+    try{card.setPointerCapture(pointerId)}catch(_){}
+    map.setDraggable(false); map.setZoomable(false);
+  },{passive:false});
+  card.addEventListener('pointermove',e=>{
+    if(!dragging)return;
+    blockMap(e);
+    if(!moved && Math.hypot(e.clientX-downX,e.clientY-downY)>=TAP_SLOP){
+      moved=true;
+      card.classList.add('dragging');
+    }
+    if(!moved)return;
+    const pinRect=pin.getBoundingClientRect();
+    const cx=pinRect.left+pinRect.width/2, cy=pinRect.top+pinRect.height/2;
+    place(Math.atan2(e.clientY-cy,e.clientX-cx)*180/Math.PI);
+  },{passive:false});
+  card.addEventListener('pointerup',e=>{
+    if(!dragging)return;
+    blockMap(e);
+    const wasTap=!moved && Math.hypot(e.clientX-downX,e.clientY-downY)<TAP_SLOP;
+    restoreMapGesture();
+    if(wasTap) openDetail(p);
+  },{passive:false});
+  card.addEventListener('pointercancel',e=>{if(dragging){blockMap(e);restoreMapGesture()}},{passive:false});
+  card.addEventListener('lostpointercapture',()=>{if(dragging)restoreMapGesture()});
+
+  // Keep native mouse/touch/click events from leaking through to Kakao Map.
+  ['mousedown','mousemove','mouseup','touchstart','touchmove','touchend','click'].forEach(ev=>{
+    card.addEventListener(ev,e=>e.stopPropagation(),{passive:false});
+  });
+  pin.addEventListener('click',e=>{e.stopPropagation();place(a+90)});
+}
+
+
+function searchArea(){
+  const q=$('areaInput').value.trim(); if(!q)return;
+  setStatus(`“${q}” 위치 찾는 중…`);
+  ps.keywordSearch(q,(data,status)=>{
+    if(status!==kakao.maps.services.Status.OK||!data.length){setStatus(`“${q}” 위치를 찾지 못했습니다.`);return}
+    const p=data[0]; searchCenter=new kakao.maps.LatLng(+p.y,+p.x); centerMarker.setPosition(searchCenter); map.setCenter(searchCenter); updateRadiusCircle(); clearExclusions(); searchPlaces(true);
+  },{size:5});
+}
+function setupCenterHandle(){
+  const h=$('centerHandle'); let pid=null;
+  h.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();centerDragging=true;pid=e.pointerId;h.classList.add('dragging');try{h.setPointerCapture(pid)}catch(_){};map.setDraggable(false)} ,{passive:false});
+  h.addEventListener('pointermove',e=>{if(!centerDragging)return;e.preventDefault();e.stopPropagation();const rect=$('map').getBoundingClientRect();const proj=map.getProjection();const pt=new kakao.maps.Point(e.clientX-rect.left,e.clientY-rect.top);const pos=proj.coordsFromPoint(pt);searchCenter=pos;centerMarker.setPosition(pos);updateRadiusCircle();map.setCenter(pos)}, {passive:false});
+  const end=e=>{if(!centerDragging)return;e&&e.stopPropagation();centerDragging=false;h.classList.remove('dragging');map.setDraggable(true);clearExclusions();searchPlaces(true)};
+  h.addEventListener('pointerup',end);h.addEventListener('pointercancel',end);h.addEventListener('lostpointercapture',()=>{if(centerDragging){centerDragging=false;h.classList.remove('dragging');map.setDraggable(true)}});
+}
+
+function qurl(base,q){return base+encodeURIComponent(q)}
+function openUrl(u){window.open(u,'_blank','noopener,noreferrer')}
+function isAndroid(){return /Android/i.test(navigator.userAgent)}
+function isIOS(){return /iPhone|iPad|iPod/i.test(navigator.userAgent)}
+function naverWeb(query){return qurl('https://map.naver.com/p/search/',query)}
+function openNaverPlace(p,query){
+  const name=encodeURIComponent(p.place_name), appname=encodeURIComponent(location.origin);
+  const web=naverWeb(query);
+  if(isAndroid()){
+    const fallback=encodeURIComponent(web);
+    location.href=`intent://place?lat=${p.y}&lng=${p.x}&name=${name}&appname=${appname}#Intent;scheme=nmap;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.nmap;S.browser_fallback_url=${fallback};end`;
+  }else if(isIOS()){
+    const started=Date.now(); location.href=`nmap://place?lat=${p.y}&lng=${p.x}&name=${name}&appname=${appname}`;
+    setTimeout(()=>{if(!document.hidden && Date.now()-started<1800) location.href=web},1000);
+  }else openUrl(web);
+}
+function openTmap(p){
+  const name=encodeURIComponent(p.place_name);
+  if(isAndroid()){
+    const fallback=encodeURIComponent('https://play.google.com/store/apps/details?id=com.skt.tmap.ku');
+    location.href=`intent://route?goalname=${name}&goalx=${p.x}&goaly=${p.y}#Intent;scheme=tmap;package=com.skt.tmap.ku;S.browser_fallback_url=${fallback};end`;
+  }else if(isIOS()) location.href=`tmap://route?goalname=${name}&goalx=${p.x}&goaly=${p.y}`;
+  else openUrl('https://www.tmap.co.kr/');
+}
+async function copyThenOpen(text,url,msg){
+  try{await navigator.clipboard.writeText(text); setStatus(msg+' · 검색어 복사됨');}catch(_){setStatus(msg)}
+  openUrl(url);
+}
+function addSourceButton(label,sub,handler){
+  const b=document.createElement('button'); b.className='sourceBtn';
+  b.innerHTML=`<span>${escapeHtml(label)}</span><small>${escapeHtml(sub)}</small>`;
+  b.onclick=handler; $('sourceGrid').appendChild(b);
+}
+function openDetail(p){
+  currentPlace=p; $('detailName').textContent=p.place_name;
+  const cat=(p.category_name||'').split(' > ').pop();
+  const d=Math.round(p._dist), dist=d<1000?d+'m':(d/1000).toFixed(1)+'km';
+  $('detailMeta').textContent=[dist,cat,p.road_address_name||p.address_name].filter(Boolean).join(' · ');
+  const name=p.place_name, address=p.road_address_name||p.address_name||'', area=(p.address_name||'').split(' ').slice(0,3).join(' '), query=`${name} ${address||area}`.trim();
+
+  $('sourceGrid').innerHTML='';
+  // Kakao is the originating POI, so this is an exact place-ID jump.
+  addSourceButton('카카오','장소ID 직접',()=>openUrl(`https://m.map.kakao.com/scheme/place?id=${encodeURIComponent(p.id)}`));
+  // Naver receives the exact Kakao coordinates + place name through its official place URL scheme.
+  addSourceButton('네이버','좌표+상호',()=>openNaverPlace(p,query));
+  // Without a Google Place ID yet, use the recommended name+address search URL.
+  addSourceButton('Google','상호+주소',()=>openUrl(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`));
+  // TMAP app gets the selected POI coordinates as the destination (best-effort scheme; not a public stable web contract).
+  addSourceButton('TMAP','좌표 목적지',()=>openTmap(p));
+  // These services do not expose a general public place API for our use, so open their own search surfaces.
+  const catchUrl=`https://app.catchtable.co.kr/ct/map/COMMON?keyword=${encodeURIComponent(query)}&keywordSearch=${encodeURIComponent(query)}&serviceType=INTEGRATION&showTabs=true`;
+  addSourceButton('캐치테이블','서비스 검색',()=>openUrl(catchUrl));
+  addSourceButton('테이블링','검색어 복사',()=>copyThenOpen(query,'https://www.tabling.co.kr/search','테이블링에서 같은 업체를 확인하세요'));
+  addSourceButton('다이닝코드','서비스 검색',()=>openUrl(`https://www.diningcode.com/list.dc?query=${encodeURIComponent(query)}&rn_search_flag=on`));
+  addSourceButton('웹검색','전체 검색',()=>openUrl(`https://www.google.com/search?q=${encodeURIComponent(query)}`));
+
+  $('sourceInfo').innerHTML=`<b>선택 위치</b> ${(+p.y).toFixed(6)}, ${(+p.x).toFixed(6)}<br>`+
+    `<b>카카오</b> 원본 장소ID·좌표 직접 &nbsp; <b>네이버</b> 동일 좌표+상호 전달 &nbsp; <b>Google</b> 상호+주소 검색<br>`+
+    `<b>TMAP</b> 동일 좌표를 목적지로 전달 &nbsp; <b>캐치/테이블링/다코</b> 각 서비스 내부 검색 (동일업체 자동확정은 API 연결 후)`;
+
+  $('deleteBtn').onclick=()=>{excludePlace(p.id);$('detail').classList.remove('open');renderFromLast();};
+  $('satBtn').onclick=()=>{setMapMode(hybridOn?'road':'hybrid');$('detail').classList.remove('open');};
+  // Kakao Roadview: find the nearest panorama within 80 m and show it in-app.
+  $('roadBtn').onclick=()=>{
+    const panel=$('roadPanel'); panel.classList.add('open');
+    if(!roadClient) roadClient=new kakao.maps.RoadviewClient();
+    if(!roadview) roadview=new kakao.maps.Roadview($('roadview'));
+    const pos=new kakao.maps.LatLng(+p.y,+p.x);
+    roadClient.getNearestPanoId(pos,80,panoId=>{
+      if(panoId){ roadview.setPanoId(panoId,pos); $('rankNote').textContent='가게 좌표에서 가장 가까운 카카오 로드뷰를 표시했습니다.'; }
+      else { panel.classList.remove('open'); $('rankNote').textContent='이 가게 주변 80m에는 카카오 로드뷰가 없습니다. Google 스트리트뷰로 확인해보세요.'; }
+    });
+  };
+  $('kakaoRoadBtn').onclick=()=>openUrl(`https://map.kakao.com/link/roadview/${p.y},${p.x}`);
+  $('extRoadBtn').onclick=()=>openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.y},${p.x}`);
+  $('webQueries').innerHTML='';
+  [['현지인 맛집',`${query} 현지인 맛집`],['로컬 맛집',`${query} 로컬 맛집`],['후기',`${query} 후기`],['웨이팅',`${query} 웨이팅`]].forEach(([l,q])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>openUrl(qurl('https://www.google.com/search?q=',q));$('webQueries').appendChild(b)});
+  const mode=$('rank').value;
+  const notes={recommend:'현재 추천은 카카오 후보를 검색반경 전체에서 거리구간별로 고르게 보여주는 1단계입니다. 각 소스 버튼은 선택한 동일 위치를 최대한 직접 전달하고, 공개 API가 없는 서비스는 해당 서비스 검색으로 연결합니다.',near:'거리 기준으로 가까운 곳부터 표시합니다.',local:'현지인 지수는 데이터 연결 전 준비 상태입니다. 지금은 후보 표시 + 각 서비스 수동 확인을 사용할 수 있습니다.',hot:'지금인기는 SK 혼잡도/방문 신호 연결 전 준비 상태입니다.',web:'웹TOP5 자동 집계는 서버 검색 연결 전 준비 상태입니다. 아래 검색 버튼으로 즉시 수동 확인할 수 있습니다.'};
+  $('rankNote').textContent=notes[mode];
+  $('roadPanel').classList.remove('open');
+
+  const evidence=[['google','Google확인'],['naver','네이버확인'],['tmap','TMAP확인'],['catch','캐치확인'],['tabling','테이블링확인'],['dining','다코확인'],['local','현지인느낌']];
+  const box=$('evidence'); box.innerHTML='';
+  const key='pinb_evidence_'+p.id;
+  let saved={}; try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch(_){}
+  evidence.forEach(([k,label])=>{
+    const b=document.createElement('button'); b.textContent='✓ '+label; if(saved[k])b.classList.add('on');
+    b.onclick=()=>{saved[k]=!saved[k]; b.classList.toggle('on',saved[k]); localStorage.setItem(key,JSON.stringify(saved));};
+    box.appendChild(b);
+  });
+  $('detail').classList.add('open');
+}
+$('closeDetail').onclick=()=>$('detail').classList.remove('open');
+$('roadMapBtn').onclick=()=>setMapMode('road');
+$('hybridMapBtn').onclick=()=>setMapMode('hybrid');
+$('undoExcludeBtn').onclick=()=>undoExclude();
+$('restoreAllBtn').onclick=()=>restoreAll();
+
+
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+$('again').onclick=()=>{clearExclusions();searchPlaces(false)};
+$('areaBtn').onclick=()=>searchArea();
+$('areaInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchArea()});
+$('locBtn').onclick=()=>navigator.geolocation.getCurrentPosition(p=>{searchCenter=new kakao.maps.LatLng(p.coords.latitude,p.coords.longitude);centerMarker.setPosition(searchCenter);map.setCenter(searchCenter);updateRadiusCircle();clearExclusions();searchPlaces(true)},()=>setStatus('GPS 위치를 가져오지 못했습니다.'),{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+$('theme').onchange=()=>{clearExclusions();searchPlaces(true)};
+$('radius').onchange=()=>{updateRadiusCircle();clearExclusions();searchPlaces(true)};
+$('cnt').onchange=()=>renderFromLast();
+$('rank').onchange=()=>renderFromLast();
+
+navigator.geolocation.getCurrentPosition(
+  p=>init(p.coords.latitude,p.coords.longitude),
+  ()=>{setStatus('위치 권한을 사용할 수 없어 기본 위치에서 시작합니다.');init(35.095,128.91)},
+  {enableHighAccuracy:true,timeout:10000,maximumAge:15000}
+);
+</script>
+</body></html>
