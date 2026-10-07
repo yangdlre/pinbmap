@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>핀볼 맛집 검색 v0.13</title>
+<title>핀볼 맛집 검색 v0.15</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -351,7 +351,10 @@ function addPlace(p,i){
     blockMap(e);
     const wasTap=!moved && Math.hypot(e.clientX-downX,e.clientY-downY)<TAP_SLOP;
     restoreMapGesture();
-    if(wasTap) openDetail(p);
+    // Wait until the original tap/click sequence has fully finished before rendering
+    // interactive detail buttons. This prevents the same finger tap from accidentally
+    // activating a source/app button that appears underneath it.
+    if(wasTap) setTimeout(()=>openDetail(p),140);
   },{passive:false});
   card.addEventListener('pointercancel',e=>{if(dragging){blockMap(e);restoreMapGesture()}},{passive:false});
   card.addEventListener('lostpointercapture',()=>{if(dragging)restoreMapGesture()});
@@ -396,6 +399,18 @@ function openNaverPlace(p,query){
     setTimeout(()=>{if(!document.hidden && Date.now()-started<1800) location.href=web},1000);
   }else openUrl(web);
 }
+function openNaverRoute(p){
+  const name=encodeURIComponent(p.place_name), appname=encodeURIComponent(location.origin);
+  const web=naverWeb(p.place_name);
+  if(isAndroid()){
+    const fallback=encodeURIComponent(web);
+    location.href=`intent://route/car?dlat=${p.y}&dlng=${p.x}&dname=${name}&appname=${appname}#Intent;scheme=nmap;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.nmap;S.browser_fallback_url=${fallback};end`;
+  }else if(isIOS()){
+    const started=Date.now();
+    location.href=`nmap://route/car?dlat=${p.y}&dlng=${p.x}&dname=${name}&appname=${appname}`;
+    setTimeout(()=>{if(!document.hidden && Date.now()-started<1800) location.href=web},1000);
+  }else openUrl(web);
+}
 function openTmap(p){
   const name=encodeURIComponent(p.place_name);
   if(isAndroid()){
@@ -418,7 +433,7 @@ function openDetail(p){
   const cat=(p.category_name||'').split(' > ').pop();
   const d=Math.round(p._dist), dist=d<1000?d+'m':(d/1000).toFixed(1)+'km';
   $('detailMeta').textContent=[dist,cat,p.road_address_name||p.address_name].filter(Boolean).join(' · ');
-  const name=p.place_name, address=p.road_address_name||p.address_name||'', area=(p.address_name||'').split(' ').slice(0,3).join(' '), query=`${name} ${address||area}`.trim();
+  const name=p.place_name, address=p.road_address_name||p.address_name||'', query=name;
 
   $('sourceGrid').innerHTML='';
   // Kakao is the originating POI, so this is an exact place-ID jump.
@@ -426,19 +441,20 @@ function openDetail(p){
   // Naver receives the exact Kakao coordinates + place name through its official place URL scheme.
   addSourceButton('네이버','좌표+상호',()=>openNaverPlace(p,query));
   // Without a Google Place ID yet, use the recommended name+address search URL.
-  addSourceButton('Google','상호+주소',()=>openUrl(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`));
+  addSourceButton('Google','상호 검색',()=>openUrl(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`));
   // TMAP app gets the selected POI coordinates as the destination (best-effort scheme; not a public stable web contract).
   addSourceButton('TMAP','이 가게로 길찾기',()=>openTmap(p));
+  addSourceButton('네이버길찾기','자동차 목적지',()=>openNaverRoute(p));
   // These services do not expose a general public place API for our use, so open their own search surfaces.
   const catchUrl=`https://app.catchtable.co.kr/ct/map/COMMON?keyword=${encodeURIComponent(query)}&keywordSearch=${encodeURIComponent(query)}&serviceType=INTEGRATION&showTabs=true`;
   addSourceButton('캐치테이블','서비스 검색',()=>openUrl(catchUrl));
   addSourceButton('테이블링','서비스 검색',()=>openUrl(`https://www.tabling.co.kr/search?keyword=${encodeURIComponent(query)}`));
   addSourceButton('다이닝코드','서비스 검색',()=>openUrl(`https://www.diningcode.com/list.dc?query=${encodeURIComponent(query)}&rn_search_flag=on`));
-  addSourceButton('웹검색','전체 검색',()=>openUrl(`https://www.google.com/search?q=${encodeURIComponent(query)}`));
+  addSourceButton('웹검색','네이버 통합검색',()=>openUrl(`https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`));
 
   $('sourceInfo').innerHTML=`<b>선택 위치</b> ${(+p.y).toFixed(6)}, ${(+p.x).toFixed(6)}<br>`+
-    `<b>카카오</b> 원본 장소ID·좌표 직접 &nbsp; <b>네이버</b> 동일 좌표+상호 전달 &nbsp; <b>Google</b> 상호+주소 검색<br>`+
-    `<b>TMAP</b> 선택 가게 좌표를 목적지로 전달(앱 지원 시) &nbsp; <b>캐치/테이블링/다코</b> 각 서비스 내부 검색 (동일업체 자동확정은 API 연결 후)`;
+    `<b>카카오</b> 원본 장소ID·좌표 직접 &nbsp; <b>네이버</b> 동일 좌표+상호 전달 &nbsp; <b>Google</b> 상호만 검색<br>`+
+    `<b>TMAP</b> 선택 가게 좌표를 목적지로 전달 &nbsp; <b>네이버길찾기</b> 같은 좌표를 자동차 목적지로 전달<br><b>캐치/테이블링/다코</b> 상호명만 각 서비스에서 검색`;
 
   $('deleteBtn').onclick=()=>{excludePlace(p.id);$('detail').classList.remove('open');renderFromLast();};
   $('satBtn').onclick=()=>{setMapMode(hybridOn?'road':'hybrid');$('detail').classList.remove('open');};
@@ -459,7 +475,7 @@ function openDetail(p){
   const naverBlog3m=q=>`https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(q)}&nso=${encodeURIComponent('so:r,p:3m,a:all')}`;
   [['현지인 맛집',`${query} 현지인 맛집`],['로컬 맛집',`${query} 로컬 맛집`],['내돈내산',`${query} 내돈내산`],['웨이팅 맛집',`${query} 웨이팅 맛집`]].forEach(([l,q])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>openUrl(naverBlog3m(q));$('webQueries').appendChild(b)});
   const mode=$('rank').value;
-  const notes={recommend:'현재 추천은 카카오 후보를 검색반경 전체에서 거리구간별로 고르게 보여주는 1단계입니다. 각 소스 버튼은 선택한 동일 위치를 최대한 직접 전달하고, 공개 API가 없는 서비스는 해당 서비스 검색으로 연결합니다.',near:'거리 기준으로 가까운 곳부터 표시합니다.',local:'현지인 지수는 데이터 연결 전 준비 상태입니다. 지금은 후보 표시 + 각 서비스 수동 확인을 사용할 수 있습니다.',hot:'지금인기는 SK 혼잡도/방문 신호 연결 전 준비 상태입니다.',web:'웹TOP5 자동 집계는 서버 검색 연결 전 준비 상태입니다. 아래 검색 버튼으로 즉시 수동 확인할 수 있습니다.'};
+  const notes={recommend:'현재 추천은 카카오 후보를 검색반경 전체에서 거리구간별로 고르게 보여주는 1단계입니다. 좌표 연동이 가능한 지도앱은 선택한 동일 위치를 직접 전달하고, 검색형 서비스는 상호명만 검색합니다.',near:'거리 기준으로 가까운 곳부터 표시합니다.',local:'현지인 지수는 데이터 연결 전 준비 상태입니다. 지금은 후보 표시 + 각 서비스 수동 확인을 사용할 수 있습니다.',hot:'지금인기는 SK 혼잡도/방문 신호 연결 전 준비 상태입니다.',web:'웹TOP5 자동 집계는 서버 검색 연결 전 준비 상태입니다. 아래 검색 버튼으로 즉시 수동 확인할 수 있습니다.'};
   $('rankNote').textContent=notes[mode];
   $('roadPanel').classList.remove('open');
 
