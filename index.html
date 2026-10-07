@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>핀볼 맛집 검색 v0.11</title>
+<title>핀볼 맛집 검색 v0.13</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -89,6 +89,7 @@ select:focus{outline:2px solid #222}
   <div id="extTools"><button id="kakaoRoadBtn">↗ 카카오 로드뷰 앱</button><button id="extRoadBtn">↗ Google 스트리트뷰</button></div>
   <div id="roadPanel"><div id="roadview"></div></div>
   <div id="webQueries"></div>
+  <div style="margin-top:9px;font-size:10px;color:#737a84">내 확인 기록 · 순위에는 아직 미반영</div>
   <div id="evidence"></div>
   <div id="rankNote"></div>
 </div>
@@ -427,17 +428,17 @@ function openDetail(p){
   // Without a Google Place ID yet, use the recommended name+address search URL.
   addSourceButton('Google','상호+주소',()=>openUrl(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`));
   // TMAP app gets the selected POI coordinates as the destination (best-effort scheme; not a public stable web contract).
-  addSourceButton('TMAP','좌표 목적지',()=>openTmap(p));
+  addSourceButton('TMAP','이 가게로 길찾기',()=>openTmap(p));
   // These services do not expose a general public place API for our use, so open their own search surfaces.
   const catchUrl=`https://app.catchtable.co.kr/ct/map/COMMON?keyword=${encodeURIComponent(query)}&keywordSearch=${encodeURIComponent(query)}&serviceType=INTEGRATION&showTabs=true`;
   addSourceButton('캐치테이블','서비스 검색',()=>openUrl(catchUrl));
-  addSourceButton('테이블링','검색어 복사',()=>copyThenOpen(query,'https://www.tabling.co.kr/search','테이블링에서 같은 업체를 확인하세요'));
+  addSourceButton('테이블링','서비스 검색',()=>openUrl(`https://www.tabling.co.kr/search?keyword=${encodeURIComponent(query)}`));
   addSourceButton('다이닝코드','서비스 검색',()=>openUrl(`https://www.diningcode.com/list.dc?query=${encodeURIComponent(query)}&rn_search_flag=on`));
   addSourceButton('웹검색','전체 검색',()=>openUrl(`https://www.google.com/search?q=${encodeURIComponent(query)}`));
 
   $('sourceInfo').innerHTML=`<b>선택 위치</b> ${(+p.y).toFixed(6)}, ${(+p.x).toFixed(6)}<br>`+
     `<b>카카오</b> 원본 장소ID·좌표 직접 &nbsp; <b>네이버</b> 동일 좌표+상호 전달 &nbsp; <b>Google</b> 상호+주소 검색<br>`+
-    `<b>TMAP</b> 동일 좌표를 목적지로 전달 &nbsp; <b>캐치/테이블링/다코</b> 각 서비스 내부 검색 (동일업체 자동확정은 API 연결 후)`;
+    `<b>TMAP</b> 선택 가게 좌표를 목적지로 전달(앱 지원 시) &nbsp; <b>캐치/테이블링/다코</b> 각 서비스 내부 검색 (동일업체 자동확정은 API 연결 후)`;
 
   $('deleteBtn').onclick=()=>{excludePlace(p.id);$('detail').classList.remove('open');renderFromLast();};
   $('satBtn').onclick=()=>{setMapMode(hybridOn?'road':'hybrid');$('detail').classList.remove('open');};
@@ -455,7 +456,8 @@ function openDetail(p){
   $('kakaoRoadBtn').onclick=()=>openUrl(`https://map.kakao.com/link/roadview/${p.y},${p.x}`);
   $('extRoadBtn').onclick=()=>openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.y},${p.x}`);
   $('webQueries').innerHTML='';
-  [['현지인 맛집',`${query} 현지인 맛집`],['로컬 맛집',`${query} 로컬 맛집`],['후기',`${query} 후기`],['웨이팅',`${query} 웨이팅`]].forEach(([l,q])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>openUrl(qurl('https://www.google.com/search?q=',q));$('webQueries').appendChild(b)});
+  const naverBlog3m=q=>`https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(q)}&nso=${encodeURIComponent('so:r,p:3m,a:all')}`;
+  [['현지인 맛집',`${query} 현지인 맛집`],['로컬 맛집',`${query} 로컬 맛집`],['내돈내산',`${query} 내돈내산`],['웨이팅 맛집',`${query} 웨이팅 맛집`]].forEach(([l,q])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>openUrl(naverBlog3m(q));$('webQueries').appendChild(b)});
   const mode=$('rank').value;
   const notes={recommend:'현재 추천은 카카오 후보를 검색반경 전체에서 거리구간별로 고르게 보여주는 1단계입니다. 각 소스 버튼은 선택한 동일 위치를 최대한 직접 전달하고, 공개 API가 없는 서비스는 해당 서비스 검색으로 연결합니다.',near:'거리 기준으로 가까운 곳부터 표시합니다.',local:'현지인 지수는 데이터 연결 전 준비 상태입니다. 지금은 후보 표시 + 각 서비스 수동 확인을 사용할 수 있습니다.',hot:'지금인기는 SK 혼잡도/방문 신호 연결 전 준비 상태입니다.',web:'웹TOP5 자동 집계는 서버 검색 연결 전 준비 상태입니다. 아래 검색 버튼으로 즉시 수동 확인할 수 있습니다.'};
   $('rankNote').textContent=notes[mode];
