@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>핀볼 맛집 검색 v0.33</title>
+<title>핀볼 맛집 검색 v0.35</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -151,7 +151,28 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 #pbOv{position:fixed;inset:0;z-index:150;touch-action:none;user-select:none;-webkit-user-select:none}
 .pbHud button{background:#fff3;color:#fff;border:0;border-radius:12px;padding:3px 9px;font-size:12px;min-height:0}
 .pbBall{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 10%,#d5dae0 28%,#7c8691 68%,#3f464e);box-shadow:0 3px 6px #0007;will-change:transform}
-.pbFlip{position:absolute;height:14px;border-radius:7px;background:linear-gradient(#ffb38f,#ff5a1f);box-shadow:0 2px 5px #0005;transform-origin:0 50%}
+.pbFloor{position:absolute;left:0;right:0;height:4px}
+.pbPad{position:absolute;left:0;top:0;height:14px;border-radius:7px;box-sizing:border-box;will-change:transform;
+  background:linear-gradient(180deg,#ffb0b0 0%,#ff3b3b 30%,#d40000 62%,#7a0000 100%);border:1.5px solid #3d0000;
+  box-shadow:0 4px 10px #b0000066,inset 0 -2px 3px #0005}
+.pbPad::before{content:'';position:absolute;left:8px;right:8px;top:2px;height:3px;border-radius:2px;background:linear-gradient(90deg,#fff0,#fffc 30%,#fffc 70%,#fff0)}
+.pbPad::after{content:'';position:absolute;left:3px;right:3px;top:50%;height:4px;margin-top:-1px;border-radius:2px;
+  background:radial-gradient(circle,#ffe36b 0 1.5px,transparent 2px) 0 0/12px 4px repeat-x;opacity:.9}
+.pbPad.hit{box-shadow:0 0 16px 4px #ff3b3baa,inset 0 -2px 3px #0005}
+.pbFloor.wall{background:#555c}
+.pbFloor.hole{height:6px;background:repeating-linear-gradient(90deg,#e33 0 10px,transparent 10px 18px)}
+.pbRail{position:absolute;height:9px;border-radius:5px;transform-origin:0 50%;box-sizing:border-box;
+  background:linear-gradient(180deg,#f4f6f8 0%,#aeb6bf 45%,#5d656e 100%);border:1px solid #2f343a;box-shadow:0 2px 4px #0005}
+.pbRail::after{content:'';position:absolute;left:4px;right:4px;bottom:1px;height:2px;border-radius:1px;background:#e01e1e}
+.pbFlip{position:absolute;height:16px;border-radius:8px 6px 6px 8px;transform-origin:8px 50%;box-sizing:border-box;
+  background:linear-gradient(180deg,#ffb0b0 0%,#ff3b3b 30%,#d40000 62%,#7a0000 100%);border:1.5px solid #3d0000;
+  box-shadow:0 4px 8px #0006,inset 0 -2px 3px #0005}
+.pbFlip::before{content:'';position:absolute;left:1px;top:50%;width:13px;height:13px;margin-top:-6.5px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff 0 15%,#c9d0d6 40%,#59626b 100%);border:1px solid #2a2f35}
+.pbFlip::after{content:'';position:absolute;left:18px;right:6px;top:2px;height:3px;border-radius:2px;background:linear-gradient(90deg,#fffc,#fff0)}
+.pbJpPop{position:absolute;z-index:3;font-weight:900;font-size:18px;color:#ffd84d;text-shadow:0 2px 0 #7a0000,0 0 8px #ff3b3b;pointer-events:none;
+  animation:pbPop 1s ease-out forwards}
+@keyframes pbPop{0%{transform:translateY(0) scale(.6);opacity:0}20%{transform:translateY(-6px) scale(1.15);opacity:1}100%{transform:translateY(-40px) scale(1);opacity:0}}
 .pbShard{position:fixed;z-index:149;background:#fff;border:1px solid #c9ced4;border-radius:3px;pointer-events:none;transition:transform .7s cubic-bezier(.2,.6,.4,1),opacity .7s}
 .card.pbShake{animation:pbShake .14s}
 @keyframes pbShake{25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
@@ -395,7 +416,7 @@ body:not(.fuel-ev) .evOnly{display:none!important}
       <label class="opt"><input type="checkbox" id="optLen"><span>선 길이 조절<small>카드가 좌우 수평일 때 밀면 짧게, 당기면 길게</small></span></label>
       <label class="opt"><input type="checkbox" id="optPin"><span>🎮 핀볼 게임<small>카드를 화면 맨 아래까지 당겼다 놓으면 쇠구슬 발사</small></span></label>
       <div id="pinModeRow" class="pinRow">
-        <select id="pinMode"><option value="A">A 바닥벽</option><option value="B">B 공3개</option><option value="C">C 플리퍼</option></select>
+        <select id="pinMode"><option value="A">A 바닥벽</option><option value="B">B 받아치기 바</option><option value="C">C 플리퍼</option></select>
         <label>내구성 <select id="pinHp"><option value="1">기본</option><option value="2">2배</option><option value="3">3배</option><option value="4">4배</option><option value="5">5배</option><option value="6">6배</option><option value="7">7배</option><option value="8">8배</option><option value="9">9배</option><option value="10">10배</option></select></label>
         <label>축소 <select id="pinShrink"><option value="1">없음</option><option value="2">2배</option><option value="3">3배</option><option value="4">4배</option><option value="5">5배</option></select></label>
         <label><input type="checkbox" id="pinRand"> 랜덤</label>
@@ -1067,7 +1088,8 @@ function addPlace(p,i){
 }
 
 /* ---------- 🎮 핀볼 : 카드를 맨 아래까지 당겼다 놓으면 쇠구슬 발사 ----------
-   A 바닥도 벽 / B 바닥은 구멍·공 3개 / C B + 플리퍼(화면 왼쪽·오른쪽 아래 누르기)
+   📅 일정 버튼을 5번(× 내구성 배수) 맞히면 7777 잭팟.
+   A 바닥도 벽 / B 아래 바를 손가락으로 좌우로 움직여 받아치기(공 3개) / C 플리퍼(화면 왼쪽·오른쪽 누르기, 공 3개) · 🔄 리필로 공 다시 3개
    맛집 점수가 높을수록 카드가 단단(1~4번) × 설정의 내구성 배수. 축소·랜덤 배치·무브(살짝씩 움직임) 선택.
    📅 일정 버튼을 맞히면 7777 잭팟! 끝나면 카드는 원래대로 */
 var pb=null;
@@ -1077,7 +1099,7 @@ function crackSvg(lv){const ln=['M82 0 L74 18 L88 30 L70 48 L80 66','M0 22 L30 2
   return `<svg class="pbCrack" viewBox="0 0 164 66" preserveAspectRatio="none"><path d="${ln.slice(0,lv).join(' ')}" stroke="#222" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg>`}
 function startPinball(fromWrap,x,y,vx,vy){
   if(pb)return;
-  const o=cardOpt(),mode=o.mode,W=innerWidth,H=innerHeight;
+  const o=cardOpt(),mode=o.mode,vv=window.visualViewport,W=Math.round(vv?vv.width:innerWidth),H=Math.round(vv?vv.height:innerHeight);
   $('detail').classList.remove('open');hideSug();
   try{map.setDraggable(false);map.setZoomable(false)}catch(_){}
   // 화면에 보이는 카드들을 게임용 카드로 옮겨 놓고(원래 카드는 잠시 숨김) 그걸 범퍼로 사용
@@ -1085,8 +1107,9 @@ function startPinball(fromWrap,x,y,vx,vy){
     const c=w.querySelector('.card');if(!c)return null;const r=c.getBoundingClientRect();
     if(r.right<0||r.left>W||r.bottom<0||r.top>H||!r.width)return null;return {w,c,r}}).filter(Boolean);
   document.querySelectorAll('.wrap').forEach(w=>w.style.visibility='hidden');
+  ['hint','nextCard'].forEach(id=>{const e=$(id);if(e)e.style.visibility='hidden'});   // 아래쪽 안내문이 바·플리퍼를 가리지 않게
   const ov=document.createElement('div');ov.id='pbOv';
-  ov.innerHTML=`<div class="pbHud"><span id="pbInfo"></span><button id="pbQuit">✕ 그만</button></div><div class="pbBall" id="pbBall"></div>`+(mode==='C'?'<div class="pbFlip" id="pbFL"></div><div class="pbFlip" id="pbFR"></div>':'');
+  ov.innerHTML=`<div class="pbHud"><span id="pbInfo"></span>${mode!=='A'?'<button id="pbRefill">🔄 리필</button>':''}<button id="pbQuit">✕ 그만</button></div><div class="pbBall" id="pbBall"></div>`+`<div class="pbFloor ${mode==='A'?'wall':'hole'}" style="top:${H-(mode==='A'?4:6)}px"></div>`+(mode==='B'?'<div class="pbPad" id="pbPad"></div>':'')+(mode==='C'?'<div class="pbFlip" id="pbFL"></div><div class="pbFlip" id="pbFR"></div><div class="pbRail" id="pbRL"></div><div class="pbRail" id="pbRR"></div>':'');
   document.body.appendChild(ov);
   const top=64,bot=H*(mode==='C'?.66:.74),sc=1/o.shrink,placed=[];
   const bumpers=src.map(({w,c,r})=>{
@@ -1105,21 +1128,35 @@ function startPinball(fromWrap,x,y,vx,vy){
   pb={mode,opt:o,W,H,ov,ballEl:ov.querySelector('#pbBall'),ball:{x,y,vx,vy,r:11},bumpers,total:bumpers.length,broken:0,hits:0,balls:mode==='A'?0:3,
     t0:performance.now(),last:performance.now(),raf:0,jack:{l:sb.left,t:sb.top,rr:sb.right,b:sb.bottom},waiting:0,over:false,endAt:0,area:{top,bot},
     flip:mode==='C'?{L:{ang:PB_FL.L[0],w:0,ids:new Set()},R:{ang:PB_FL.R[0],w:0,ids:new Set()}}:null,
-    flipP:{L:{x:W*.16,y:H-60},R:{x:W*.84,y:H-60}},flipLen:W*.29};
+    flipP:null,flipLen:Math.min(W*.29,150),rails:null,jackHits:0,jackNeed:5*o.hp,jackCool:0,pad:mode==='B'?{x:W/2,w:Math.min(W*.3,150),y:H-46,h:12}:null};
+  if(mode==='C'){const L=pb.flipLen,py=H-34-L*Math.sin(28*Math.PI/180),px=W*.16;
+    pb.flipP={L:{x:px,y:py},R:{x:W-px,y:py}};
+    pb.rails=[{a:{x:0,y:py-px*.75},b:{x:px,y:py}},{a:{x:W,y:py-px*.75},b:{x:W-px,y:py}}];   // 벽에서 플리퍼로 공을 모아주는 레일
+    pb.rails.forEach((r,k)=>{const el=$(k?'pbRR':'pbRL'),dx=r.b.x-r.a.x,dy=r.b.y-r.a.y;el.style.cssText=`left:${r.a.x}px;top:${r.a.y-4}px;width:${Math.hypot(dx,dy)}px;transform:rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`})}
   ov.addEventListener('pointerdown',e=>{
-    if(e.target.closest('#pbQuit,.pbEnd button'))return;e.preventDefault();
+    if(e.target.closest('button'))return;e.preventDefault();
     if(pb&&pb.over){if(performance.now()>pb.endAt)pbCleanup();return}
     if(pb&&pb.flip){const f=pb.flip[e.clientX<pb.W/2?'L':'R'];f.ids.add(e.pointerId)}
+    if(pb&&pb.pad)pbPadTo(e.clientX);
   });
+  ov.addEventListener('pointermove',e=>{if(pb&&pb.pad&&!pb.over&&(e.pointerType!=='mouse'||e.buttons))pbPadTo(e.clientX)});
   const up=e=>{if(pb&&pb.flip)['L','R'].forEach(k=>pb.flip[k].ids.delete(e.pointerId))};
   ov.addEventListener('pointerup',up);ov.addEventListener('pointercancel',up);
   $('pbQuit').onclick=()=>endPinball('quit');
+  if($('pbRefill'))$('pbRefill').onclick=pbRefill;
   if(navigator.vibrate)try{navigator.vibrate(20)}catch(_){}
   pbHud();pb.raf=requestAnimationFrame(pbStep);
 }
+function pbPadTo(x){const p=pb.pad;p.x=Math.max(p.w/2,Math.min(pb.W-p.w/2,x))}   // 바: 손가락 좌우 위치를 그대로 따라감
+// 🔄 리필: 공을 다시 3개로. 게임 오버 상태면 부순 카드는 그대로 두고 이어서
+function pbRefill(){const g=pb;if(!g||g.mode==='A')return;
+  g.balls=3;if(navigator.vibrate)try{navigator.vibrate(15)}catch(_){}
+  if(g.over&&g.overWhy==='over'){g.over=false;g.overWhy='';const box=g.ov.querySelector('.pbEnd');if(box)box.remove();clearTimeout(g.closeT);
+    g.waiting=performance.now()+600;g.ballEl.style.display='none';g.last=performance.now();g.raf=requestAnimationFrame(pbStep)}
+  pbHud()}
 function bmRect(bm){return {l:bm.cx-bm.hw,t:bm.cy-bm.hh,rr:bm.cx+bm.hw,b:bm.cy+bm.hh}}
 function pbHud(){const g=pb;if(!g)return;
-  $('pbInfo').textContent=`🎮 ${g.mode} · `+(g.total?`카드 ${g.total-g.broken}/${g.total}`:'📅 일정을 노려요')+` · 튕김 ${g.hits}`+(g.mode!=='A'?' · '+'●'.repeat(g.balls)+'○'.repeat(3-g.balls):'')}
+  $('pbInfo').textContent=`🎮 ${g.mode} · `+(g.total?`카드 ${g.total-g.broken}/${g.total}`:'📅 일정을 노려요')+` · 🎰 ${g.jackHits}/${g.jackNeed} · 튕김 ${g.hits}`+(g.mode!=='A'?' · '+'●'.repeat(g.balls)+'○'.repeat(3-g.balls):'')}
 function pbRect(b,R){
   const cx=Math.max(R.l,Math.min(b.x,R.rr)),cy=Math.max(R.t,Math.min(b.y,R.b));let dx=b.x-cx,dy=b.y-cy;const d=Math.hypot(dx,dy);
   if(d>=b.r)return null;
@@ -1128,6 +1165,15 @@ function pbRect(b,R){
   return {nx:dx/d,ny:dy/d,px:cx+dx/d*(b.r+.5),py:cy+dy/d*(b.r+.5)};
 }
 function pbBounce(b,c,e,kick){const vn=b.vx*c.nx+b.vy*c.ny;if(vn<0){b.vx-=(1+e)*vn*c.nx;b.vy-=(1+e)*vn*c.ny;b.vx+=c.nx*kick;b.vy+=c.ny*kick}b.x=c.px;b.y=c.py;return vn<0}
+function pbSeg(b,P,ex,ey,w,rad){   // P에서 (ex,ey)까지의 막대, w=회전속도(rad/s, P 기준)
+  const sx=ex-P.x,sy=ey-P.y,L2=sx*sx+sy*sy||1;let t=((b.x-P.x)*sx+(b.y-P.y)*sy)/L2;t=Math.max(0,Math.min(1,t));
+  const qx=P.x+sx*t,qy=P.y+sy*t,dx=b.x-qx,dy=b.y-qy,d=Math.hypot(dx,dy),rr=b.r+rad;
+  if(d>=rr||d<1e-3)return;
+  const nx=dx/d,ny=dy/d,vsx=-w*(qy-P.y),vsy=w*(qx-P.x);
+  let rvx=b.vx-vsx,rvy=b.vy-vsy;const vn=rvx*nx+rvy*ny;
+  if(vn<0){rvx-=(w?1.5:1.7)*vn*nx;rvy-=(w?1.5:1.7)*vn*ny;b.vx=rvx+vsx;b.vy=rvy+vsy}
+  b.x=qx+nx*(rr+.5);b.y=qy+ny*(rr+.5);
+}
 function pbFlipHit(g,k,b){
   const f=g.flip[k],P=g.flipP[k],L=g.flipLen,rad=f.ang*Math.PI/180,sx=Math.cos(rad)*L,sy=Math.sin(rad)*L;
   let t=((b.x-P.x)*sx+(b.y-P.y)*sy)/(L*L);t=Math.max(0,Math.min(1,t));
@@ -1137,6 +1183,22 @@ function pbFlipHit(g,k,b){
   let rvx=b.vx-vsx,rvy=b.vy-vsy;const vn=rvx*nx+rvy*ny;
   if(vn<0){rvx-=1.5*vn*nx;rvy-=1.5*vn*ny;b.vx=rvx+vsx;b.vy=rvy+vsy}
   b.x=qx+nx*(rr+.5);b.y=qy+ny*(rr+.5);
+}
+function pbJack(g){   // 📅 일정 버튼 명중: 정해진 횟수를 채우면 7777 잭팟
+  g.jackHits++;if(navigator.vibrate)try{navigator.vibrate([20,30,20])}catch(_){}
+  const b=$('schedBtn');b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump');
+  const pop=document.createElement('div');pop.className='pbJpPop';pop.textContent=g.jackHits>=g.jackNeed?'7777!':`🎰 ${g.jackHits}/${g.jackNeed}`;
+  pop.style.left=(g.jack.l+4)+'px';pop.style.top=(g.jack.b+2)+'px';g.ov.appendChild(pop);setTimeout(()=>pop.remove(),1000);
+  pbHud();if(g.jackHits>=g.jackNeed)endPinball('jackpot');
+}
+function pbFloorA(g,b){   // A 바닥: 튕기는 높이를 매번 다르게(화면 60~97%), 3번에 1번은 남은 카드를 노려서
+  g.floorN=(g.floorN||0)+1;
+  const alive=g.bumpers.filter(x=>!x.dead);
+  if(alive.length&&g.floorN%3===0){
+    const t=alive[Math.floor(Math.random()*alive.length)],rise=Math.max(80,b.y-(t.cy-t.hh*.5)),vy=Math.sqrt(2*PB_G*rise),ta=vy/PB_G;
+    b.vy=-vy;b.vx=Math.max(-1100,Math.min(1100,(t.cx-b.x)/ta));return}
+  const h=g.H*(.6+Math.random()*.37);b.vy=-Math.max(Math.abs(b.vy)*.6,Math.sqrt(2*PB_G*h));
+  if(Math.abs(b.vx)<80)b.vx+=(Math.random()<.5?-1:1)*(120+Math.random()*200);
 }
 function pbHit(g,bm){
   bm.hp--;g.hits++;if(navigator.vibrate)try{navigator.vibrate(8)}catch(_){}
@@ -1156,9 +1218,9 @@ function pbStep(now){
   const dt=Math.min(.033,(now-g.last)/1000);g.last=now;const b=g.ball;
   if(g.flip)for(const k of ['L','R']){const f=g.flip[k],[rest,upA]=PB_FL[k],on=f.ids.size>0,target=on?upA:rest,prev=f.ang;
     f.ang+=Math.sign(target-f.ang)*Math.min(Math.abs(target-f.ang),(on?1500:700)*dt);f.w=dt?(f.ang-prev)/dt*Math.PI/180:0;
-    const el=$(k==='L'?'pbFL':'pbFR'),P=g.flipP[k];el.style.cssText=`left:${P.x}px;top:${P.y-7}px;width:${g.flipLen}px;transform:rotate(${f.ang}deg)`}
+    const el=$(k==='L'?'pbFL':'pbFR'),P=g.flipP[k];el.style.cssText=`left:${P.x-8}px;top:${P.y-8}px;width:${g.flipLen+16}px;transform:rotate(${f.ang}deg)`}
   if(g.waiting){if(now<g.waiting){g.raf=requestAnimationFrame(pbStep);return}
-    g.waiting=0;b.x=g.W/2;b.y=g.H-30;b.vx=(Math.random()-.5)*300;b.vy=-Math.sqrt(2*PB_G*g.H*.8);g.ballEl.style.display=''}
+    g.waiting=0;b.x=g.pad?g.pad.x:g.W/2;b.y=g.pad?g.pad.y-b.r-2:g.H-30;b.vx=(Math.random()-.5)*300;b.vy=-Math.sqrt(2*PB_G*g.H*.8);g.ballEl.style.display=''}
   if(g.opt.move)for(const bm of g.bumpers){if(bm.dead)continue;   // 무브: 살짝살짝 떠다님
     bm.cx+=bm.vx*dt;bm.cy+=bm.vy*dt;
     if(bm.cx-bm.hw<6){bm.cx=6+bm.hw;bm.vx=Math.abs(bm.vx)}if(bm.cx+bm.hw>g.W-6){bm.cx=g.W-6-bm.hw;bm.vx=-Math.abs(bm.vx)}
@@ -1170,21 +1232,27 @@ function pbStep(now){
     if(b.x<b.r){b.x=b.r;b.vx=Math.abs(b.vx)*.92}
     if(b.x>g.W-b.r){b.x=g.W-b.r;b.vx=-Math.abs(b.vx)*.92}
     if(b.y<b.r){b.y=b.r;b.vy=Math.abs(b.vy)*.92}
-    if(g.mode==='A'){if(b.y>g.H-b.r){b.y=g.H-b.r;b.vy=-Math.max(Math.abs(b.vy)*.95,Math.sqrt(2*PB_G*g.H*.55));if(Math.abs(b.vx)<80)b.vx+=(Math.random()<.5?-1:1)*160}}
+    if(g.mode==='A'){if(b.y>g.H-b.r){b.y=g.H-b.r;pbFloorA(g,b)}}
     else if(b.y-b.r>g.H){   // 바닥 구멍으로 빠짐
       g.balls--;pbHud();if(navigator.vibrate)try{navigator.vibrate(40)}catch(_){}
       if(g.balls<=0){endPinball('over');break}
       g.waiting=now+900;g.ballEl.style.display='none';break}
     for(const bm of g.bumpers){if(bm.dead)continue;const c=pbRect(b,bmRect(bm));if(!c)continue;if(pbBounce(b,c,.9,220)&&now>bm.cool){bm.cool=now+120;pbHit(g,bm)}if(g.over)break}
-    if(!g.over&&pbRect(b,g.jack)){endPinball('jackpot');break}
-    if(g.flip){pbFlipHit(g,'L',b);pbFlipHit(g,'R',b)}
+    if(!g.over){const c=pbRect(b,g.jack);if(c){pbBounce(b,c,.9,260);if(now>g.jackCool){g.jackCool=now+400;pbJack(g);if(g.over)break}}}
+    if(g.pad){const P=g.pad,c=pbRect(b,{l:P.x-P.w/2,t:P.y,rr:P.x+P.w/2,b:P.y+P.h});   // 받아치기: 바 가운데=수직, 끝=60°
+      if(c){if(c.ny<0&&b.vy>0){const off=Math.max(-1,Math.min(1,(b.x-P.x)/(P.w/2))),sp=Math.max(Math.hypot(b.vx,b.vy),Math.sqrt(2*PB_G*g.H*.85)),an=off*60*Math.PI/180;
+          b.vx=sp*Math.sin(an);b.vy=-sp*Math.cos(an);b.y=P.y-b.r-.5;if(navigator.vibrate)try{navigator.vibrate(6)}catch(_){}
+          const pe=$('pbPad');pe.classList.add('hit');clearTimeout(g.padT);g.padT=setTimeout(()=>pe.classList.remove('hit'),140)}
+        else pbBounce(b,c,.9,0)}}
+    if(g.flip){pbFlipHit(g,'L',b);pbFlipHit(g,'R',b);g.rails.forEach(r=>pbSeg(b,r.a,r.b.x,r.b.y,0,4))}
   }
   const sp=Math.hypot(b.vx,b.vy);if(sp>2600){b.vx*=2600/sp;b.vy*=2600/sp}
   g.ballEl.style.transform=`translate(${b.x-b.r}px,${b.y-b.r}px)`;
+  if(g.pad){const P=g.pad,el=$('pbPad');el.style.width=P.w+'px';el.style.transform=`translate(${P.x-P.w/2}px,${P.y}px)`}
   if(!g.over)g.raf=requestAnimationFrame(pbStep);
 }
 function endPinball(why){
-  const g=pb;if(!g||g.over)return;g.over=true;cancelAnimationFrame(g.raf);
+  const g=pb;if(!g||g.over)return;g.over=true;g.overWhy=why;cancelAnimationFrame(g.raf);
   if(why==='quit'){pbCleanup();return}
   const sec=((performance.now()-g.t0)/1000).toFixed(1),box=document.createElement('div');box.className='pbEnd';
   if(why==='jackpot'){
@@ -1196,12 +1264,14 @@ function endPinball(why){
     setTimeout(()=>{clearInterval(iv);box.querySelector('.jpTxt').classList.add('show');if(navigator.vibrate)try{navigator.vibrate([60,40,60,40,160])}catch(_){}},450+4*280);
     g.endAt=performance.now()+1800;setTimeout(pbCleanup,3400);
   }else{
-    box.innerHTML=`<div class="pbBig">${why==='clear'?'🎉 클리어!':'💥 게임 오버'}</div><div>${sec}초 · 부순 카드 ${g.broken}/${g.total} · 튕김 ${g.hits}번</div><button>닫기</button>`;
-    box.querySelector('button').onclick=pbCleanup;g.endAt=performance.now()+600;setTimeout(()=>{if(pb===g)pbCleanup()},7000);
+    box.innerHTML=`<div class="pbBig">${why==='clear'?'🎉 클리어!':'💥 게임 오버'}</div><div>${sec}초 · 부순 카드 ${g.broken}/${g.total} · 튕김 ${g.hits}번</div>`+
+      (why==='over'?'<button class="pbAgain">🔄 리필하고 계속</button> ':'')+'<button class="pbClose">닫기</button>';
+    box.querySelector('.pbClose').onclick=pbCleanup;if(box.querySelector('.pbAgain'))box.querySelector('.pbAgain').onclick=pbRefill;
+    g.endAt=performance.now()+600;g.closeT=setTimeout(()=>{if(pb===g&&g.over)pbCleanup()},why==='over'?15000:7000);
   }
   g.ov.appendChild(box);
 }
-function pbCleanup(){const g=pb;if(!g)return;pb=null;g.over=true;cancelAnimationFrame(g.raf);g.ov.remove();
+function pbCleanup(){const g=pb;if(!g)return;pb=null;g.over=true;cancelAnimationFrame(g.raf);g.ov.remove();['hint','nextCard'].forEach(id=>{const e=$(id);if(e)e.style.visibility=''});
   try{map.setDraggable(true);map.setZoomable(true)}catch(_){}
   renderFromLast({fit:false});   // 부서진 카드들 원래대로
 }
