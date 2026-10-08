@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>핀볼 맛집 검색 v0.31</title>
+<title>핀볼 맛집 검색 v0.33</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -144,6 +144,31 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 .sheetFoot{padding:8px 12px;border-top:1px solid #eee;gap:5px}
 .sheetFoot button{font-size:12px;padding:7px 9px}
 #arcList .arc{display:flex;gap:6px;align-items:center;padding:6px 0;border-top:1px solid #eee;font-size:12px}#arcList .arc span{flex:1;min-width:0}#arcList .arc small{color:#888}#arcList .arc.cur{background:#f3f8ff;border-radius:8px;padding:6px}
+#setEd input[type=email],#setEd input[type=password]{padding:8px 10px;border:1px solid #cfd3d8;border-radius:9px;font-size:14px}
+#setEd .pinRow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin:6px 0 0 24px;font-size:12px}#setEd .pinRow select{padding:5px 6px;font-size:12px}#setEd .pinRow label{display:flex;gap:4px;align-items:center}
+#setEd .opt{display:flex;gap:6px;align-items:flex-start;font-size:13px;margin-top:8px;line-height:1.4}#setEd .opt small{display:block;color:#888;font-size:11px}#setEd .opt input{margin-top:3px}
+.pbHud{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:#111d;color:#fff;font-size:12px;padding:5px 6px 5px 12px;border-radius:16px;display:flex;gap:8px;align-items:center;white-space:nowrap}
+#pbOv{position:fixed;inset:0;z-index:150;touch-action:none;user-select:none;-webkit-user-select:none}
+.pbHud button{background:#fff3;color:#fff;border:0;border-radius:12px;padding:3px 9px;font-size:12px;min-height:0}
+.pbBall{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 10%,#d5dae0 28%,#7c8691 68%,#3f464e);box-shadow:0 3px 6px #0007;will-change:transform}
+.pbFlip{position:absolute;height:14px;border-radius:7px;background:linear-gradient(#ffb38f,#ff5a1f);box-shadow:0 2px 5px #0005;transform-origin:0 50%}
+.pbShard{position:fixed;z-index:149;background:#fff;border:1px solid #c9ced4;border-radius:3px;pointer-events:none;transition:transform .7s cubic-bezier(.2,.6,.4,1),opacity .7s}
+.card.pbShake{animation:pbShake .14s}
+@keyframes pbShake{25%{transform:translate(-3px,1px)}75%{transform:translate(3px,-1px)}}
+.card.pbCard{pointer-events:none;cursor:default;margin:0;box-sizing:border-box;z-index:2}
+.pbCrack{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.card.ballMode{width:28px;height:28px;min-height:0;padding:0;border:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 10%,#d5dae0 28%,#7c8691 68%,#3f464e);box-shadow:0 3px 8px #0007}
+.card.ballMode>*{display:none}
+.arm.spring{height:3px;background:repeating-linear-gradient(90deg,#444 0 3px,transparent 3px 6px)}
+.pbEnd{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);background:#fff;border-radius:18px;box-shadow:0 10px 30px #0006;padding:18px 22px;text-align:center;font-size:13px;min-width:220px}
+.pbEnd .pbBig{font-size:24px;font-weight:800;margin-bottom:6px}
+.pbEnd button{margin-top:10px}
+.pbEnd.jp{background:#1b0f2e;color:#ffd84d;border:3px solid #ffd84d}
+.pbEnd .reels{display:flex;gap:6px;justify-content:center}
+.pbEnd .reels span{display:inline-block;width:46px;height:62px;line-height:62px;font-size:44px;font-weight:900;background:#fff;color:#999;border-radius:8px;font-family:ui-monospace,Menlo,monospace}
+.pbEnd .reels span.hit{color:#d00;box-shadow:0 0 12px #ffd84d}
+.pbEnd .jpTxt{font-size:28px;font-weight:900;margin-top:10px;opacity:0;transform:scale(.4);transition:all .35s cubic-bezier(.3,1.8,.5,1)}
+.pbEnd .jpTxt.show{opacity:1;transform:scale(1)}
 #planSum{font-size:11px;color:#555;padding:0 12px 6px}
 #itemEd{position:fixed;left:8px;right:8px;bottom:8px;z-index:120;background:#fff;border:1px solid #d6d9de;border-radius:16px;box-shadow:0 8px 28px #0005;padding:12px;display:none}
 #itemEd.on{display:block}
@@ -290,7 +315,7 @@ body:not(.fuel-ev) .evOnly{display:none!important}
     <div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6">· ↑ 로 순서를 바꾸고, － 삭제로 뺄 수 있어요. 바꾼 목록은 이 폰에만 저장됩니다.<br>· 한 번만 찾을 땐 위쪽 입력칸의 +키워드(예: +갈치조림)가 더 간편해요.</div>
   </div></div>
 <div id="startEd" class="sheet"><div class="sheetHead"><b>📍 시작위치 편집</b><button data-close="startEd">닫기</button></div>
-  <div class="sheetBody"><div style="font-size:12px;color:#666;margin-bottom:8px">현재위치 + 4곳까지 저장. ⭐ 기본 = 앱을 열면 처음 보여줄 위치. 상세화면의 “🏷 시작위치로”로도 저장됩니다.</div><div id="startList"></div></div></div>
+  <div class="sheetBody"><div style="font-size:12px;color:#666;margin-bottom:8px">현재위치 + 7곳까지 저장(총 8곳). ⭐ 기본 = 앱을 열면 처음 보여줄 위치. 상세화면의 “🏷 시작위치로”로도 저장됩니다.</div><div id="startList"></div></div></div>
 <div id="sched" class="sheet"><div class="sheetHead"><b>📅 여행 일정</b><span class="hbtns"><button id="chatBtn" style="display:none">💬 단톡</button><button class="roomBtn">👥 같이 쓰기</button><button data-close="sched">닫기</button></span></div>
   <div id="tripCfg" class="row">시작 <input type="date" id="tripStart"><select id="tripDays"></select><select id="tripFrom"></select>~<select id="tripTo"></select></div>
   <div id="dayTabs"></div>
@@ -352,8 +377,33 @@ body:not(.fuel-ev) .evOnly{display:none!important}
     <div style="font-size:13px;font-weight:700;margin:12px 0 4px">기록 <button id="exCopy" style="font-size:11px;padding:3px 8px;margin-left:6px">📋 복사</button></div>
     <div id="exList"></div>
   </div></div>
-<div id="setEd" class="sheet"><div class="sheetHead"><b>⚙️ 내 설정 동기화</b><button data-close="setEd">닫기</button></div>
+<div id="setEd" class="sheet"><div class="sheetHead"><b>⚙️ 설정</b><button data-close="setEd">닫기</button></div>
   <div class="sheetBody">
+    <div class="rbox"><b>👤 내 계정</b> <small style="color:#888">설정·시작위치·여행 보관함을 어느 기기에서나 불러오기</small>
+      <div id="acctOut" style="margin-top:8px">
+        <div class="row"><input type="email" id="acctEmail" placeholder="이메일" autocomplete="email" style="flex:1;min-width:0"></div>
+        <div class="row" style="margin-top:6px"><input type="password" id="acctPin" placeholder="숫자 4자리" inputmode="numeric" maxlength="4" autocomplete="off" style="width:110px;letter-spacing:6px"><button id="acctLogin" class="sourceBtn main" style="min-height:0;padding:8px 14px">로그인</button><button id="acctSignup">가입</button></div>
+        <div style="font-size:11px;color:#888;margin-top:6px">· 숫자 4자리라 보안이 약해요. 다른 곳에 쓰는 비밀번호는 넣지 마세요.<br>· 50번 틀리면 15분 동안 잠겨요. 이메일 인증은 없어요.</div>
+      </div>
+      <div id="acctIn" style="display:none;margin-top:8px">
+        <div style="font-size:13px">📧 <b id="acctMail"></b> <span id="acctState" style="font-size:12px;color:#1f7a35"></span></div>
+        <div class="row" style="margin-top:8px"><button id="acctSyncBtn">지금 맞추기</button><button id="acctOutBtn">로그아웃</button><button id="acctDel" style="color:#a33">탈퇴</button></div>
+      </div>
+      <div id="acctMsg" style="font-size:12px;color:#1f5fbf;margin-top:6px;min-height:16px"></div>
+    </div>
+    <div class="rbox"><b>🃏 지도 카드 동작</b> <small style="color:#888">기본: 손가락 따라 빙빙 · 아래로 휙 튕기면 🎰 일정 담기</small>
+      <label class="opt"><input type="checkbox" id="optLen"><span>선 길이 조절<small>카드가 좌우 수평일 때 밀면 짧게, 당기면 길게</small></span></label>
+      <label class="opt"><input type="checkbox" id="optPin"><span>🎮 핀볼 게임<small>카드를 화면 맨 아래까지 당겼다 놓으면 쇠구슬 발사</small></span></label>
+      <div id="pinModeRow" class="pinRow">
+        <select id="pinMode"><option value="A">A 바닥벽</option><option value="B">B 공3개</option><option value="C">C 플리퍼</option></select>
+        <label>내구성 <select id="pinHp"><option value="1">기본</option><option value="2">2배</option><option value="3">3배</option><option value="4">4배</option><option value="5">5배</option><option value="6">6배</option><option value="7">7배</option><option value="8">8배</option><option value="9">9배</option><option value="10">10배</option></select></label>
+        <label>축소 <select id="pinShrink"><option value="1">없음</option><option value="2">2배</option><option value="3">3배</option><option value="4">4배</option><option value="5">5배</option></select></label>
+        <label><input type="checkbox" id="pinRand"> 랜덤</label>
+        <label><input type="checkbox" id="pinMove"> 무브</label>
+      </div>
+    </div>
+    <div class="rbox"><b>✏️ 편집</b><div class="row" style="margin-top:8px;flex-wrap:wrap"><button id="goStartEd">📍 시작위치 (8곳)</button><button id="goThemeEd">🍽 맛집 테마</button><button id="goBtnEd">🔘 상세창 버튼 배치</button></div></div>
+    <details id="setOld" style="margin-top:6px"><summary style="font-size:12px;color:#666;cursor:pointer">기기끼리 코드로 맞추기 (예전 방식 · 계정이 있으면 필요 없음)</summary>
     <div style="font-size:12px;color:#555;line-height:1.6;margin-bottom:10px">내 폰과 노트북처럼 <b>내 기기끼리만</b> 설정을 맞춥니다. 친구와는 섞이지 않아요.<br>맞춰지는 것: 시작위치·⭐기본, 맛집 테마 편집, 프랜차이즈 제외, 탭별 반경, 유종, 검색어 동네 붙이기</div>
     <div id="setOut">
       <div class="rbox"><b>이 기기가 처음이면</b><div style="font-size:12px;color:#666;margin:4px 0 8px">지금 설정으로 코드를 만들고, 다른 기기에서 그 코드를 넣으세요.</div><button id="setCreate" class="sourceBtn main" style="min-height:0;padding:10px 14px">설정 코드 만들기</button></div>
@@ -365,6 +415,8 @@ body:not(.fuel-ev) .evOnly{display:none!important}
     </div>
     <div id="setMsg" style="font-size:13px;color:#1f5fbf;margin-top:8px;min-height:18px"></div>
     <div style="font-size:11px;color:#888;margin-top:8px">· 어느 기기에서 고쳐도 항목별로 나중에 고친 쪽이 남아요. 앱을 보고 있는 동안 30초마다 맞춥니다.<br>· 앱 비밀번호 인증은 보안상 기기마다 따로예요.</div>
+    </details>
+    <div style="font-size:11px;color:#aaa;margin-top:12px;text-align:right" id="appVer"></div>
   </div></div>
 <div id="listPanel"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b id="listTitle">≡ 목록</b><button id="listClose">닫기</button></div><div id="listBody"></div></div>
 <div id="btnEd" class="sheet"><div class="sheetHead"><b id="btnEdTitle">✏️ 상세창 버튼 배치</b><button data-close="btnEd">닫기</button></div>
@@ -417,7 +469,7 @@ function setOK(k,v){
     case 'startDef':return typeof v==='string'||typeof v==='number';
     case 'noFran':case 'qdong':return typeof v==='boolean';
     case 'fuel':return ['gas','lpg','ev'].includes(v);
-    case 'radiusByMode':case 'btnLayout':return obj(v);
+    case 'radiusByMode':case 'btnLayout':case 'cardOpt':return obj(v);
   }return true}
 let themeList=setOK('themes',lsGet('themes',null))?lsGet('themes',null):DEFAULT_THEMES.map(t=>({...t}));
 function themeById(id){return themeList.find(t=>t.id===id)||themeList[0]||DEFAULT_THEMES[0]}
@@ -919,11 +971,11 @@ function addDot(p,cheapest){
   const ov=new kakao.maps.CustomOverlay({position:new kakao.maps.LatLng(+p.y,+p.x),content:el,xAnchor:0.5,yAnchor:0.5,zIndex:3});
   ov.setMap(map);overlays.push(ov);
 }
-// 카드: 핀을 축으로 빙빙 돌리기(선 길이 고정). 좌우 수평(±5°)에서만 밀면 짧아지고 당기면 길어짐.
-// 아래로 튕기면 🎰 그 방향으로 팽 돌다가 서서히 멈추고 → 일정에 담김(📅＋ 아이콘이 일정 버튼으로 날아감). 도는 중 화면을 누르면 바로 멈춤.
+// 지도 카드: 기본은 손가락을 따라 핀을 축으로 360° 빙빙 돌리기 (처음 방식)
+// ⚙️ 설정에서 켜는 것: 선 길이 조절(좌우 수평 ±5°) · 아래로 튕기면 🎰 일정 담기 · 🎮 핀볼(맨 아래까지 당겼다 놓기)
 const R_MIN=34,R_MAX=170,R_DEF=78;
 function addPlace(p,i){
-  const el=document.createElement('div');el.className='wrap';
+  const el=document.createElement('div');el.className='wrap';el._p=p;
   const [l1,l2]=cardLines(p);
   el.innerHTML=`<div class="pin">${i+1}</div><div class="arm"></div><div class="card"><b>${escapeHtml(p.place_name)}</b><small>${l1}</small>${l2?`<small>${l2}</small>`:''}</div>`;
   const ov=new kakao.maps.CustomOverlay({position:new kakao.maps.LatLng(+p.y,+p.x),content:el,xAnchor:0.5,yAnchor:0.5,zIndex:10});
@@ -931,27 +983,29 @@ function addPlace(p,i){
   const pin=el.querySelector('.pin'),card=el.querySelector('.card'),arm=el.querySelector('.arm');
   const zi=z=>{try{ov.setZIndex(z)}catch(_){}};
   let a=angles[p.id]??((i*73-30)%360), R=armLen[p.id]||R_DEF;
-  function place(v,r=R,smooth=false){
+  function place(v,r=R,how){
     a=v;angles[p.id]=v;
     const rad=v*Math.PI/180,x=Math.cos(rad)*r,y=Math.sin(rad)*r;
     arm.style.width=r+'px';arm.style.transform=`rotate(${v}deg)`;
-    if(smooth){card.style.left=(x-82+Math.cos(rad)*88)+'px';card.style.top=(y-33+Math.sin(rad)*42)+'px'}   // 돌 때는 매끄럽게
+    if(how==='ball'){card.style.left=(x-14)+'px';card.style.top=(y-14)+'px'}                         // 쇠구슬로 변한 카드
+    else if(how==='smooth'){card.style.left=(x-82+Math.cos(rad)*88)+'px';card.style.top=(y-33+Math.sin(rad)*42)+'px'}   // 돌 때는 매끄럽게
     else{card.style.left=(x+(x<0?-164:6))+'px';card.style.top=(y-36)+'px'}
   }
   place(a);
-  let dragging=false,pointerId=null,moved=false,downX=0,downY=0,grabOff=0,grabAng=0,startA=0,trail=[];
+  let dragging=false,pointerId=null,moved=false,downX=0,downY=0,grabOff=0,trail=[],opt=null,loaded=false;
   const TAP_SLOP=9;
   function blockMap(e){e.preventDefault();e.stopPropagation()}
   function pinXY(){const r=pin.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2]}
+  function setLoaded(v){if(loaded===v)return;loaded=v;card.classList.toggle('ballMode',v);arm.classList.toggle('spring',v);if(v&&navigator.vibrate)try{navigator.vibrate(12)}catch(_){}}
   function restoreMapGesture(){
-    dragging=false;card.classList.remove('dragging');map.setDraggable(true);map.setZoomable(true);zi(10);
+    dragging=false;card.classList.remove('dragging');setLoaded(false);map.setDraggable(true);map.setZoomable(true);zi(10);
     try{if(pointerId!==null&&card.hasPointerCapture(pointerId))card.releasePointerCapture(pointerId)}catch(_){}
     pointerId=null;
   }
   card.addEventListener('pointerdown',e=>{
-    if(spinning)return;
-    blockMap(e);dragging=true;moved=false;pointerId=e.pointerId;downX=e.clientX;downY=e.clientY;trail=[[e.clientX,e.clientY,performance.now()]];
-    const [cx,cy]=pinXY();grabOff=Math.hypot(e.clientX-cx,e.clientY-cy)-R;grabAng=Math.atan2(e.clientY-cy,e.clientX-cx)*180/Math.PI;startA=a;
+    if(spinning||pb)return;
+    blockMap(e);dragging=true;moved=false;opt=cardOpt();pointerId=e.pointerId;downX=e.clientX;downY=e.clientY;trail=[[e.clientX,e.clientY,performance.now()]];
+    const [cx,cy]=pinXY();grabOff=Math.hypot(e.clientX-cx,e.clientY-cy)-R;
     try{card.setPointerCapture(pointerId)}catch(_){}
     map.setDraggable(false);map.setZoomable(false);
   },{passive:false});
@@ -960,25 +1014,26 @@ function addPlace(p,i){
     const now=performance.now();trail.push([e.clientX,e.clientY,now]);while(trail.length>2&&now-trail[0][2]>120)trail.shift();
     if(!moved&&Math.hypot(e.clientX-downX,e.clientY-downY)>=TAP_SLOP){moved=true;card.classList.add('dragging');zi(40)}
     if(!moved)return;
-    const [cx,cy]=pinXY(),dx=e.clientX-cx,dy=e.clientY-cy;
-    // 손가락이 돈 만큼 그대로 회전 (잡은 위치 기준)
-    let da=Math.atan2(dy,dx)*180/Math.PI-grabAng;da=((da+540)%360)-180;
-    const v=((startA+da)%360+540)%360-180;
-    const flat=Math.abs(v)<=5||Math.abs(v)>=175;   // 좌우 수평 ±5°에서만 길이 조절
-    if(flat){R=Math.max(R_MIN,Math.min(R_MAX,Math.hypot(dx,dy)-grabOff));armLen[p.id]=R}
-    place(v,R);
+    const [cx,cy]=pinXY(),dx=e.clientX-cx,dy=e.clientY-cy,ang=Math.atan2(dy,dx)*180/Math.PI,dist=Math.hypot(dx,dy);
+    // 🎮 핀볼: 화면 맨 아래까지 당기면 카드가 쇠구슬로
+    if(opt.pin&&e.clientY>innerHeight-56&&dist>40){setLoaded(true);place(ang,dist,'ball');return}
+    setLoaded(false);
+    if(opt.len&&(Math.abs(ang)<=5||Math.abs(ang)>=175)){R=Math.max(R_MIN,Math.min(R_MAX,dist-grabOff));armLen[p.id]=R}
+    place(ang,R);
   },{passive:false});
   card.addEventListener('pointerup',e=>{
     if(!dragging)return;blockMap(e);
     // 손 떼기 직전 0.1초 동안의 움직임으로 튕김 속도 계산 (멈췄다 떼면 튕김 아님)
     const now=performance.now(),L=trail[trail.length-1],f=trail.find(t=>L[2]-t[2]<=100)||L,dt=Math.max(16,L[2]-f[2]);
-    const vx=(L[0]-f[0])/dt,vy=(L[1]-f[1])/dt,sp=now-L[2]>90?0:Math.hypot(vx,vy);
-    const vAng=Math.atan2(vy,vx)*180/Math.PI;
-    const wasTap=!moved&&Math.hypot(e.clientX-downX,e.clientY-downY)<TAP_SLOP;
+    const vx=(L[0]-f[0])/dt,vy=(L[1]-f[1])/dt,sp=now-L[2]>90?0:Math.hypot(vx,vy),vAng=Math.atan2(vy,vx)*180/Math.PI;
+    const wasTap=!moved&&Math.hypot(e.clientX-downX,e.clientY-downY)<TAP_SLOP, fire=loaded;
     restoreMapGesture();
-    if(moved&&sp>0.6&&vAng>=70&&vAng<=110){   // 아래로 튕김(±20°)
+    if(fire){   // 새총처럼: 핀 쪽으로, 당긴 만큼 세게
+      const [cx,cy]=pinXY(),ddx=cx-e.clientX,ddy=cy-e.clientY,d=Math.max(1,Math.hypot(ddx,ddy)),pw=Math.max(900,Math.min(2600,d*7));
+      place(a,R);startPinball(el,e.clientX,e.clientY,ddx/d*pw,ddy/d*pw);return}
+    if(moved&&sp>0.6&&vAng>=70&&vAng<=110){   // 아래로 휙 튕김(±20°) → 🎰 돌다가 일정 담기 (항상)
       const [cx,cy]=pinXY(),rx=e.clientX-cx,ry=e.clientY-cy;
-      launch((rx*vy-ry*vx)>=0?1:-1,sp);return}
+      spinLaunch((rx*vy-ry*vx)>=0?1:-1,sp);return}
     place(a,R);
     if(wasTap)setTimeout(()=>openDetail(p),140);   // 같은 손가락이 상세 버튼을 누르지 않도록 잠깐 대기
   },{passive:false});
@@ -986,7 +1041,7 @@ function addPlace(p,i){
   card.addEventListener('lostpointercapture',()=>{if(dragging){restoreMapGesture();place(a,R)}});
   ['mousedown','mousemove','mouseup','touchstart','touchmove','touchend','click'].forEach(ev=>card.addEventListener(ev,e=>e.stopPropagation(),{passive:false}));
   pin.addEventListener('click',e=>{e.stopPropagation();place(a+90)});
-  function launch(dir,sp){
+  function spinLaunch(dir,sp){
     let ang=a,raf=0;const t0=performance.now();let last=t0;
     const W0=Math.max(700,Math.min(1300,sp*800)),TAU=2.6;   // 튕긴 세기만큼 → 약 10초에 걸쳐 서서히 멈춤
     card.classList.add('spinning');zi(45);if(navigator.vibrate)try{navigator.vibrate(25)}catch(_){}
@@ -995,7 +1050,7 @@ function addPlace(p,i){
     function step(now){
       const dt=Math.min(.05,(now-last)/1000),t=(now-t0)/1000;last=now;
       const w=W0*Math.exp(-t/TAU);ang+=dir*w*dt;
-      place(ang,R,true);
+      place(ang,R,'smooth');
       if(t>10.2||w<10){finish();return}
       raf=requestAnimationFrame(step);
     }
@@ -1010,6 +1065,147 @@ function addPlace(p,i){
     }
   }
 }
+
+/* ---------- 🎮 핀볼 : 카드를 맨 아래까지 당겼다 놓으면 쇠구슬 발사 ----------
+   A 바닥도 벽 / B 바닥은 구멍·공 3개 / C B + 플리퍼(화면 왼쪽·오른쪽 아래 누르기)
+   맛집 점수가 높을수록 카드가 단단(1~4번) × 설정의 내구성 배수. 축소·랜덤 배치·무브(살짝씩 움직임) 선택.
+   📅 일정 버튼을 맞히면 7777 잭팟! 끝나면 카드는 원래대로 */
+var pb=null;
+const PB_G=1300, PB_FL={L:[28,-28],R:[152,208]};
+function cardHP(p){const s=p?qScore(ENRICH[p.id]):null;return s==null?1:s>=75?4:s>=62?3:s>=48?2:1}
+function crackSvg(lv){const ln=['M82 0 L74 18 L88 30 L70 48 L80 66','M0 22 L30 28 L44 20 L62 34','M164 40 L130 34 L118 46 L96 40 L100 66'];
+  return `<svg class="pbCrack" viewBox="0 0 164 66" preserveAspectRatio="none"><path d="${ln.slice(0,lv).join(' ')}" stroke="#222" stroke-width="1.7" fill="none" stroke-linejoin="round"/></svg>`}
+function startPinball(fromWrap,x,y,vx,vy){
+  if(pb)return;
+  const o=cardOpt(),mode=o.mode,W=innerWidth,H=innerHeight;
+  $('detail').classList.remove('open');hideSug();
+  try{map.setDraggable(false);map.setZoomable(false)}catch(_){}
+  // 화면에 보이는 카드들을 게임용 카드로 옮겨 놓고(원래 카드는 잠시 숨김) 그걸 범퍼로 사용
+  const src=[...document.querySelectorAll('.wrap')].filter(w=>w!==fromWrap&&w.style.visibility!=='hidden').map(w=>{
+    const c=w.querySelector('.card');if(!c)return null;const r=c.getBoundingClientRect();
+    if(r.right<0||r.left>W||r.bottom<0||r.top>H||!r.width)return null;return {w,c,r}}).filter(Boolean);
+  document.querySelectorAll('.wrap').forEach(w=>w.style.visibility='hidden');
+  const ov=document.createElement('div');ov.id='pbOv';
+  ov.innerHTML=`<div class="pbHud"><span id="pbInfo"></span><button id="pbQuit">✕ 그만</button></div><div class="pbBall" id="pbBall"></div>`+(mode==='C'?'<div class="pbFlip" id="pbFL"></div><div class="pbFlip" id="pbFR"></div>':'');
+  document.body.appendChild(ov);
+  const top=64,bot=H*(mode==='C'?.66:.74),sc=1/o.shrink,placed=[];
+  const bumpers=src.map(({w,c,r})=>{
+    const hw=r.width*sc/2,hh=r.height*sc/2;let cx=r.left+r.width/2,cy=r.top+r.height/2;
+    if(o.rand){   // 랜덤 배치: 겹치지 않는 자리를 몇 번 찾아봄
+      for(let k=0;k<40;k++){const tx=hw+8+Math.random()*Math.max(1,W-2*hw-16),ty=top+hh+Math.random()*Math.max(1,bot-top-2*hh);
+        cx=tx;cy=ty;if(!placed.some(q=>Math.abs(q.cx-tx)<q.hw+hw+8&&Math.abs(q.cy-ty)<q.hh+hh+8))break}}
+    const el=document.createElement('div');el.className='card pbCard';el.innerHTML=c.innerHTML;
+    el.style.cssText=`left:${cx-r.width/2}px;top:${cy-r.height/2}px;width:${r.width}px;height:${r.height}px;scale:${sc}`;
+    ov.appendChild(el);
+    const sp=18+Math.random()*24,an=Math.random()*Math.PI*2,hp=cardHP(w._p)*o.hp;
+    const bm={el,w,cx,cy,hw,hh,ow:r.width,oh:r.height,vx:o.move?Math.cos(an)*sp:0,vy:o.move?Math.sin(an)*sp:0,hp,max:hp,cool:0,dead:false};
+    placed.push(bm);return bm;
+  });
+  const sb=$('schedBtn').getBoundingClientRect();
+  pb={mode,opt:o,W,H,ov,ballEl:ov.querySelector('#pbBall'),ball:{x,y,vx,vy,r:11},bumpers,total:bumpers.length,broken:0,hits:0,balls:mode==='A'?0:3,
+    t0:performance.now(),last:performance.now(),raf:0,jack:{l:sb.left,t:sb.top,rr:sb.right,b:sb.bottom},waiting:0,over:false,endAt:0,area:{top,bot},
+    flip:mode==='C'?{L:{ang:PB_FL.L[0],w:0,ids:new Set()},R:{ang:PB_FL.R[0],w:0,ids:new Set()}}:null,
+    flipP:{L:{x:W*.16,y:H-60},R:{x:W*.84,y:H-60}},flipLen:W*.29};
+  ov.addEventListener('pointerdown',e=>{
+    if(e.target.closest('#pbQuit,.pbEnd button'))return;e.preventDefault();
+    if(pb&&pb.over){if(performance.now()>pb.endAt)pbCleanup();return}
+    if(pb&&pb.flip){const f=pb.flip[e.clientX<pb.W/2?'L':'R'];f.ids.add(e.pointerId)}
+  });
+  const up=e=>{if(pb&&pb.flip)['L','R'].forEach(k=>pb.flip[k].ids.delete(e.pointerId))};
+  ov.addEventListener('pointerup',up);ov.addEventListener('pointercancel',up);
+  $('pbQuit').onclick=()=>endPinball('quit');
+  if(navigator.vibrate)try{navigator.vibrate(20)}catch(_){}
+  pbHud();pb.raf=requestAnimationFrame(pbStep);
+}
+function bmRect(bm){return {l:bm.cx-bm.hw,t:bm.cy-bm.hh,rr:bm.cx+bm.hw,b:bm.cy+bm.hh}}
+function pbHud(){const g=pb;if(!g)return;
+  $('pbInfo').textContent=`🎮 ${g.mode} · `+(g.total?`카드 ${g.total-g.broken}/${g.total}`:'📅 일정을 노려요')+` · 튕김 ${g.hits}`+(g.mode!=='A'?' · '+'●'.repeat(g.balls)+'○'.repeat(3-g.balls):'')}
+function pbRect(b,R){
+  const cx=Math.max(R.l,Math.min(b.x,R.rr)),cy=Math.max(R.t,Math.min(b.y,R.b));let dx=b.x-cx,dy=b.y-cy;const d=Math.hypot(dx,dy);
+  if(d>=b.r)return null;
+  if(d<1e-3){const pl=b.x-R.l,pr=R.rr-b.x,pt=b.y-R.t,pd=R.b-b.y,m=Math.min(pl,pr,pt,pd);
+    return m===pl?{nx:-1,ny:0,px:R.l-b.r,py:b.y}:m===pr?{nx:1,ny:0,px:R.rr+b.r,py:b.y}:m===pt?{nx:0,ny:-1,px:b.x,py:R.t-b.r}:{nx:0,ny:1,px:b.x,py:R.b+b.r}}
+  return {nx:dx/d,ny:dy/d,px:cx+dx/d*(b.r+.5),py:cy+dy/d*(b.r+.5)};
+}
+function pbBounce(b,c,e,kick){const vn=b.vx*c.nx+b.vy*c.ny;if(vn<0){b.vx-=(1+e)*vn*c.nx;b.vy-=(1+e)*vn*c.ny;b.vx+=c.nx*kick;b.vy+=c.ny*kick}b.x=c.px;b.y=c.py;return vn<0}
+function pbFlipHit(g,k,b){
+  const f=g.flip[k],P=g.flipP[k],L=g.flipLen,rad=f.ang*Math.PI/180,sx=Math.cos(rad)*L,sy=Math.sin(rad)*L;
+  let t=((b.x-P.x)*sx+(b.y-P.y)*sy)/(L*L);t=Math.max(0,Math.min(1,t));
+  const qx=P.x+sx*t,qy=P.y+sy*t,dx=b.x-qx,dy=b.y-qy,d=Math.hypot(dx,dy),rr=b.r+7;
+  if(d>=rr||d<1e-3)return;
+  const nx=dx/d,ny=dy/d,vsx=-f.w*(qy-P.y),vsy=f.w*(qx-P.x);   // 플리퍼 표면 속도
+  let rvx=b.vx-vsx,rvy=b.vy-vsy;const vn=rvx*nx+rvy*ny;
+  if(vn<0){rvx-=1.5*vn*nx;rvy-=1.5*vn*ny;b.vx=rvx+vsx;b.vy=rvy+vsy}
+  b.x=qx+nx*(rr+.5);b.y=qy+ny*(rr+.5);
+}
+function pbHit(g,bm){
+  bm.hp--;g.hits++;if(navigator.vibrate)try{navigator.vibrate(8)}catch(_){}
+  bm.el.classList.remove('pbShake');void bm.el.offsetWidth;bm.el.classList.add('pbShake');
+  const old=bm.el.querySelector('.pbCrack');if(old)old.remove();
+  if(bm.hp>0){bm.el.insertAdjacentHTML('beforeend',crackSvg(Math.min(3,Math.ceil((bm.max-bm.hp)/bm.max*3))));pbHud();return}
+  bm.dead=true;g.broken++;
+  const r=bmRect(bm);for(let k=0;k<10;k++){const sh=document.createElement('div');sh.className='pbShard';const w=Math.max(6,(10+Math.random()*24)/g.opt.shrink),h=Math.max(5,(8+Math.random()*16)/g.opt.shrink);
+    sh.style.cssText+=`left:${r.l+Math.random()*Math.max(1,r.rr-r.l-w)}px;top:${r.t+Math.random()*Math.max(1,r.b-r.t-h)}px;width:${w}px;height:${h}px`;document.body.appendChild(sh);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{sh.style.transform=`translate(${(Math.random()-.5)*220}px,${60+Math.random()*200}px) rotate(${(Math.random()-.5)*540}deg)`;sh.style.opacity='0'}));
+    setTimeout(()=>sh.remove(),800)}
+  bm.el.remove();pbHud();
+  if(g.total&&g.broken>=g.total)endPinball('clear');
+}
+function pbStep(now){
+  const g=pb;if(!g||g.over)return;
+  const dt=Math.min(.033,(now-g.last)/1000);g.last=now;const b=g.ball;
+  if(g.flip)for(const k of ['L','R']){const f=g.flip[k],[rest,upA]=PB_FL[k],on=f.ids.size>0,target=on?upA:rest,prev=f.ang;
+    f.ang+=Math.sign(target-f.ang)*Math.min(Math.abs(target-f.ang),(on?1500:700)*dt);f.w=dt?(f.ang-prev)/dt*Math.PI/180:0;
+    const el=$(k==='L'?'pbFL':'pbFR'),P=g.flipP[k];el.style.cssText=`left:${P.x}px;top:${P.y-7}px;width:${g.flipLen}px;transform:rotate(${f.ang}deg)`}
+  if(g.waiting){if(now<g.waiting){g.raf=requestAnimationFrame(pbStep);return}
+    g.waiting=0;b.x=g.W/2;b.y=g.H-30;b.vx=(Math.random()-.5)*300;b.vy=-Math.sqrt(2*PB_G*g.H*.8);g.ballEl.style.display=''}
+  if(g.opt.move)for(const bm of g.bumpers){if(bm.dead)continue;   // 무브: 살짝살짝 떠다님
+    bm.cx+=bm.vx*dt;bm.cy+=bm.vy*dt;
+    if(bm.cx-bm.hw<6){bm.cx=6+bm.hw;bm.vx=Math.abs(bm.vx)}if(bm.cx+bm.hw>g.W-6){bm.cx=g.W-6-bm.hw;bm.vx=-Math.abs(bm.vx)}
+    if(bm.cy-bm.hh<g.area.top){bm.cy=g.area.top+bm.hh;bm.vy=Math.abs(bm.vy)}if(bm.cy+bm.hh>g.area.bot){bm.cy=g.area.bot-bm.hh;bm.vy=-Math.abs(bm.vy)}
+    bm.el.style.left=(bm.cx-bm.ow/2)+'px';bm.el.style.top=(bm.cy-bm.oh/2)+'px'}
+  const n=Math.min(12,Math.max(1,Math.ceil(Math.hypot(b.vx,b.vy)*dt/5))),h=dt/n;
+  for(let s=0;s<n&&!g.over&&!g.waiting;s++){
+    b.vy+=PB_G*h;b.x+=b.vx*h;b.y+=b.vy*h;
+    if(b.x<b.r){b.x=b.r;b.vx=Math.abs(b.vx)*.92}
+    if(b.x>g.W-b.r){b.x=g.W-b.r;b.vx=-Math.abs(b.vx)*.92}
+    if(b.y<b.r){b.y=b.r;b.vy=Math.abs(b.vy)*.92}
+    if(g.mode==='A'){if(b.y>g.H-b.r){b.y=g.H-b.r;b.vy=-Math.max(Math.abs(b.vy)*.95,Math.sqrt(2*PB_G*g.H*.55));if(Math.abs(b.vx)<80)b.vx+=(Math.random()<.5?-1:1)*160}}
+    else if(b.y-b.r>g.H){   // 바닥 구멍으로 빠짐
+      g.balls--;pbHud();if(navigator.vibrate)try{navigator.vibrate(40)}catch(_){}
+      if(g.balls<=0){endPinball('over');break}
+      g.waiting=now+900;g.ballEl.style.display='none';break}
+    for(const bm of g.bumpers){if(bm.dead)continue;const c=pbRect(b,bmRect(bm));if(!c)continue;if(pbBounce(b,c,.9,220)&&now>bm.cool){bm.cool=now+120;pbHit(g,bm)}if(g.over)break}
+    if(!g.over&&pbRect(b,g.jack)){endPinball('jackpot');break}
+    if(g.flip){pbFlipHit(g,'L',b);pbFlipHit(g,'R',b)}
+  }
+  const sp=Math.hypot(b.vx,b.vy);if(sp>2600){b.vx*=2600/sp;b.vy*=2600/sp}
+  g.ballEl.style.transform=`translate(${b.x-b.r}px,${b.y-b.r}px)`;
+  if(!g.over)g.raf=requestAnimationFrame(pbStep);
+}
+function endPinball(why){
+  const g=pb;if(!g||g.over)return;g.over=true;cancelAnimationFrame(g.raf);
+  if(why==='quit'){pbCleanup();return}
+  const sec=((performance.now()-g.t0)/1000).toFixed(1),box=document.createElement('div');box.className='pbEnd';
+  if(why==='jackpot'){
+    g.ballEl.style.display='none';box.classList.add('jp');
+    box.innerHTML='<div class="reels"><span>0</span><span>0</span><span>0</span><span>0</span></div><div class="jpTxt">🎰 JACKPOT!</div>';
+    const sp=[...box.querySelectorAll('.reels span')],stop=[0,0,0,0];
+    const iv=setInterval(()=>sp.forEach((x,k)=>{if(!stop[k])x.textContent=Math.floor(Math.random()*10)}),55);
+    sp.forEach((x,k)=>setTimeout(()=>{stop[k]=1;x.textContent='7';x.classList.add('hit')},450+k*280));
+    setTimeout(()=>{clearInterval(iv);box.querySelector('.jpTxt').classList.add('show');if(navigator.vibrate)try{navigator.vibrate([60,40,60,40,160])}catch(_){}},450+4*280);
+    g.endAt=performance.now()+1800;setTimeout(pbCleanup,3400);
+  }else{
+    box.innerHTML=`<div class="pbBig">${why==='clear'?'🎉 클리어!':'💥 게임 오버'}</div><div>${sec}초 · 부순 카드 ${g.broken}/${g.total} · 튕김 ${g.hits}번</div><button>닫기</button>`;
+    box.querySelector('button').onclick=pbCleanup;g.endAt=performance.now()+600;setTimeout(()=>{if(pb===g)pbCleanup()},7000);
+  }
+  g.ov.appendChild(box);
+}
+function pbCleanup(){const g=pb;if(!g)return;pb=null;g.over=true;cancelAnimationFrame(g.raf);g.ov.remove();
+  try{map.setDraggable(true);map.setZoomable(true)}catch(_){}
+  renderFromLast({fit:false});   // 부서진 카드들 원래대로
+}
+
 // 카드 옆에 📅＋가 톡 생겼다가 위쪽 📅 일정 버튼으로 날아가 사라짐 (지도는 그대로). 사라지기 전에 누르면 일정으로 이동
 function flyToSched(p,fromEl){
   const r=fromEl.getBoundingClientRect(),t=$('schedBtn').getBoundingClientRect();
@@ -1345,9 +1541,10 @@ $('radius').value=radiusByMode[appMode()]||RADIUS_DEF[appMode()];if(!$('radius')
 applyModeClass();fillRank();
 
 /* =====================================================================
-   시작위치 (현재위치 + 저장 4곳)
+   시작위치 (현재위치 + 저장 7곳 = 8곳)
    ===================================================================== */
-function getStarts(){let a=lsGet('starts',[]);if(!Array.isArray(a))a=[];a=a.map(x=>setOK('starts',[x])?x:null);while(a.length<4)a.push(null);return a.slice(0,4)}
+var START_N=7;
+function getStarts(){let a=lsGet('starts',[]);if(!Array.isArray(a))a=[];a=a.map(x=>setOK('starts',[x])?x:null);while(a.length<START_N)a.push(null);return a.slice(0,START_N)}
 function setStarts(a){lsSet('starts',a)}
 let startSelPrev='gps';
 function fillStartSel(){
@@ -1477,7 +1674,7 @@ let curDay=0, selPick=null;
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 const live=a=>a.filter(x=>!x.del);
 function stamp(o){o.upd=Date.now();o.by=myNick();return o}
-function persistPlan(){lsSet('trip',trip);lsSet('picks',picks);lsSet('items',items);updateBadge();if(typeof updateNextCard==='function')try{updateNextCard()}catch(_){}}
+function persistPlan(){acctDirty=true;lsSet('trip',trip);lsSet('picks',picks);lsSet('items',items);updateBadge();if(typeof updateNextCard==='function')try{updateNextCard()}catch(_){}}
 function savePlan(){persistPlan();scheduleSync()}
 function updateBadge(){const n=live(picks).length;$('pickBadge').textContent=n?String(n):'';$('pickBadge').style.display=n?'inline-block':'none'}
 function byTag(o){return room&&o.by?` · ${escapeHtml(o.by)}`:''}
@@ -1725,7 +1922,7 @@ function b64d(s){return decodeURIComponent(escape(atob(s)))}
    할일 목록
    ===================================================================== */
 let todos=cleanArr((Array.isArray(lsGet('todo',[]))?lsGet('todo',[]):[]).map(t=>t&&t.uid?t:{uid:uid(),t:t&&t.t,done:!!(t&&t.done),upd:Date.now()}),cleanTodo);
-function persistTodo(){lsSet('todo',todos);const n=live(todos).filter(t=>!t.done).length;$('todoBadge').textContent=n?String(n):'';$('todoBadge').style.display=n?'inline-block':'none'}
+function persistTodo(){acctDirty=true;lsSet('todo',todos);const n=live(todos).filter(t=>!t.done).length;$('todoBadge').textContent=n?String(n):'';$('todoBadge').style.display=n?'inline-block':'none'}
 function saveTodo(){persistTodo();scheduleSync()}
 function renderTodo(){
   const lt=live(todos);
@@ -1844,7 +2041,7 @@ $('roomLeave').onclick=()=>{archiveCurrent();room=null;members={};syncState='';l
 var archive=(()=>{const a=lsGet('tripArc',{});return a&&typeof a==='object'&&!Array.isArray(a)?a:{}})();
 var tripId=lsGet('tripId',null)||(room?room.code:'L'+Date.now().toString(36));lsSet('tripId',tripId);
 function setTripId(k){tripId=k;lsSet('tripId',k)}
-function saveArc(){lsSet('tripArc',archive)}
+function saveArc(){acctDirty=true;lsSet('tripArc',archive)}
 function snapData(){return JSON.parse(JSON.stringify({trip,picks,items,todos,exps}))}
 function emptyData(){return {trip:{start:todayPlus(1),days:3,from:7,to:23,upd:0,people:[],name:'',chat:''},picks:[],items:[],todos:[],exps:[]}}
 function dataCount(d){const n=a=>(a||[]).filter(x=>x&&!x.del).length;return {it:n(d.items),pk:n(d.picks),td:n(d.todos),ex:n(d.exps)}}
@@ -1862,18 +2059,18 @@ function loadData(d){
 function arcLabel(d,code){const t=d.trip||{},c=dataCount(d);
   return `<b>${escapeHtml(t.name||((t.start||'').slice(5).replace('-','/')+' 여행'))}</b> <small>${escapeHtml(t.start||'')} · ${t.days||'?'}일 · ${code?'👥 방 '+code:'혼자'} · 일정 ${c.it} · 담아둔 곳 ${c.pk}${c.ex?' · 경비 '+c.ex:''}</small>`}
 function renderArc(){
-  const keys=Object.keys(archive).filter(k=>k!==tripId).sort((a,b)=>(archive[b].at||0)-(archive[a].at||0));
+  const keys=Object.keys(archive).filter(k=>k!==tripId&&archive[k]&&!archive[k].del).sort((a,b)=>(archive[b].at||0)-(archive[a].at||0));
   let h=`<div class="arc cur"><span>📍 지금: ${arcLabel(snapData(),room&&room.code)}</span></div>`;
   h+=keys.length?keys.map(k=>`<div class="arc"><span>${arcLabel(archive[k].data||{},archive[k].code)}<br><small>보관 ${ago(archive[k].at)}</small></span><button data-open="${escapeHtml(k)}">열기</button><button data-del="${escapeHtml(k)}">✕</button></div>`).join('')
     :'<div style="font-size:12px;color:#888;padding:4px 0">아직 보관한 여행이 없어요.</div>';
   $('arcList').innerHTML=h;
   $('arcList').querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openArc(b.dataset.open));
   $('arcList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{
-    if(b.dataset.sure){delete archive[b.dataset.del];saveArc();renderArc();return}
+    if(b.dataset.sure){archive[b.dataset.del]={del:true,at:Date.now()};saveArc();renderArc();return}   // 지운 표시를 남겨 다른 기기에도 지워지게
     b.dataset.sure='1';b.textContent='삭제?';b.style.color='#c33';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent='✕';b.style.color=''}},3000)});
 }
 function openArc(k){
-  const e=archive[k];if(!e||roomWorking)return;
+  const e=archive[k];if(!e||e.del||roomWorking)return;
   archiveCurrent();loadData(e.data||{});setTripId(k);
   if(e.code){room={code:e.code,nick:myNick()};lsSet('room',room);members={};syncState='';syncNow()}else{room=null;lsSet('room',null)}
   delete archive[k];saveArc();   // 지금 여행이 됐으니 목록에서는 빠짐 (다른 여행을 열면 다시 보관됨)
@@ -2154,7 +2351,7 @@ function logText(){
 
 /* ----- ③ 경비 + N빵 정산 (여행방과 같이 맞춰짐) ----- */
 let exps=cleanArr(lsGet('exps',[]),cleanExp);
-function persistExp(){lsSet('exps',exps)}
+function persistExp(){acctDirty=true;lsSet('exps',exps)}
 function saveExp(){persistExp();scheduleSync()}
 function people(){
   const s=new Set(trip.people||[]);
@@ -2247,11 +2444,11 @@ $('expBtn').onclick=()=>openExp();
 /* =====================================================================
    ⓪ 내 설정 코드 — 내 폰·노트북끼리만 설정을 맞춤 (친구와 섞이지 않음)
    ===================================================================== */
-var SET_KEYS=['starts','startDef','themes','noFran','radiusByMode','fuel','qdong','btnLayout'];
+var SET_KEYS=['starts','startDef','themes','noFran','radiusByMode','fuel','qdong','btnLayout','cardOpt'];
 var setRoom=lsGet('setRoom',null), setTimer=null;
 let setState='', setLast=0, setTry=0;
 function setMeta(){try{return JSON.parse(localStorage.getItem('pinb_setMeta')||'{}')}catch(_){return {}}}
-function markSet(k){if(!SET_KEYS||!SET_KEYS.includes(k))return;const m=setMeta();m[k]=Date.now();try{localStorage.setItem('pinb_setMeta',JSON.stringify(m))}catch(_){}if(setRoom){clearTimeout(setTimer);setTimer=setTimeout(()=>setSync(),800)}}
+function markSet(k){if(!SET_KEYS||!SET_KEYS.includes(k))return;acctDirty=true;const m=setMeta();m[k]=Date.now();try{localStorage.setItem('pinb_setMeta',JSON.stringify(m))}catch(_){}if(setRoom){clearTimeout(setTimer);setTimer=setTimeout(()=>setSync(),800)}}
 let setQ=Promise.resolve();
 function setSync(create,pull){const p=setQ.then(()=>doSetSync(create,pull));setQ=p.catch(()=>{});return p}
 async function doSetSync(create,pull){
@@ -2285,12 +2482,12 @@ function applySettings(ch){
   if($('themeEd').classList.contains('on'))renderThemeEd();
 }
 function renderSetBits(){
-  $('setBtn').classList.toggle('on',!!setRoom&&setState==='ok');
+  $('setBtn').classList.toggle('on',(!!setRoom&&setState==='ok')||(!!acct&&acctState==='ok'));
   if(!$('setEd').classList.contains('on'))return;
   $('setOut').style.display=setRoom?'none':'';$('setIn').style.display=setRoom?'':'none';
   if(setRoom){$('setCode').textContent=setRoom.code;$('setState').textContent=setState==='ok'?`✅ 맞춰짐 (${ago(setLast)})`:setState==='offline'?'⚠️ 인터넷 연결 없음':setState?'⚠️ '+setState:'연결 중…'}
 }
-$('setBtn').onclick=()=>{openSheet('setEd');$('setMsg').textContent='';renderSetBits()};
+$('setBtn').onclick=()=>{openSheet('setEd');$('setMsg').textContent='';$('acctMsg').textContent='';renderSetBits();renderAcct();fillCardOpt();$('appVer').textContent=document.title.replace(/^.*?(v[\d.]+)$/,'핀볼 지도 $1')};
 $('setCreate').onclick=async()=>{
   if(setRoom)return;$('setCreate').disabled=true;$('setMsg').textContent='만드는 중…';
   try{
@@ -2317,6 +2514,117 @@ $('setLeave').onclick=()=>{setRoom=null;setState='';lsSet('setRoom',null);$('set
 setInterval(()=>{if(setRoom&&document.visibilityState==='visible'&&Date.now()-setTry>(($('setEd').classList.contains('on'))?5000:30000))setSync()},2000);
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&setRoom)setSync()});
 renderSetBits();
+
+/* ---------- 🃏 지도 카드 동작 옵션 ---------- */
+function cardOpt(){const o=lsGet('cardOpt',null)||{},n=(v,a,b)=>Math.max(a,Math.min(b,Math.round(+v||a)));
+  return {len:!!o.len,pin:!!o.pin,mode:['A','B','C'].includes(o.mode)?o.mode:'A',hp:n(o.hp,1,10),shrink:n(o.shrink,1,5),rand:!!o.rand,move:!!o.move}}
+function fillCardOpt(){const o=cardOpt();$('optLen').checked=o.len;$('optPin').checked=o.pin;$('pinMode').value=o.mode;$('pinHp').value=String(o.hp);$('pinShrink').value=String(o.shrink);
+  $('pinRand').checked=o.rand;$('pinMove').checked=o.move;$('pinModeRow').style.opacity=o.pin?1:.45}
+['optLen','optPin','pinMode','pinHp','pinShrink','pinRand','pinMove'].forEach(id=>$(id).onchange=()=>{
+  lsSet('cardOpt',{len:$('optLen').checked,pin:$('optPin').checked,mode:$('pinMode').value,hp:+$('pinHp').value,shrink:+$('pinShrink').value,rand:$('pinRand').checked,move:$('pinMove').checked});fillCardOpt()});
+$('goStartEd').onclick=()=>openStartEd();
+$('goThemeEd').onclick=()=>openThemeEd();
+$('goBtnEd').onclick=()=>openBtnEd();
+
+/* ---------- 👤 계정 (이메일 + 숫자 4자리) : 내 설정·여행 보관함을 기기 사이에서 맞춤 ---------- */
+var acct=(()=>{const a=lsGet('acct',null);return a&&typeof a.email==='string'&&typeof a.token==='string'?a:null})();
+var acctState='', acctLast=0, acctQ=Promise.resolve(), acctDirty=true, acctBusy=false;
+function acctKV(){const m=setMeta(),kv={};SET_KEYS.forEach(k=>{const raw=localStorage.getItem('pinb_'+k);if(raw!==null){try{kv[k]={v:JSON.parse(raw),upd:m[k]||0}}catch(_){}}});return kv}
+function acctTrips(){
+  const t={};Object.entries(archive).forEach(([k,e])=>{if(e&&typeof e==='object')t[k]=e});
+  const d=snapData(),c=dataCount(d);
+  if(c.it||c.pk||c.td||c.ex||(d.trip&&d.trip.name))t[tripId]={code:room?room.code:null,at:Date.now(),data:d};
+  return t;
+}
+function applyAcctKV(kv,pull){
+  const changed=[],mm=setMeta();
+  Object.entries(kv||{}).forEach(([k,x])=>{if(!SET_KEYS.includes(k)||!x||!setOK(k,x.v))return;
+    if(pull||(x.upd||0)>(mm[k]||0)){const nv=JSON.stringify(x.v);if(localStorage.getItem('pinb_'+k)!==nv){try{localStorage.setItem('pinb_'+k,nv)}catch(_){}changed.push(k)}mm[k]=x.upd||0}});
+  try{localStorage.setItem('pinb_setMeta',JSON.stringify(mm))}catch(_){}
+  if(changed.length)applySettings(changed);
+  return changed;
+}
+function mergeDocLocal(a={},b={}){const o={};['picks','items','todos','exps'].forEach(k=>o[k]=mergeArr(a[k]||[],b[k]||[]));const ta=a.trip,tb=b.trip;o.trip=!ta?tb:!tb?ta:((tb.upd||0)>(ta.upd||0)?tb:ta);return o}
+function applyAcctTrips(trips){
+  let ch=0;
+  Object.entries(trips||{}).forEach(([k,e])=>{
+    if(!e||typeof e!=='object')return;
+    if(k===tripId){if(!e.del&&e.data)applyRemote(e.data);return}   // 지금 보고 있는 여행은 항목별로 합침
+    const cur=archive[k];
+    if(e.del){if(!cur||(!cur.del&&(cur.at||0)<=(e.at||0))){archive[k]={del:true,at:e.at||0};ch++}return}
+    if(cur&&cur.del&&(cur.at||0)>=(e.at||0))return;
+    archive[k]=(!cur||cur.del)?{code:e.code||null,at:e.at||0,data:e.data||{}}:{code:e.code||cur.code||null,at:Math.max(cur.at||0,e.at||0),data:mergeDocLocal(cur.data,e.data)};ch++;
+  });
+  if(ch){try{localStorage.setItem('pinb_tripArc',JSON.stringify(archive))}catch(_){}if($('roomEd').classList.contains('on'))renderArc()}
+}
+async function acctCall(b){
+  const r=await fetchT(SYNC_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind:'acct',...b})});
+  const j=await r.json().catch(()=>({err:'서버 응답 없음'}));return {ok:r.ok&&!j.err,status:r.status,j};
+}
+const ACCT_ERR={'bad email':'이메일 형식을 확인해 주세요.','bad pin':'숫자 4자리를 넣어주세요.','exists':'이미 가입된 이메일이에요. 로그인하세요.','no account':'가입된 이메일이 아니에요. 먼저 가입하세요.','wrong pin':'숫자가 틀렸어요.','locked':'여러 번 틀려서 15분 동안 잠겼어요.','bad token':'다시 로그인해 주세요.','too big':'보관함이 너무 커서 다 못 담아요. 오래된 여행을 지워주세요.','save failed':'저장 서버가 잠시 응답하지 않아요.','busy':'잠시 후 다시 시도해 주세요.'};
+function acctErr(r){return ACCT_ERR[r.j.err]?ACCT_ERR[r.j.err]+(r.j.err==='wrong pin'&&r.j.left!=null?` (${r.j.left}번 남음)`:''):'연결하지 못했어요 ('+(r.j.err||r.status)+')'}
+function doAcctSync(){
+  if(!acct)return Promise.resolve({err:'none'});
+  const p=acctQ.then(async()=>{
+    const me=acct;acctBusy=true;acctDirty=false;
+    try{
+      const r=await acctCall({action:'sync',email:me.email,token:me.token,kv:acctKV(),trips:acctTrips()});
+      if(acct!==me)return {err:'changed'};
+      if(!r.ok){acctState=r.j.err||'오류';if(r.j.err==='bad token'){acct=null;lsSet('acct',null);$('acctMsg').textContent='로그인이 풀렸어요. 다시 로그인해 주세요.'}else acctDirty=true;renderAcct();return {err:r.j.err}}
+      applyAcctKV(r.j.kv,false);applyAcctTrips(r.j.trips);acctState='ok';acctLast=Date.now();renderAcct();return {ok:true};
+    }catch(_){acctState='offline';acctDirty=true;renderAcct();return {err:'offline'}}
+    finally{acctBusy=false}
+  });
+  acctQ=p.catch(()=>{});return p;
+}
+function renderAcct(){
+  $('setBtn').classList.toggle('on',(!!setRoom&&setState==='ok')||(!!acct&&acctState==='ok'));
+  if(!$('setEd').classList.contains('on'))return;
+  $('acctOut').style.display=acct?'none':'';$('acctIn').style.display=acct?'':'none';
+  if(acct){$('acctMail').textContent=acct.email;$('acctState').textContent=acctState==='ok'?`✅ 맞춰짐 (${ago(acctLast)})`:acctState==='offline'?'⚠️ 인터넷 연결 없음':acctState?'⚠️ '+(ACCT_ERR[acctState]||acctState):'맞추는 중…'}
+}
+function acctInputs(){const email=$('acctEmail').value.trim(),pin=$('acctPin').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){$('acctMsg').textContent='이메일을 확인해 주세요.';return null}
+  if(!/^\d{4}$/.test(pin)){$('acctMsg').textContent='숫자 4자리를 넣어주세요.';return null}
+  return {email,pin}}
+function acctBusyBtns(on){['acctLogin','acctSignup'].forEach(id=>$(id).disabled=on)}
+$('acctSignup').onclick=async()=>{
+  const v=acctInputs();if(!v)return;acctBusyBtns(true);$('acctMsg').textContent='가입하는 중…';
+  try{
+    const m=setMeta();SET_KEYS.forEach(k=>{if(localStorage.getItem('pinb_'+k)!==null&&!m[k])m[k]=1});try{localStorage.setItem('pinb_setMeta',JSON.stringify(m))}catch(_){}
+    const r=await acctCall({action:'signup',email:v.email,pin:v.pin,kv:acctKV(),trips:acctTrips()});
+    if(!r.ok){$('acctMsg').textContent=acctErr(r);return}
+    acct={email:v.email.toLowerCase(),token:r.j.token};lsSet('acct',acct);acctState='ok';acctLast=Date.now();$('acctPin').value='';
+    $('acctMsg').textContent='✅ 가입했어요. 이 기기의 설정과 여행 보관함을 올렸어요. 다른 기기에서 같은 이메일로 로그인하세요.';renderAcct();
+  }catch(_){$('acctMsg').textContent='인터넷 연결을 확인해 주세요.'}finally{acctBusyBtns(false)}
+};
+$('acctLogin').onclick=async()=>{
+  const v=acctInputs();if(!v)return;acctBusyBtns(true);$('acctMsg').textContent='로그인하는 중…';
+  try{
+    // 처음 로그인은 받기만: 이 기기의 기본값이 계정 설정을 덮지 않게
+    const r=await acctCall({action:'login',email:v.email,pin:v.pin,kv:{},trips:{}});
+    if(!r.ok){$('acctMsg').textContent=acctErr(r);return}
+    acct={email:v.email.toLowerCase(),token:r.j.token};lsSet('acct',acct);$('acctPin').value='';
+    const ch=applyAcctKV(r.j.kv,true);applyAcctTrips(r.j.trips);
+    const n=Object.values(r.j.trips||{}).filter(e=>e&&!e.del).length;
+    $('acctMsg').textContent=`✅ 로그인했어요. 설정 ${ch.length}가지${n?`, 여행 ${n}개(🗂 보관함)`:''}를 가져왔어요.`;
+    await doAcctSync();
+  }catch(_){$('acctMsg').textContent='인터넷 연결을 확인해 주세요.'}finally{acctBusyBtns(false);renderAcct()}
+};
+$('acctSyncBtn').onclick=async()=>{$('acctMsg').textContent='맞추는 중…';const r=await doAcctSync();$('acctMsg').textContent=r.ok?'✅ 맞췄어요.':'맞추지 못했어요.'};
+$('acctOutBtn').onclick=async()=>{const me=acct;if(!me)return;acct=null;acctState='';lsSet('acct',null);renderAcct();$('acctMsg').textContent='로그아웃했어요. 이 기기의 설정·여행은 그대로 남아요.';try{await acctCall({action:'logout',email:me.email,token:me.token})}catch(_){}};
+$('acctDel').onclick=async()=>{
+  const b=$('acctDel');if(!b.dataset.sure){b.dataset.sure='1';b.textContent='정말 탈퇴?';setTimeout(()=>{delete b.dataset.sure;b.textContent='탈퇴'},3000);return}
+  const me=acct;if(!me)return;
+  try{const r=await acctCall({action:'delete',email:me.email,token:me.token});if(!r.ok){$('acctMsg').textContent=acctErr(r);return}}catch(_){$('acctMsg').textContent='인터넷 연결을 확인해 주세요.';return}
+  acct=null;acctState='';lsSet('acct',null);renderAcct();$('acctMsg').textContent='탈퇴했어요. 서버에 저장된 계정 자료를 지웠어요. 이 기기 자료는 남아요.';
+};
+$('acctPin').addEventListener('keydown',e=>{if(e.key==='Enter')$('acctLogin').click()});
+// 바뀐 게 있으면 1분마다, 아니면 5분마다 맞춤 (화면을 보고 있을 때만)
+setInterval(()=>{if(acct&&!acctBusy&&document.visibilityState==='visible'&&(acctDirty?Date.now()-acctLast>60000:Date.now()-acctLast>300000))doAcctSync()},10000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&acct&&Date.now()-acctLast>60000)doAcctSync()});
+if(acct)setTimeout(doAcctSync,2500);
+renderAcct();
 
 
 /* ---------- 상세창 버튼 배치 (각자 순서·숨김, 맛집/관광/주유 따로) ---------- */

@@ -3,8 +3,11 @@
 //             일행이 함께 보는 일정표·담아둔 곳·할일·경비
 // ② 내 설정  : POST {kind:'set', room:<설정코드>, create?, kv:{키:{v,upd}}}
 //             내 폰·노트북끼리만 맞추는 시작위치·테마 등 개인 설정
+// ③ 계정    : POST {kind:'acct', action:'signup'|'login'|'sync'|'logout'|'delete', email, pin|token, kv, trips}
+//             이메일 + 숫자 4자리로 내 설정·여행 보관함을 어느 기기에서나 불러오기 (중요 정보용 아님)
 // 서버에 있는 것과 보낸 것을 "항목별 최신 수정 우선"으로 합쳐 저장하고, 합친 결과를 돌려줍니다.
 import { getStore } from '@netlify/blobs';
+import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
 const ok = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 const ARR = ['picks', 'items', 'todos', 'exps'];
@@ -62,11 +65,93 @@ function store() {
   return globalThis.__pinbStore || getStore({ name: 'pinb-rooms', consistency: 'strong' });
 }
 
+// ---------- 계정 ----------
+const sha = (x) => createHash('sha256').update(String(x)).digest('hex');
+const pinHash = (pin, salt) => scryptSync(String(pin), salt, 32).toString('hex');
+function pinOK(pin, rec) {
+  if (!/^\d{4}$/.test(String(pin || '')) || !rec.salt || !rec.hash) return false;
+  const a = Buffer.from(pinHash(pin, rec.salt), 'hex'), b = Buffer.from(rec.hash, 'hex');
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+export function cleanTrips(t) {
+  const o = {};
+  if (!t || typeof t !== 'object' || Array.isArray(t)) return o;
+  const lim = Date.now() + 864e5;
+  for (const [k, e] of Object.entries(t).slice(0, 80)) {
+    if (!/^[A-Za-z0-9_-]{1,40}$/.test(k) || !e || typeof e !== 'object') continue;
+    const at = Math.min(+e.at || 0, lim);
+    if (e.del) { o[k] = { del: true, at }; continue; }
+    o[k] = { code: typeof e.code === 'string' && /^[A-Z0-9]{6,12}$/.test(e.code) ? e.code : null, at, data: cleanDoc(e.data || {}) };
+  }
+  return o;
+}
+export function mergeTrips(a = {}, b = {}) {
+  const o = { ...a };
+  for (const [k, e] of Object.entries(b)) {
+    const c = o[k];
+    if (!c) { o[k] = e; continue; }
+    if (e.del || c.del) { if ((e.at || 0) > (c.at || 0)) o[k] = e; continue; }
+    o[k] = { code: e.code || c.code || null, at: Math.max(c.at || 0, e.at || 0), data: mergeDoc(c.data || {}, e.data || {}) };
+  }
+  return o;
+}
+async function acct(body, st) {
+  const email = String(body.email || '').trim().toLowerCase();
+  if (!/^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/.test(email)) return ok({ err: 'bad email' }, 400);
+  const key = 'acct:' + sha('pinb|' + email).slice(0, 40);
+  const act = body.action, now = Date.now();
+  for (let tries = 0; tries < 4; tries++) {
+    const cur = await st.getWithMetadata(key, { type: 'json' });
+    if (act === 'signup') {
+      if (!/^\d{4}$/.test(String(body.pin || ''))) return ok({ err: 'bad pin' }, 400);
+      if (cur) return ok({ err: 'exists' }, 409);
+      const salt = randomBytes(16).toString('hex'), tok = randomBytes(24).toString('hex');
+      const rec = { salt, hash: pinHash(body.pin, salt), fails: 0, lock: 0, tokens: [{ t: sha(tok), at: now }], kv: cleanKV(body.kv), trips: cleanTrips(body.trips), created: now };
+      if (Buffer.byteLength(JSON.stringify(rec)) > MAX_BYTES) return ok({ err: 'too big' }, 413);
+      const w = await put(st, key, rec, { onlyIfNew: true });
+      if (w === 'conflict') continue;
+      if (w === 'fail') return ok({ err: 'save failed' }, 503);
+      return ok({ token: tok, kv: rec.kv, trips: rec.trips });
+    }
+    if (!cur) return ok({ err: 'no account' }, 404);
+    const rec = { ...(cur.data || {}) };
+    rec.tokens = Array.isArray(rec.tokens) ? rec.tokens : [];
+    let newTok = null;
+    if (act === 'login') {
+      if ((rec.lock || 0) > now) return ok({ err: 'locked', until: rec.lock }, 429);
+      if (!pinOK(body.pin, rec)) {
+        // 50번 틀리면 15분 잠금 (숫자 4자리라 마구 맞혀보기 방지 — 쓰기 편하게 넉넉히)
+        rec.fails = (rec.fails || 0) + 1;
+        if (rec.fails >= 50) { rec.fails = 0; rec.lock = now + 15 * 60e3; }
+        const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
+        if (w === 'conflict') continue;
+        return ok({ err: rec.lock > now ? 'locked' : 'wrong pin', left: rec.lock > now ? 0 : 50 - rec.fails }, 401);
+      }
+      rec.fails = 0; rec.lock = 0;
+      newTok = randomBytes(24).toString('hex');
+      rec.tokens = [...rec.tokens.slice(-9), { t: sha(newTok), at: now }];
+    } else if (act === 'sync' || act === 'logout' || act === 'delete') {
+      const th = sha(String(body.token || ''));
+      if (!rec.tokens.some(x => x && x.t === th)) return ok({ err: 'bad token' }, 401);
+      if (act === 'delete') { await st.delete(key); return ok({ deleted: true }); }
+      if (act === 'logout') rec.tokens = rec.tokens.filter(x => x.t !== th);
+    } else return ok({ err: 'bad action' }, 400);
+    if (act !== 'logout') { rec.kv = mergeKV(rec.kv || {}, cleanKV(body.kv)); rec.trips = mergeTrips(rec.trips || {}, cleanTrips(body.trips)); }
+    if (Buffer.byteLength(JSON.stringify(rec)) > MAX_BYTES) return ok({ err: 'too big' }, 413);
+    const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
+    if (w === 'conflict') continue;
+    if (w === 'fail') return ok({ err: 'save failed' }, 503);
+    return ok({ token: newTok || undefined, kv: rec.kv, trips: rec.trips });
+  }
+  return ok({ err: 'busy' }, 503);
+}
+
 export default async (req) => {
   if (req.method !== 'POST') return ok({ err: 'POST only' }, 405);
   let body;
   try { body = await req.json(); } catch { return ok({ err: 'bad json' }, 400); }
   if (!body || typeof body !== 'object') return ok({ err: 'bad json' }, 400);
+  if (body.kind === 'acct') return acct(body, store());
   const code = String(body.room || '').toUpperCase();
   if (!/^[A-Z0-9]{6,12}$/.test(code)) return ok({ err: 'bad room' }, 400);
   const isSet = body.kind === 'set';
