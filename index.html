@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>핀볼 맛집 검색 v0.22</title>
+<title>핀볼 맛집 검색 v0.25</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -168,6 +168,56 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 .mem{display:inline-block;background:#f1f2f4;border-radius:10px;padding:4px 9px;margin:0 5px 5px 0;font-size:13px}
 .mem small{color:#888;font-size:10px}
 #roomMsg{font-size:13px;color:#1f5fbf;margin-top:8px;min-height:18px}
+.age{font-size:11px;color:#8a6d00;margin-top:4px}
+#nextCard{position:absolute;left:10px;right:10px;bottom:12px;z-index:44;background:#fff;border:2px solid #ff5a1f;border-radius:14px;box-shadow:0 3px 14px #0003;padding:7px 8px;display:none;align-items:center;gap:6px}
+#nextCard .ncTxt{flex:1;min-width:0;cursor:pointer}
+#nextCard .ncTxt small{display:block;font-size:11px;color:#a0522d}
+#nextCard .ncTxt b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#nextCard button{padding:7px 9px;font-size:12px}
+#nextCard .ncGo{background:#111;color:#fff;border-color:#111;font-weight:700}
+#nextCard .ncX{padding:7px 7px;color:#999}
+#srcTools{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}
+#srcTools button{font-size:11px;padding:4px 9px;border-radius:9px}
+.sourceBtn.dim{opacity:.6;border-style:dashed}
+.thRow.off .thTxt{opacity:.45}
+#listPanel{position:fixed;left:8px;right:8px;bottom:8px;z-index:78;background:#fff;border:1px solid #d6d9de;border-radius:18px;box-shadow:0 8px 28px #0005;padding:12px;display:none;max-height:55vh;overflow:auto}
+#listPanel.on{display:block}
+.lrow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid #eee;cursor:pointer}
+.lno{width:24px;height:24px;border-radius:50%;background:#111;color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800;flex:0 0 auto}
+.ltxt{flex:1;min-width:0}
+.ltxt b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ltxt small{display:block;font-size:11px;color:#666;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ltxt small .sc{color:#111;font-weight:600}
+.ltmap{font-size:11px;padding:6px 8px;background:#111;color:#fff;border-color:#111}
+.trav{position:absolute;left:54px;z-index:3;font-size:10px;background:#eef3ff;color:#2a4fb0;border:1px solid #c9d6ff;border-radius:9px;padding:1px 7px;white-space:nowrap;cursor:pointer}
+.trav u{margin-left:4px;color:#7b3fe4}
+.trav.tight{background:#fff0f0;color:#c0392b;border-color:#f3b6b6}
+.item.visited{background:#eaf7ee;border-color:#7cc795;border-left-color:#2e9d57}
+#dayWx{padding:2px 12px 4px;font-size:12px;color:#333;min-height:18px}
+#dayWx button{font-size:11px;padding:3px 8px;margin-left:4px;background:#eef6ff;border-color:#9cc3ff}
+.wxi{margin-right:3px}
+#routeFind{position:fixed;left:8px;right:8px;bottom:8px;z-index:130;background:#fff;border:1px solid #d6d9de;border-radius:16px;box-shadow:0 8px 28px #0005;padding:12px;display:none}
+#routeFind.on{display:block}
+#routeFind .row button{flex:1;padding:10px 4px;font-size:13px}
+.logDay{border:1px solid #e3e5e8;border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.logSum{font-size:12px;color:#a0522d;margin-left:6px}
+.logRow{display:flex;gap:8px;align-items:flex-start;padding:4px 0;font-size:13px;border-top:1px dotted #eee}
+.logRow .t{color:#888;font-size:12px;width:38px}
+.logRow .n{flex:1}
+.logRow .n small{display:block;font-size:11px;color:#999}
+.logRow.ok .n{color:#1f7a35}
+.pchip{display:inline-flex;align-items:center;gap:3px;border:1px solid #cfd3d9;border-radius:14px;padding:4px 9px;margin:0 5px 5px 0;font-size:13px}
+.exRow{display:flex;align-items:center;gap:8px;padding:8px 2px;border-bottom:1px solid #eee;font-size:13px}
+.exRow .d{font-size:11px;color:#888;width:38px}
+.exRow .n{flex:1;min-width:0}
+.exRow .n small{display:block;font-size:11px;color:#888}
+.exRow button{padding:3px 8px;font-size:12px}
+#exSum{margin-top:10px;font-size:13px;line-height:1.7}
+.settle{margin-top:6px;background:#fff8e6;border-radius:10px;padding:8px 10px}
+#leftTools button{padding:6px 8px;font-size:11px}
+#setBtn.on{background:#e8f6ec;border-color:#5cb87a}
+#edVisit.on{background:#e8f6ec;border-color:#5cb87a;color:#1f7a35}
+#itemEd .row button{font-size:12px}
 </style>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=47e6f1005ee8102053deac6824764b3a&libraries=services"></script>
 </head>
@@ -204,9 +254,10 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 <div id="status">현재 위치 확인 중…</div>
 <div id="map">
   <div id="mapFloatTools"><button id="roadMapBtn" class="active">일반</button><button id="hybridMapBtn">위성</button></div>
-  <div id="leftTools"><button id="schedBtn">📅 일정<span class="badge" id="pickBadge"></span></button><button id="todoBtn">✅ 할일<span class="badge" id="todoBadge"></span></button></div>
-  <div id="restoreTools"><button id="undoExcludeBtn" disabled>↶ 1개 복원</button><button id="restoreAllBtn" disabled>전체 복원</button></div>
+  <div id="leftTools"><button id="schedBtn">📅 일정<span class="badge" id="pickBadge"></span></button><button id="todoBtn">✅ 할일<span class="badge" id="todoBadge"></span></button><button id="expBtn">💳 경비</button><button id="setBtn" title="내 설정 동기화">⚙️</button></div>
+  <div id="restoreTools"><button id="listBtn" style="font-weight:700">≡ 목록</button><button id="undoExcludeBtn" disabled>↶ 1개 복원</button><button id="restoreAllBtn" disabled>전체 복원</button></div>
   <div id="crosshair">+</div>
+  <div id="nextCard"></div>
   <div id="hint">지도를 움직여 가운데 + 를 원하는 곳에 맞추고 “이 지역 검색” · 카드 탭 = 상세 · 카드 드래그 = 회전</div>
 </div>
 </div>
@@ -226,18 +277,19 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 <div id="sched" class="sheet"><div class="sheetHead"><b>📅 여행 일정</b><span class="hbtns"><button class="roomBtn">👥 같이 쓰기</button><button data-close="sched">닫기</button></span></div>
   <div id="tripCfg" class="row">시작 <input type="date" id="tripStart"><select id="tripDays"></select><select id="tripFrom"></select>~<select id="tripTo"></select></div>
   <div id="dayTabs"></div>
+  <div id="dayWx"></div>
   <div class="binHead">담아둔 곳 <small id="binHint"></small><button id="addCustom">+ 직접</button></div>
   <div class="customBox" id="customBox"><input type="text" id="customName" placeholder="예) 공항 도착, 렌터카 픽업, 숙소 체크인"><button id="customOk">추가</button></div>
   <div id="bin"></div>
   <div id="planSum"></div>
   <div id="grid"><div id="gridIn"></div></div>
-  <div class="shareBox" id="shareBox"><button id="shareCopy">내 일정 공유코드 복사</button><span>또는 받은 코드 붙여넣기 ↓</span><textarea id="shareIn" placeholder="PINB1:..."></textarea><button id="shareApply">받은 일정으로 바꾸기</button><div id="shareMsg"></div></div>
-  <div class="row sheetFoot"><button id="dayMap">🗺 이 날 지도에서 보기</button><button id="copySched">📋 글자로 복사</button><button id="shareSched">🔗 공유코드</button></div>
+  <div class="row sheetFoot"><button id="optDay">🔀 동선 정리</button><button id="dayMap">🗺 이 날 지도</button><button id="logBtn">📒 기록</button><button id="copySched">📋 글자로 복사</button></div>
   <div id="itemEd"><div style="display:flex;justify-content:space-between;gap:8px"><b id="edName"></b><button id="edClose">닫기</button></div>
     <div class="row"><select id="edDay"></select></div>
     <div class="row" style="align-items:center"><span style="font-size:12px;width:42px">시작</span><button class="tadj" data-adj="s-5">−5분</button><input type="time" id="edStart" step="300"><button class="tadj" data-adj="s5">+5분</button></div>
     <div class="row" style="align-items:center"><span style="font-size:12px;width:42px;white-space:nowrap">머무름</span><button class="tadj" data-adj="d-10">−10</button><input type="number" id="edDur" min="5" max="720" step="5" inputmode="numeric"><span style="font-size:12px">분</span><button class="tadj" data-adj="d10">+10</button><span id="edEnd" style="font-size:12px;color:#a0522d"></span></div>
     <div class="row"><input type="text" id="edMemo" placeholder="메모 (예: 예약 13시, 주차 2시간 무료)"></div>
+    <div class="row"><button id="edVisit">⬜ 다녀옴 표시</button><button id="edReplace">🔁 다른 곳 갔어요</button><button id="edExp">💳 쓴 돈</button><button id="edRoute">🛣 다음 일정 가는 길</button></div>
     <div class="row"><button id="edTmap" class="sourceBtn main" style="min-height:0;padding:8px 12px">TMAP 길안내</button><button id="edInfo">상세</button><button id="edBack">담아둔 곳으로</button><button id="edDel">삭제</button></div></div>
 </div>
 <div id="todo" class="sheet"><div class="sheetHead"><b>✅ 할일</b><span class="hbtns"><button class="roomBtn">👥 같이 쓰기</button><button data-close="todo">닫기</button></span></div>
@@ -260,19 +312,53 @@ body:not(.fuel-ev) .evOnly{display:none!important}
     <div id="roomMsg"></div>
     <div style="font-size:11px;color:#777;line-height:1.6;margin-top:12px">· 같은 방에 있는 사람끼리 <b>📅 일정표(담아둔 곳 포함)와 ✅ 할일</b>이 자동으로 맞춰집니다. 일정·할일 창을 보고 있으면 5초, 아니면 20초마다 맞춰요.<br>· 둘이 같은 항목을 동시에 고치면 나중에 고친 쪽이 남습니다.<br>· 처음 참여하면 내 폰에 있던 일정·할일도 방에 합쳐집니다.<br>· 시작위치·제외한 가게·비밀번호 인증은 각자 폰에만 저장됩니다.</div>
   </div></div>
+<div id="routeFind"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><div><b>🛣 가는 길 중간에서 찾기</b><div id="rfTitle" style="font-size:12px;color:#666;margin-top:2px"></div></div><button id="rfClose">닫기</button></div>
+  <div class="row" style="margin-top:10px"><button data-k="food">🍽 맛집</button><button data-k="cafe">☕ 카페</button><button data-k="gas">⛽ 주유·충전</button><button data-k="tour">🏝 관광</button></div></div>
+<div id="logEd" class="sheet"><div class="sheetHead"><b>📒 여행 기록</b><span class="hbtns"><button id="logCopy">📋 복사</button><button data-close="logEd">닫기</button></span></div>
+  <div class="sheetBody"><div id="logMsg" style="font-size:12px;color:#1f7a35"></div><div id="logBody"></div></div></div>
+<div id="expEd" class="sheet"><div class="sheetHead"><b>💳 경비 · 정산</b><span class="hbtns"><button class="roomBtn">👥 같이 쓰기</button><button data-close="expEd">닫기</button></span></div>
+  <div class="sheetBody">
+    <div class="rbox">
+      <div class="row"><input type="text" id="exTitle" placeholder="내용 (예: 흑돼지 저녁)" style="flex:1 1 140px;min-width:0"><input type="text" id="exAmt" inputmode="numeric" placeholder="금액" style="width:110px"></div>
+      <div class="row" style="margin-top:6px;font-size:12px"><select id="exDay"></select> 낸 사람 <select id="exPayer"></select></div>
+      <div style="font-size:12px;margin:8px 0 4px">나눌 사람</div><div id="exSplit"></div>
+      <div class="row"><input type="text" id="exPerson" placeholder="사람 추가 (이름)" style="flex:1;min-width:0"><button id="exPersonAdd">+ 사람</button><button id="exAdd" class="sourceBtn main" style="min-height:0;padding:8px 16px">기록</button></div>
+      <div id="exMsg" style="font-size:12px;color:#1f5fbf;margin-top:4px;min-height:16px"></div>
+      <div id="exHint" style="font-size:11px;color:#888"></div>
+    </div>
+    <div id="exSum"></div>
+    <div style="font-size:13px;font-weight:700;margin:12px 0 4px">기록 <button id="exCopy" style="font-size:11px;padding:3px 8px;margin-left:6px">📋 복사</button></div>
+    <div id="exList"></div>
+  </div></div>
+<div id="setEd" class="sheet"><div class="sheetHead"><b>⚙️ 내 설정 동기화</b><button data-close="setEd">닫기</button></div>
+  <div class="sheetBody">
+    <div style="font-size:12px;color:#555;line-height:1.6;margin-bottom:10px">내 폰과 노트북처럼 <b>내 기기끼리만</b> 설정을 맞춥니다. 친구와는 섞이지 않아요.<br>맞춰지는 것: 시작위치·⭐기본, 맛집 테마 편집, 프랜차이즈 제외, 탭별 반경, 유종, 검색어 동네 붙이기</div>
+    <div id="setOut">
+      <div class="rbox"><b>이 기기가 처음이면</b><div style="font-size:12px;color:#666;margin:4px 0 8px">지금 설정으로 코드를 만들고, 다른 기기에서 그 코드를 넣으세요.</div><button id="setCreate" class="sourceBtn main" style="min-height:0;padding:10px 14px">설정 코드 만들기</button></div>
+      <div class="rbox"><b>다른 기기에서 만든 코드가 있으면</b><div class="row" style="margin-top:8px"><input type="text" id="setJoinIn" placeholder="설정 코드 6자리" style="flex:1;min-width:0;text-transform:uppercase;letter-spacing:3px" maxlength="12"><button id="setJoin">가져오기</button></div></div>
+    </div>
+    <div id="setIn" style="display:none">
+      <div class="rbox" style="text-align:center"><div style="font-size:12px;color:#666">내 설정 코드 (여행방 코드와 다름)</div><div id="setCode" style="font-size:34px;font-weight:800;letter-spacing:6px;margin:6px 0 10px;font-family:ui-monospace,Menlo,monospace"></div><button id="setCopy">📋 코드 복사</button><div id="setState" style="font-size:12px;margin-top:8px"></div></div>
+      <button id="setLeave">연결 끊기</button>
+    </div>
+    <div id="setMsg" style="font-size:13px;color:#1f5fbf;margin-top:8px;min-height:18px"></div>
+    <div style="font-size:11px;color:#888;margin-top:8px">· 어느 기기에서 고쳐도 항목별로 나중에 고친 쪽이 남아요. 앱을 보고 있는 동안 30초마다 맞춥니다.<br>· 앱 비밀번호 인증은 보안상 기기마다 따로예요.</div>
+  </div></div>
+<div id="listPanel"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b id="listTitle">≡ 목록</b><button id="listClose">닫기</button></div><div id="listBody"></div></div>
+<div id="btnEd" class="sheet"><div class="sheetHead"><b id="btnEdTitle">✏️ 상세창 버튼 배치</b><button data-close="btnEd">닫기</button></div>
+  <div class="sheetBody"><div style="font-size:12px;color:#666;margin-bottom:8px">↑↓로 순서를 바꾸고, 잘 안 쓰는 건 숨기세요. 숨긴 버튼은 상세창의 “＋ 숨긴 버튼”으로 언제든 열 수 있어요. 맛집·관광지·주유 화면마다 따로 저장되고, ⚙️ 내 설정 코드로 내 기기끼리 맞춰집니다.</div>
+  <div id="btnList"></div><button id="btnReset" style="margin-top:10px;font-size:12px">이 화면 기본 배치로</button></div></div>
 <div id="detail">
   <div id="detailHead"><div><h3 id="detailName"></h3><div id="detailMeta"></div></div><button id="closeDetail">닫기</button></div>
   <div id="repBox"></div>
   <div id="sourceGrid"></div>
+  <div id="srcTools"></div>
   <div id="qOpt" class="notFuel"><span>웹·블로그 검색어:</span><button id="qNameBtn">상호만</button><button id="qDongBtn">상호+동네</button></div>
   <div id="sourceInfo"></div>
-  <div id="mapTools"><button id="satBtn">🛰 위성지도</button><button id="roadBtn">🛣 카카오 로드뷰</button><button id="deleteBtn">✕ 이번 검색에서 제외</button><button id="pickBtn">📅 일정에 담기</button><button id="startSaveBtn">🏷 시작위치로</button></div>
-  <div id="extTools"><button id="kakaoRoadBtn">↗ 카카오 로드뷰 앱</button><button id="extRoadBtn">↗ Google 스트리트뷰</button></div>
+  <div id="mapTools"><button id="roadBtn">🛣 카카오 로드뷰</button><button id="deleteBtn">✕ 이번 검색에서 제외</button><button id="pickBtn">📅 일정에 담기</button><button id="startSaveBtn">🏷 시작위치로</button></div>
   <div id="roadPanel"><div id="roadview"></div></div>
   <div class="notFuel">
     <div id="webQueries"></div>
-    <div style="margin-top:9px;font-size:10px;color:#737a84">내 확인 기록 (이 폰에만 저장)</div>
-    <div id="evidence"></div>
   </div>
   <div id="rankNote"></div>
 </div>
@@ -288,7 +374,7 @@ let foodRadius='1000';
 
 /* ---------- 저장(이 폰에만) ---------- */
 function lsGet(k,d){try{const v=localStorage.getItem('pinb_'+k);return v===null?d:JSON.parse(v)}catch(_){return d}}
-function lsSet(k,v){try{localStorage.setItem('pinb_'+k,JSON.stringify(v))}catch(_){}}
+function lsSet(k,v){try{localStorage.setItem('pinb_'+k,JSON.stringify(v))}catch(_){}markSet(k)}
 
 /* ---------- 테마 ---------- */
 // 맛집 테마 목록 — 직접 추가·삭제·순서 변경 가능 (이 폰에 저장)
@@ -322,8 +408,8 @@ const TOUR={
 };
 const JEJU={s:33.10,n:33.58,w:126.14,e:126.98};   // 제주 전체(우도·마라도 포함) 사각형
 const RANKS={
-  tour:[['recommend','⭐ 추천(인기)'],['near','가까운순'],['rating','★ 평점순'],['hot','🔥 지금 붐비는'],['blog','📝 블로그 많은']],
-  food:[['recommend','⭐ 추천(평판)'],['rating','★ 평점순'],['near','가까운순'],['hot','🔥 지금 붐비는'],['local','🏠 현지인풍'],['blog','📝 블로그 많은']],
+  tour:[['recommend','⭐ 추천(인기)'],['rating','★ 평점순'],['near','가까운순']],
+  food:[['recommend','⭐ 추천(평판)'],['rating','★ 평점순'],['near','가까운순'],['local','🏠 현지인 맛집']],
   gas:[['cheap','💰 최저가순'],['near','가까운순']],
   ev:[['near','가까운순'],['avail','🔌 빈 충전기 많은']]
 };
@@ -390,7 +476,6 @@ function setMapMode(mode){
   map.setMapTypeId(hybridOn?kakao.maps.MapTypeId.HYBRID:kakao.maps.MapTypeId.ROADMAP);
   $('roadMapBtn').classList.toggle('active',!hybridOn);
   $('hybridMapBtn').classList.toggle('active',hybridOn);
-  $('satBtn').textContent=hybridOn?'🗺 일반지도':'🛰 위성지도';
 }
 function updateRadiusCircle(){
   if(!map||!searchCenter)return;
@@ -402,6 +487,7 @@ function updateRadiusCircle(){
   }else{radiusCircle.setPosition(searchCenter);radiusCircle.setRadius(r);if(!radiusCircle.getMap())radiusCircle.setMap(map)}
 }
 function moveCenter(lat,lng){
+  if(typeof clearRoute==='function')clearRoute();
   searchCenter=new kakao.maps.LatLng(lat,lng);
   centerMarker.setPosition(searchCenter);map.setCenter(searchCenter);updateRadiusCircle();clearExclusions();searchPlaces(true);
 }
@@ -412,7 +498,7 @@ function init(lat,lng){
   centerMarker=new kakao.maps.Marker({map,position:searchCenter});
   updateRadiusCircle();
   kakao.maps.event.addListener(map,'dragend',()=>{
-    $('again').classList.add('pulse');
+    $('again').classList.add('pulse');if($('hint').style.display!=='none'){$('hint').style.display='none';lsSet('hintSeen',true)}
     setStatus('지도를 옮겼습니다. 가운데 + 위치로 찾으려면 “이 지역 검색”을 누르세요.');
   });
   searchPlaces(true);
@@ -562,7 +648,7 @@ function enrichTargets(){
   return pool.length>48?chooseSpread(pool,radius,48):pool;
 }
 async function enrichThenRender(token){
-  const need=enrichTargets().map(p=>p.id).filter(id=>!(id in ENRICH));
+  const need=enrichTargets().map(p=>p.id).filter(id=>!(id in ENRICH)||isStale(ENRICH[id]));
   if(!need.length){ renderFromLast({fit:false}); return; }
   enrichState='loading';
   setStatus($('status').textContent+' · 평판/가격 불러오는 중…');
@@ -574,7 +660,7 @@ async function enrichThenRender(token){
     res.forEach((j,k)=>{
       if(!j||typeof j!=='object')return;
       answered=true;
-      batches[i+k].forEach(id=>{const v=j[id]; if(v&&!v.err){ENRICH[id]=v;got++}});   // 실패한 곳은 다음 검색 때 다시 시도
+      batches[i+k].forEach(id=>{const v=j[id]; if(v&&!v.err){v._t=Date.now();ENRICH[id]=v;got++}});   // 실패한 곳은 다음 검색 때 다시 시도
     });
     if(token!==searchToken)return;
   }
@@ -583,6 +669,15 @@ async function enrichThenRender(token){
   renderFromLast({fit:false});
 }
 
+// 정보별 새로 받는 주기: 충전기 빈자리 2분, 유가 30분, 평점·영업 6시간
+function isStale(e){if(!e||!e._t)return true;const age=Date.now()-e._t;return e.ev?age>2*60e3:e.gas?age>30*60e3:age>6*3600e3}
+function ageText(e){if(!e||!e._t)return '';const m=Math.round((Date.now()-e._t)/60000);return m<1?'방금 받은 정보':m<60?`${m}분 전 정보`:`${Math.round(m/60)}시간 전 정보`}
+async function refreshOne(p){
+  if(refreshOne.busy===p.id)return;refreshOne.busy=p.id;
+  try{const r=await fetch(API+'?ids='+p.id,{credentials:'same-origin'});const j=r.ok?await r.json():null;const v=j&&j[p.id];
+    if(v&&!v.err){v._t=Date.now();ENRICH[p.id]=v;renderFromLast({fit:false});if(currentPlace&&currentPlace.id===p.id&&$('detail').classList.contains('open'))openDetail(currentPlace)}}catch(_){}
+  refreshOne.busy=null;
+}
 /* ---------- 점수 ---------- */
 function bayes(e){ if(!e||!e.n) return null; return (e.r*e.n+3.6*12)/(e.n+12); }   // 리뷰 적은 집의 평점 거품 제거
 function scoreParts(e){
@@ -672,7 +767,7 @@ function renderFromLast(opt={}){
     if(ok) items=items.filter(p=>{const e=ENRICH[p.id];return e&&e.ev&&e.ev.fast>0});
     else note=' · 급속 필터는 충전기 데이터 연결 후 적용';
   }
-  if(!items.length){setStatus('조건에 맞는 곳이 반경 안에 없습니다. 반경을 넓히거나 필터를 풀어보세요.'+note);updateRestoreButtons();return}
+  if(!items.length){lastSelected=[];renderList();setStatus('조건에 맞는 곳이 반경 안에 없습니다. 반경을 넓히거나 필터를 풀어보세요.'+note);updateRestoreButtons();return}
   const selected=selectTop(items,radius,wanted,mode);
   if(appMode()==='fuel'){
     const top=new Set(selected.map(p=>p.id));
@@ -680,6 +775,7 @@ function renderFromLast(opt={}){
     items.filter(p=>!top.has(p.id)).forEach(p=>addDot(p,p.id===cheapest));
   }
   selected.forEach((p,i)=>addPlace(p,i));
+  lastSelected=selected;renderList();
   if(fit)fitResults(selected,radius);
   const label=appMode()==='fuel'?$('fuel').selectedOptions[0].text:themeLabel();
   const rankLabel=$('rank').selectedOptions[0]?$('rank').selectedOptions[0].text:'';
@@ -693,8 +789,10 @@ function renderFromLast(opt={}){
     if(filterStats.minus)extra+=` · 제외어 ${filterStats.minus}곳 뺌`;
   }
   const dn=appMode()==='fuel'?(fuelKind()==='ev'?'충전기':'가격'):'평판';
-  const es={ok:dn+' 데이터 연결됨',fail:dn+' 서버 미연결 → 거리 기준',loading:dn+' 불러오는 중…',idle:''}[enrichState];
-  setStatus(`${label} · ${rankLabel} · ${isFinite(radius)?'반경 ':''}${fmtRadius(radius)} · 후보 ${items.length}곳${extra} · ${selected.length}곳 표시${es?' · '+es:''}${note}`);
+  const failTxt=appMode()==='fuel'?dn+' 서버 미연결 → 가까운 순':(mode==='near'?'평판 서버 미연결':'평판 서버 미연결 → 거리대별로 고르게 표시');
+  const nDet=appMode()!=='fuel'&&ok?items.filter(hasData).length:0;
+  const es={ok:dn+' 데이터 연결됨'+(nDet?` · 상세 비교 ${nDet}곳`:''),fail:failTxt,loading:dn+' 불러오는 중…',idle:''}[enrichState];
+  setStatus(`${routeNote}${label} · ${rankLabel} · ${isFinite(radius)?'반경 ':''}${fmtRadius(radius)} · 후보 ${items.length}곳${extra} · ${selected.length}곳 표시${es?' · '+es:''}${note}`);
   updateRestoreButtons();
 }
 function minPriceId(items){
@@ -852,11 +950,7 @@ function openTmap(p){
   else openUrl('https://www.tmap.co.kr/');
 }
 function kakaoRouteUrl(p){return `https://map.kakao.com/link/to/${encodeURIComponent(String(p.place_name).replace(/,/g,' '))},${p.y},${p.x}`}
-function addSourceButton(label,sub,handler,main){
-  const b=document.createElement('button');b.className='sourceBtn'+(main?' main':'');
-  b.innerHTML=`<span>${escapeHtml(label)}</span><small>${escapeHtml(sub)}</small>`;
-  b.onclick=handler;$('sourceGrid').appendChild(b);
-}
+function addSourceButton(label,sub,handler,main){srcDefs.push({k:label,label,sub,fn:handler,main})}
 function dongOf(p){
   const toks=String(p.address_name||'').split(/\s+/).filter(t=>!/^\d/.test(t));
   const fine=toks.filter(t=>/(동|리|가)$/.test(t)&&t.length>=2);
@@ -898,8 +992,10 @@ function openDetail(p){
   $('detailName').textContent=p.place_name;
   const cat=(p.category_name||'').split(' > ').pop();
   $('detailMeta').textContent=[fmtDist(p._dist),cat,p.road_address_name||p.address_name].filter(Boolean).join(' · ');
-  const rep=repHtml(p); $('repBox').innerHTML=rep; $('repBox').classList.toggle('on',!!rep);
-  $('sourceGrid').innerHTML='';
+  const eAge=ENRICH[p.id];
+  const rep=repHtml(p)+(eAge&&eAge._t?`<div class="age">🕘 ${ageText(eAge)}${isStale(eAge)?' · 새로 받는 중…':''}</div>`:''); $('repBox').innerHTML=rep; $('repBox').classList.toggle('on',!!rep);
+  if(eAge&&isStale(eAge))refreshOne(p);
+  $('sourceGrid').innerHTML='';srcDefs=[];
   if(appMode()==='fuel'){
     addSourceButton('TMAP','바로 길안내',()=>openTmap(p),true);
     addSourceButton('카카오맵','길찾기',()=>openUrl(kakaoRouteUrl(p)));
@@ -936,11 +1032,17 @@ function openDetail(p){
     detailExtras(p,nq,[['최근3개월 블로그',''],['현지인',' 현지인'],['내돈내산',' 내돈내산'],['웨이팅',' 웨이팅'],['메뉴 추천',' 메뉴 추천']],
       [['naver','네이버확인'],['kakao','카카오확인'],['catch','캐치확인'],['tabling','테이블링확인'],['local','현지인느낌'],['go','가볼곳']]);
   }
+  // 주차장·입구 (카카오 상세 데이터에 있을 때만)
+  const pk=parkingOf(p);
+  if(pk)addSourceButton(pk.t==='PARKING'?'🅿️ 주차장':'🚪 입구',`TMAP · ${pk.d}m 떨어짐`,()=>openTmap({place_name:p.place_name+(pk.t==='PARKING'?' 주차장':' 입구'),x:pk.x,y:pk.y}));
+  addSourceButton('카카오 로드뷰','앱·웹으로',()=>openUrl(`https://map.kakao.com/link/roadview/${p.y},${p.x}`));
+  addSourceButton('스트리트뷰','Google',()=>openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.y},${p.x}`));
+  {const ti=srcDefs.findIndex(d=>d.k==='TMAP'),pi=srcDefs.findIndex(d=>/주차장|입구/.test(d.k));if(ti>=0&&pi>ti+1)srcDefs.splice(ti+1,0,srcDefs.splice(pi,1)[0])}
+  renderSrcButtons();
   $('deleteBtn').onclick=()=>{excludePlace(p.id);$('detail').classList.remove('open');renderFromLast({fit:false})};
-  $('pickBtn').textContent=isPicked(p)?'✓ 일정에 담김':'📅 일정에 담기';
-  $('pickBtn').onclick=()=>{if(addPick(p))$('pickBtn').textContent='✓ 일정에 담김'};
+  $('pickBtn').textContent=replaceUid?'🔁 이 곳으로 바꾸기':isPicked(p)?'✓ 일정에 담김':'📅 일정에 담기';
+  $('pickBtn').onclick=()=>{if(replaceUid){replaceWith(p);return}if(addPick(p))$('pickBtn').textContent='✓ 일정에 담김'};
   $('startSaveBtn').onclick=()=>saveAsStart(p);
-  $('satBtn').onclick=()=>{setMapMode(hybridOn?'road':'hybrid');$('detail').classList.remove('open')};
   $('roadBtn').onclick=()=>{
     const panel=$('roadPanel');panel.classList.add('open');
     if(!roadClient)roadClient=new kakao.maps.RoadviewClient();
@@ -951,14 +1053,12 @@ function openDetail(p){
       else{panel.classList.remove('open');$('rankNote').textContent='주변 80m에 카카오 로드뷰가 없습니다. Google 스트리트뷰로 확인해보세요.'}
     });
   };
-  $('kakaoRoadBtn').onclick=()=>openUrl(`https://map.kakao.com/link/roadview/${p.y},${p.x}`);
-  $('extRoadBtn').onclick=()=>openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.y},${p.x}`);
   const notes={
     recommend:appMode()==='tour'?'추천(인기) = 카카오맵 평점(리뷰 수로 보정) + 리뷰량 + 블로그 수 + 인기 배지·수상. 제주 전체일 땐 거리를 전혀 보지 않습니다.':'추천 = 카카오맵 평점(리뷰 수로 보정) + 리뷰량 + 블로그 수 + 인기 배지·트렌드랭킹 수상, 거리는 조금만 반영.',
     rating:'평점순은 리뷰가 적은 집의 5.0 같은 거품을 빼려고 리뷰 12개 분량의 평균(3.6)을 섞어 보정합니다.',
     near:'거리 기준으로 가까운 곳부터 표시합니다.',
     hot:'지금 붐비는 = 카카오맵의 요일 평균 시간대별 방문지수 중 지금 시각 값. 실시간 혼잡도는 아닙니다.',
-    local:'현지인풍 = 블로그 홍보 비중은 낮고 카카오맵 리뷰는 탄탄한 곳. 실제 거주자 데이터가 아닌 추정입니다.',
+    local:'현지인 맛집 = 블로그 홍보는 적고 카카오맵 리뷰·평점이 탄탄한 곳. 실제 거주자 데이터가 아닌 추정입니다.',
     blog:'블로그 리뷰 수가 많은 순입니다. 체험단 광고가 섞일 수 있어요.',
     cheap:'카카오맵에 연동된 오피넷 가격 기준 최저가 순입니다. 지도 위 숫자 점이 반경 안 나머지 주유소입니다.',
     avail:'지금 비어 있는 충전기 수가 많은 순입니다(급속만 켜면 급속 기준).'
@@ -974,7 +1074,7 @@ function detailExtras(p,nq,blogs,evidence){
   $('webQueries').innerHTML='';
   const naverBlog3m=q=>`https://search.naver.com/search.naver?where=blog&query=${encodeURIComponent(q)}&nso=${encodeURIComponent('so:r,p:3m,a:all')}`;
   blogs.forEach(([l,s])=>{const b=document.createElement('button');b.textContent=l;b.onclick=()=>openUrl(naverBlog3m(nq+s));$('webQueries').appendChild(b)});
-  const box=$('evidence');box.innerHTML='';
+  const box=$('evidence');if(!box)return;box.innerHTML='';
   const key='pinb_evidence_'+p.id;let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch(_){}
   evidence.forEach(([k,label])=>{
     const b=document.createElement('button');b.textContent='✓ '+label;if(saved[k])b.classList.add('on');
@@ -1004,7 +1104,7 @@ $('roadMapBtn').onclick=()=>setMapMode('road');
 $('hybridMapBtn').onclick=()=>setMapMode('hybrid');
 $('undoExcludeBtn').onclick=()=>undoExclude();
 $('restoreAllBtn').onclick=()=>restoreAll();
-$('again').onclick=()=>{clearExclusions();searchPlaces(false)};
+$('again').onclick=()=>{clearRoute();clearExclusions();searchPlaces(false)};
 $('areaBtn').onclick=()=>searchArea();
 $('areaInput').addEventListener('keydown',e=>{if(e.key==='Enter')searchArea()});
 let prevMode=null;
@@ -1156,15 +1256,60 @@ function saveAsStart(p){
 const ROW=30;               // 30분 한 칸 높이(px)
 const WD=['일','월','화','수','목','금','토'];
 function todayPlus(n){const d=new Date(Date.now()+9*36e5);d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10)}
-let trip=Object.assign({start:todayPlus(1),days:3,from:7,to:23},lsGet('trip',{}));
+
+/* ---------- 들어오는 데이터 검사 (친구·공유코드·저장값) ----------
+   항목 번호는 영문·숫자만, 날짜·시간·금액은 숫자만, 글자는 길이 제한 → 이상한 값이 화면에 끼어들지 않게 */
+function isUid(s){return typeof s==='string'&&/^[A-Za-z0-9_-]{1,40}$/.test(s)}
+function num(v,lo,hi,d){v=+v;return Number.isFinite(v)?Math.max(lo,Math.min(hi,v)):d}
+function str(v,n){return v==null?'':String(v).slice(0,n)}
+function cleanArr(a,f){return Array.isArray(a)?a.map(f).filter(Boolean):[]}
+function cleanPlace(p){
+  if(!p||typeof p!=='object')return null;
+  const custom=!!p.custom, x=+p.x, y=+p.y;
+  if(!custom&&!(Number.isFinite(x)&&Number.isFinite(y)))return null;
+  if(!isUid(String(p.id||'')))return null;
+  return {id:String(p.id),place_name:str(p.place_name,80)||'이름 없음',category_name:str(p.category_name,120),x:String(Number.isFinite(x)?x:0),y:String(Number.isFinite(y)?y:0),address_name:str(p.address_name,120),road_address_name:str(p.road_address_name,120),custom};
+}
+function cleanBase(o){
+  if(!o||typeof o!=='object'||!isUid(o.uid))return null;
+  const r={uid:o.uid,upd:num(o.upd,0,Date.now()+864e5,0)};   // 미래 시각으로 영원히 이기는 값 방지
+  if(o.by!=null&&o.by!=='')r.by=str(o.by,20);
+  if(o.del)r.del=true;
+  return r;
+}
+function cleanPick(o){
+  const b=cleanBase(o);if(!b)return null;
+  const p=cleanPlace(o.p);
+  if(!p)return b.del?{...b,p:{id:'gone',place_name:'',category_name:'',x:'0',y:'0',address_name:'',road_address_name:'',custom:true}}:null;
+  return {...b,p,memo:str(o.memo,200)};
+}
+function cleanItem(o){
+  const k=cleanPick(o);if(!k)return null;
+  const r={...k,day:Math.floor(num(o.day,0,6,0)),start:Math.round(num(o.start,0,1435,600)),dur:Math.round(num(o.dur,5,720,60))};
+  if(o.visited===false)r.visited=false;
+  else if(o.visited&&typeof o.visited==='object')r.visited={at:num(o.visited.at,0,9e15,0),auto:!!o.visited.auto};
+  return r;
+}
+function cleanTodo(o){const b=cleanBase(o);if(!b)return null;return {...b,t:str(o.t,200),done:!!o.done}}
+function cleanExp(o){
+  const b=cleanBase(o);if(!b)return null;
+  return {...b,title:str(o.title,80)||'경비',amt:Math.round(num(o.amt,0,1e9,0)),payer:str(o.payer,20)||'?',
+    split:Array.isArray(o.split)?o.split.slice(0,30).filter(x=>typeof x==='string').map(x=>str(x,20)).filter(Boolean):[],day:Math.floor(num(o.day,0,6,0)),item:isUid(o.item)?o.item:null};
+}
+function cleanTrip(t){
+  if(!t||typeof t!=='object')return null;
+  return {start:/^\d{4}-\d{2}-\d{2}$/.test(t.start)?t.start:todayPlus(1),days:Math.floor(num(t.days,1,7,3)),from:Math.floor(num(t.from,5,12,7)),to:Math.floor(num(t.to,18,24,23)),
+    upd:num(t.upd,0,Date.now()+864e5,0),people:Array.isArray(t.people)?t.people.slice(0,30).filter(x=>typeof x==='string').map(x=>str(x,20)).filter(Boolean):[]};
+}
+let trip=cleanTrip(lsGet('trip',{}))||{start:todayPlus(1),days:3,from:7,to:23,upd:0,people:[]};
 // 모든 항목은 uid·upd(수정시각)·by(누가)·del(삭제표시)를 가짐 → 친구와 합칠 때 최신 수정이 이김
-let picks=lsGet('picks',[]);   // [{uid,p,memo,upd,by,del}]
-let items=lsGet('items',[]);   // [{uid,day,start,dur,memo,p,upd,by,del}]
+let picks=cleanArr(lsGet('picks',[]),cleanPick);   // [{uid,p,memo,upd,by,del}]
+let items=cleanArr(lsGet('items',[]),cleanItem);   // [{uid,day,start,dur,memo,p,upd,by,del}]
 let curDay=0, selPick=null;
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
 const live=a=>a.filter(x=>!x.del);
 function stamp(o){o.upd=Date.now();o.by=myNick();return o}
-function persistPlan(){lsSet('trip',trip);lsSet('picks',picks);lsSet('items',items);updateBadge()}
+function persistPlan(){lsSet('trip',trip);lsSet('picks',picks);lsSet('items',items);updateBadge();if(typeof updateNextCard==='function')try{updateNextCard()}catch(_){}}
 function savePlan(){persistPlan();scheduleSync()}
 function updateBadge(){const n=live(picks).length;$('pickBadge').textContent=n?String(n):'';$('pickBadge').style.display=n?'inline-block':'none'}
 function byTag(o){return room&&o.by?` · ${escapeHtml(o.by)}`:''}
@@ -1193,8 +1338,9 @@ function fillTripCfg(){
   if(curDay>=trip.days)curDay=0;
   savePlan();renderPlan();
 });
-function openPlan(){fillTripCfg();renderPlan();openSheet('sched')}
+function openPlan(){replaceUid=null;fillTripCfg();renderPlan();openSheet('sched')}
 function renderPlan(){
+  if(curDay>=trip.days||curDay<0)curDay=0;   // 친구가 여행 기간을 줄인 경우
   $('dayTabs').innerHTML=Array.from({length:trip.days},(_,i)=>{
     const n=live(items).filter(it=>it.day===i).length;
     return `<button class="dtab${i===curDay?' on':''}" data-d="${i}">${dayLabel(i)}${n?` <small>${n}</small>`:''}</button>`}).join('');
@@ -1219,13 +1365,16 @@ function renderPlan(){
   const nc=Math.max(1,cols.length);
   dayItems.forEach(it=>{
     const top=(it.start-trip.from*60)/30*ROW, ht=Math.max(ROW-2,it.dur/30*ROW-2);
-    h+=`<div class="item" data-uid="${it.uid}" style="top:${top}px;height:${ht}px;left:calc(50px + (100% - 54px)*${it._c}/${nc});width:calc((100% - 54px)/${nc} - 3px)">
-      <b>${hm(it.start)} ${escapeHtml(it.p.place_name)}</b><small>${hm(it.start+it.dur)}까지${it.memo?' · '+escapeHtml(it.memo):''}${byTag(it)}</small></div>`;
+    h+=`<div class="item${it.visited?' visited':''}" data-uid="${it.uid}" style="top:${top}px;height:${ht}px;left:calc(50px + (100% - 54px)*${it._c}/${nc});width:calc((100% - 54px)/${nc} - 3px)">
+      <b>${it.visited?'✅ ':''}${hm(it.start)} ${escapeHtml(it.p.place_name)}</b><small>${hm(it.start+it.dur)}까지${it.memo?' · '+escapeHtml(it.memo):''}${byTag(it)}</small></div>`;
   });
+  h+=travelHtml(dayItems);
   g.innerHTML=h;
   g.style.height=((trip.to-trip.from)*2*ROW)+'px';
   g.querySelectorAll('.item').forEach(el=>bindDrag(el,'item',el.dataset.uid));
   $('planSum').textContent=`이 날 ${dayItems.length}곳 · 담아둔 곳 ${lp.length}개`;
+  $('optDay').textContent=dayItems.some(x=>hasLoc(x.p))?'🔀 동선 정리':'🔀 담아둔 곳 자동 배치';
+  renderWx();loadWx();
 }
 // 빈 시간칸 탭 → 고른 곳 배치
 $('gridIn').addEventListener('click',e=>{
@@ -1236,9 +1385,12 @@ $('gridIn').addEventListener('click',e=>{
 function placePick(puid,day,start){
   const k=picks.find(x=>x.uid===puid&&!x.del);if(!k)return;
   stamp(k).del=true;
-  items.push(stamp({uid:uid(),day,start,dur:60,memo:k.memo||'',p:k.p}));savePlan();
+  // 같은 후보를 친구와 동시에 넣어도 하나로 합쳐지도록 번호를 후보에서 이어받음
+  const dur=60;start=Math.max(trip.from*60,Math.min(start,trip.to*60-dur));
+  const old=items.find(x=>x.uid==='i'+k.uid);
+  if(old){Object.assign(old,{day,start,dur,del:false});stamp(old)}else items.push(stamp({uid:'i'+k.uid,day,start,dur,memo:k.memo||'',p:k.p}));savePlan();
 }
-function moveItem(iuid,day,start){const it=items.find(x=>x.uid===iuid);if(it){it.day=day;it.start=start;stamp(it);savePlan()}}
+function moveItem(iuid,day,start){const it=items.find(x=>x.uid===iuid);if(it){it.day=day;it.start=Math.max(trip.from*60,Math.min(start,trip.to*60-it.dur));stamp(it);savePlan()}}
 function unplace(iuid){const it=items.find(x=>x.uid===iuid&&!x.del);if(!it)return;stamp(it).del=true;picks.push(stamp({uid:uid(),p:it.p,memo:it.memo||''}));savePlan()}
 
 /* ----- 끌어다 놓기 (터치·마우스 공용) -----
@@ -1324,6 +1476,7 @@ function openItemEd(iuid){
   $('edDay').innerHTML=Array.from({length:trip.days},(_,i)=>`<option value="${i}">${dayLabel(i)}</option>`).join('');$('edDay').value=it.day;
   $('edMemo').value=it.memo||'';
   $('edTmap').style.display=it.p.custom?'none':'';$('edInfo').style.display=it.p.custom?'none':'';
+  refreshEdExtra(it);$('edReplace').style.display=it.p.custom?'none':'';
   $('itemEd').classList.add('on');
 }
 function parseHM(v){const m=/^(\d{1,2}):(\d{2})/.exec(v||'');return m?(+m[1])*60+(+m[2]):null}
@@ -1343,7 +1496,7 @@ $('edMemo').onchange=()=>{edSave();renderPlan()};
 $('edClose').onclick=()=>{edSave();$('itemEd').classList.remove('on');renderPlan()};
 $('edBack').onclick=()=>{unplace(edUid);$('itemEd').classList.remove('on');renderPlan()};
 $('edDel').onclick=()=>{const it=items.find(x=>x.uid===edUid);if(it)stamp(it).del=true;savePlan();$('itemEd').classList.remove('on');renderPlan()};
-$('edTmap').onclick=()=>{const it=items.find(x=>x.uid===edUid);if(it)openTmap(it.p)};
+$('edTmap').onclick=()=>{const it=items.find(x=>x.uid===edUid);if(it)openTmapSmart(it.p)};
 $('edInfo').onclick=()=>{const it=items.find(x=>x.uid===edUid);if(!it)return;$('itemEd').classList.remove('on');closeSheet('sched');openDetail(withDist(it.p))};
 function withDist(p){return {...p,_dist:searchCenter?distanceM(searchCenter.getLat(),searchCenter.getLng(),+p.y,+p.x):0}}
 
@@ -1397,26 +1550,11 @@ function planText(){
 $('copySched').onclick=async()=>{$('planSum').textContent=await copyText(planText(),'📋 일정을 글자로 복사했어요. 카톡에 붙여넣기 하세요.')};
 function b64e(s){return btoa(unescape(encodeURIComponent(s)))}
 function b64d(s){return decodeURIComponent(escape(atob(s)))}
-$('shareSched').onclick=()=>{$('shareBox').classList.toggle('on');$('shareIn').value=''};
-$('shareCopy').onclick=async()=>{$('shareMsg').textContent=await copyText('PINB1:'+b64e(JSON.stringify({trip,picks:live(picks),items:live(items)})),'공유코드를 복사했어요. 친구에게 보내면 친구 앱의 여기에 붙여넣어 그대로 받을 수 있어요.')};
-$('shareApply').onclick=()=>{
-  const v=$('shareIn').value.trim();
-  try{
-    if(!v.startsWith('PINB1:'))throw 0;
-    const o=JSON.parse(b64d(v.slice(6)));
-    if(!o.trip||!Array.isArray(o.items))throw 0;
-    picks.concat(items).forEach(x=>{if(!x.del)stamp(x).del=true});
-    trip=Object.assign({},o.trip,{upd:Date.now()});
-    o.items.filter(x=>!x.del).forEach(x=>items.push(stamp({...x,uid:uid()})));(o.picks||[]).filter(x=>!x.del).forEach(x=>picks.push(stamp({...x,uid:uid()})));
-    curDay=0;savePlan();fillTripCfg();renderPlan();
-    $('shareMsg').textContent='✅ 받은 일정으로 바꿨어요.';$('shareIn').value='';
-  }catch(_){$('shareMsg').textContent='공유코드가 올바르지 않아요. PINB1: 로 시작하는 전체를 붙여넣어 주세요.'}
-};
 
 /* =====================================================================
    할일 목록
    ===================================================================== */
-let todos=lsGet('todo',[]).map(t=>t.uid?t:{uid:uid(),t:t.t,done:!!t.done,upd:Date.now()});
+let todos=cleanArr((lsGet('todo',[])||[]).map(t=>t&&t.uid?t:{uid:uid(),t:t&&t.t,done:!!(t&&t.done),upd:Date.now()}),cleanTodo);
 function persistTodo(){lsSet('todo',todos);const n=live(todos).filter(t=>!t.done).length;$('todoBadge').textContent=n?String(n):'';$('todoBadge').style.display=n?'inline-block':'none'}
 function saveTodo(){persistTodo();scheduleSync()}
 function renderTodo(){
@@ -1452,7 +1590,7 @@ async function doSync(create){
   syncBusy=true;lastTry=Date.now();let res;
   try{
     const r=await fetch(SYNC_API,{method:'POST',headers:{'content-type':'application/json'},
-      body:JSON.stringify({room:room.code,nick:room.nick,create:!!create,doc:{trip,picks,items,todos}})});
+      body:JSON.stringify({room:room.code,nick:room.nick,create:!!create,doc:{trip,picks,items,todos,exps}})});
     const j=await r.json().catch(()=>({err:'서버 응답 없음'}));
     if(room!==myRoom){syncBusy=false;return {err:'changed'}}   // 도중에 방을 나가거나 바꾼 경우 결과 무시
     if(r.ok&&j.doc){applyRemote(j.doc);members=j.members||{};lastSync=Date.now();syncState='ok';res={ok:true}}
@@ -1462,11 +1600,13 @@ async function doSync(create){
   return res;
 }
 function applyRemote(d){
-  const before=JSON.stringify([trip,picks,items,todos]);
-  picks=mergeArr(picks,d.picks);items=mergeArr(items,d.items);todos=mergeArr(todos,d.todos);
+  d={trip:cleanTrip(d.trip),picks:cleanArr(d.picks,cleanPick),items:cleanArr(d.items,cleanItem),todos:cleanArr(d.todos,cleanTodo),exps:cleanArr(d.exps,cleanExp)};
+  const before=JSON.stringify([trip,picks,items,todos,exps]);
+  picks=mergeArr(picks,d.picks);items=mergeArr(items,d.items);todos=mergeArr(todos,d.todos);exps=mergeArr(exps,d.exps);
   if(d.trip&&(d.trip.upd||0)>(trip.upd||0))trip=d.trip;
-  if(JSON.stringify([trip,picks,items,todos])===before)return;
-  persistPlan();persistTodo();
+  if(JSON.stringify([trip,picks,items,todos,exps])===before)return;
+  persistPlan();persistTodo();persistExp();
+  if($('expEd').classList.contains('on')&&document.activeElement!==$('exAmt')&&document.activeElement!==$('exTitle'))renderExp();
   if($('sched').classList.contains('on')&&!drag&&!$('itemEd').classList.contains('on')){fillTripCfg();renderPlan()}
   if($('todo').classList.contains('on')&&document.activeElement!==$('todoIn'))renderTodo();
 }
@@ -1485,10 +1625,10 @@ function renderRoomBits(){
   }
 }
 let roomFrom=null;
-function openRoom(){roomFrom=['sched','todo'].find(id=>$(id).classList.contains('on'))||null;openSheet('roomEd');$('roomMsg').textContent='';renderRoomBits()}
+function openRoom(){roomFrom=['sched','todo','expEd'].find(id=>$(id).classList.contains('on'))||null;openSheet('roomEd');$('roomMsg').textContent='';renderRoomBits()}
 $('roomEd').querySelector('[data-close]').onclick=()=>{   // 닫으면 원래 보던 창(일정/할일)으로 돌아감
   closeSheet('roomEd');const f=roomFrom;roomFrom=null;
-  if(f==='sched')openPlan(); else if(f==='todo'){renderTodo();openSheet('todo')}
+  if(f==='sched')openPlan(); else if(f==='todo'){renderTodo();openSheet('todo')} else if(f==='expEd'){renderExp();openSheet('expEd')}
 };
 function needNick(){const n=$('nickIn').value.trim();if(!n){$('roomMsg').textContent='먼저 내 이름(친구들에게 보일 이름)을 적어주세요.';$('nickIn').focus();return null}lsSet('nick',n);return n}
 const RC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -1551,7 +1691,472 @@ $('schedBtn').onclick=()=>{openPlan();if(room)syncNow()};
 $('todoBtn').onclick=()=>{renderTodo();openSheet('todo');if(room)syncNow()};
 updateBadge();persistTodo();fillStartSel();
 
+/* =====================================================================
+   v0.23 ① 이동시간·동선 정리 ② 날씨·일몰 ③ 경비·정산 ⑤ 가는 길 중간 찾기 ⑥ 다녀온 기록 ⓪ 내 설정 코드
+   ===================================================================== */
+const ceil5=m=>Math.ceil(m/5)*5;
+function hasLoc(p){return p&&!p.custom&&+p.x&&+p.y}
+// 이동시간 추정: 직선거리 × 1.35(도로 우회) ÷ 속도(시내 22, 중거리 38, 장거리 50km/h) + 주차·출발 3분
+function travelMin(a,b){
+  if(!hasLoc(a)||!hasLoc(b))return null;
+  const km=distanceM(+a.y,+a.x,+b.y,+b.x)*1.35/1000;
+  const v=km<3?22:km<15?38:50;
+  return Math.max(3,Math.ceil(km/v*60+3));
+}
+function travelHtml(dayItems){
+  let h='';
+  for(let i=0;i<dayItems.length-1;i++){
+    const a=dayItems[i],b=dayItems[i+1];
+    const t=travelMin(a.p,b.p);if(t==null)continue;
+    const end=a.start+a.dur, gap=b.start-end;
+    const top=(end-trip.from*60)/30*ROW-9;
+    const tight=gap<t;
+    h+=`<div class="trav${tight?' tight':''}" data-a="${a.uid}" data-b="${b.uid}" style="top:${top}px">🚗 약 ${t}분${tight?(gap<0?' · 시간 겹침':` · ${gap}분뿐`):''} <u>가는 길 찾기</u></div>`;
+  }
+  return h;
+}
+
+/* ----- ① 동선 정리 (가까운 순서) + 되돌리기 ----- */
+let undoSnap=null;
+function optimizeDay(){
+  const day=curDay;
+  const real=live(items).filter(it=>it.day===day&&hasLoc(it.p)).sort((a,b)=>a.start-b.start);
+  if(real.length===0){ return autoPlaceBin(day); }
+  if(real.length<2){$('planSum').textContent='정리할 일정이 2곳 이상이어야 해요.';return}
+  undoSnap={day,list:real.map(it=>({uid:it.uid,start:it.start,day:it.day}))};
+  const first=real[0], rest=real.slice(1), order=[first];
+  let cur=first;
+  while(rest.length){let bi=0,bd=Infinity;rest.forEach((x,i)=>{const d=distanceM(+cur.p.y,+cur.p.x,+x.p.y,+x.p.x);if(d<bd){bd=d;bi=i}});cur=rest.splice(bi,1)[0];order.push(cur)}
+  let t=first.start;
+  order.forEach((it,i)=>{
+    if(i>0){const prev=order[i-1];t=ceil5(prev.start+prev.dur+travelMin(prev.p,it.p))}
+    it.start=clamp(t,trip.from*60,trip.to*60-5);stamp(it);
+  });
+  savePlan();renderPlan();
+  $('planSum').innerHTML=`🔀 가까운 순서로 정리하고 이동시간만큼 띄웠어요. <button id="undoOpt">↶ 되돌리기</button>`;
+  $('undoOpt').onclick=undoOptimize;
+}
+function autoPlaceBin(day){
+  const lp=live(picks).filter(k=>hasLoc(k.p));
+  if(!lp.length){$('planSum').textContent='이 날 일정도, 담아둔 곳도 없어요.';return}
+  undoSnap={day,placed:[]};
+  const c=searchCenter?{y:searchCenter.getLat(),x:searchCenter.getLng()}:lp[0].p;
+  let cur={p:c},t=Math.max(trip.from*60,10*60);
+  const rest=[...lp];
+  while(rest.length){
+    let bi=0,bd=Infinity;rest.forEach((k,i)=>{const d=distanceM(+cur.p.y,+cur.p.x,+k.p.y,+k.p.x);if(d<bd){bd=d;bi=i}});
+    const k=rest.splice(bi,1)[0];
+    if(cur.uid)t=ceil5(cur.start+cur.dur+travelMin(cur.p,k.p));
+    if(t>trip.to*60-30)break;
+    stamp(k).del=true;
+    const it=stamp({uid:'i'+k.uid,day,start:t,dur:Math.min(60,trip.to*60-t),memo:k.memo||'',p:k.p});{const o=items.findIndex(x=>x.uid===it.uid);if(o>=0)items.splice(o,1)}items.push(it);undoSnap.placed.push({item:it.uid,pick:k.uid});
+    cur=it;
+  }
+  savePlan();renderPlan();
+  $('planSum').innerHTML=`🔀 담아둔 곳을 10시부터 가까운 순서로 넣었어요. <button id="undoOpt">↶ 되돌리기</button>`;
+  $('undoOpt').onclick=undoOptimize;
+}
+function undoOptimize(){
+  if(!undoSnap)return;
+  if(undoSnap.list)undoSnap.list.forEach(s=>{const it=items.find(x=>x.uid===s.uid);if(it){it.start=s.start;it.day=s.day;stamp(it)}});
+  if(undoSnap.placed)undoSnap.placed.forEach(s=>{const it=items.find(x=>x.uid===s.item);if(it)stamp(it).del=true;const k=picks.find(x=>x.uid===s.pick);if(k){k.del=false;stamp(k)}});
+  undoSnap=null;savePlan();renderPlan();$('planSum').textContent='되돌렸어요.';
+}
+
+/* ----- ⑤ 가는 길 중간에서 찾기 ----- */
+let routeNote='', routeLine=null, routeAB=null;
+function openRouteFind(aUid,bUid){
+  const a=items.find(x=>x.uid===aUid),b=items.find(x=>x.uid===bUid);if(!a||!b)return;
+  routeAB={a,b};
+  $('rfTitle').textContent=`${a.p.place_name} → ${b.p.place_name}`;
+  $('routeFind').classList.add('on');
+}
+function setModeQuiet(m){
+  if(appMode()===m)return;
+  radiusByMode[appMode()]=$('radius').value;
+  $('mode').value=m;prevMode=m;syncJejuOption();
+  $('radius').value=radiusByMode[m]||RADIUS_DEF[m];if(!$('radius').value)$('radius').value=RADIUS_DEF[m];
+  applyModeClass();fillRank(true);lsSet('mode',m);updateRadiusCircle();
+}
+function findAlong(kind){
+  if(!routeAB||!map)return;
+  const {a,b}=routeAB;$('routeFind').classList.remove('on');$('itemEd').classList.remove('on');closeSheet('sched');
+  const lat=(+a.p.y + +b.p.y)/2, lng=(+a.p.x + +b.p.x)/2;
+  const d=distanceM(+a.p.y,+a.p.x,+b.p.y,+b.p.x);
+  const need=Math.max(1000,d*0.45);
+  const r=[1000,2000,3000,5000,10000,20000].find(v=>v>=need)||20000;
+  const want=kind==='gas'?'fuel':kind==='tour'?'tour':'food';
+  setModeQuiet(want);
+  if(kind==='food'||kind==='cafe'){const t=themeList.find(t=>t.cat===(kind==='cafe'?'CE7':'FD6'));if(t){$('theme').value=t.id;themePrev=t.id}}
+  if(kind==='tour')$('tourTheme').value='AT4';
+  $('radius').value=String(r);
+  searchCenter=new kakao.maps.LatLng(lat,lng);centerMarker.setPosition(searchCenter);map.setCenter(searchCenter);
+  routeNote=`🛣 ${a.p.place_name} → ${b.p.place_name} 가는 길 중간 · `;
+  drawRouteLine(a.p,b.p);
+  clearExclusions();searchPlaces(true);
+}
+function drawRouteLine(p1,p2){
+  clearRouteLine();
+  if(!kakao.maps.Polyline)return;
+  routeLine=new kakao.maps.Polyline({path:[new kakao.maps.LatLng(+p1.y,+p1.x),new kakao.maps.LatLng(+p2.y,+p2.x)],strokeWeight:4,strokeColor:'#7b3fe4',strokeOpacity:.7,strokeStyle:'shortdash'});
+  routeLine.setMap(map);
+}
+function clearRouteLine(){if(routeLine){routeLine.setMap(null);routeLine=null}}
+function clearRoute(){routeNote='';clearRouteLine()}
+
+/* ----- ② 날씨·일몰 (Open-Meteo, 키 없음) ----- */
+let wx={key:'',days:{}}, wxLoading=false;
+const WXI=c=>c===0?'☀️':c<=2?'🌤':c===3?'☁️':c<=48?'🌫':c<=57?'🌦':c<=67?'🌧':c<=77?'🌨':c<=82?'🌧':'⛈';
+function dayDate(i){const d=new Date(trip.start+'T00:00:00');d.setDate(d.getDate()+i);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function wxLoc(){const it=live(items).find(x=>hasLoc(x.p));if(it)return [+it.p.y,+it.p.x];if(searchCenter)return [searchCenter.getLat(),searchCenter.getLng()];return [33.38,126.55]}
+async function loadWx(){
+  const [la,lo]=wxLoc(), s=dayDate(0), e=dayDate(trip.days-1);
+  const key=`${s}|${e}|${la.toFixed(1)}|${lo.toFixed(1)}`;
+  if(wx.key===key||wxLoading)return;
+  wxLoading=true;
+  try{
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=${la.toFixed(3)}&longitude=${lo.toFixed(3)}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset&timezone=Asia%2FSeoul&start_date=${s}&end_date=${e}`;
+    const r=await fetch(u);const j=await r.json();
+    const d={};(j.daily&&j.daily.time||[]).forEach((t,i)=>d[t]={c:j.daily.weather_code[i],hi:j.daily.temperature_2m_max[i],lo:j.daily.temperature_2m_min[i],p:j.daily.precipitation_probability_max[i],ss:(j.daily.sunset[i]||'').slice(11,16)});
+    wx={key,days:d};
+  }catch(_){wx={key,days:{}}}
+  wxLoading=false;
+  if($('sched').classList.contains('on')&&!drag)renderWx();
+}
+function renderWx(){
+  const w=wx.days[dayDate(curDay)];
+  document.querySelectorAll('.dtab').forEach(b=>{const x=wx.days[dayDate(+b.dataset.d)];if(x&&!b.querySelector('.wxi'))b.insertAdjacentHTML('afterbegin',`<span class="wxi">${WXI(x.c)}</span>`)});
+  if(!w){$('dayWx').innerHTML='<span style="color:#999">날씨 예보는 여행 16일 전부터 보여요</span>';return}
+  const rain=w.p>=60||(w.c>=51&&w.c<=67)||w.c>=80;
+  $('dayWx').innerHTML=`${WXI(w.c)} ${Math.round(w.lo)}~${Math.round(w.hi)}° · 💧${w.p??'-'}% · 🌅 일몰 ${w.ss}`+(rain?` <button id="wxIndoor">☔ 비 예보 · 실내 관광지 찾기</button>`:'');
+  if(rain)$('wxIndoor').onclick=()=>{closeSheet('sched');setModeQuiet('tour');$('tourTheme').value='박물관';clearRoute();clearExclusions();searchPlaces(true)};
+}
+
+/* ----- ⑥ 다녀온 기록 : 근처에 가면 자동 체크, 편집 가능 ----- */
+function todayIdx(){const t=new Date(Date.now()+9*36e5).toISOString().slice(0,10);for(let i=0;i<trip.days;i++)if(dayDate(i)===t)return i;return -1}
+let lastVisitCheck=0, watchId=null;
+function checkVisits(lat,lng){
+  if(Date.now()-lastVisitCheck<45000)return;lastVisitCheck=Date.now();
+  const d=todayIdx();if(d<0)return;
+  live(items).filter(it=>it.day===d&&hasLoc(it.p)&&it.visited===undefined).forEach(it=>{
+    if(distanceM(lat,lng,+it.p.y,+it.p.x)<150){
+      it.visited={at:Date.now(),auto:true};stamp(it);savePlan();
+      setStatus(`✅ “${it.p.place_name}” 다녀옴으로 체크했어요. (📅 일정에서 일정을 누르면 바꿀 수 있어요)`);
+      if($('sched').classList.contains('on')&&!drag)renderPlan();
+    }
+  });
+}
+function startVisitWatch(){
+  if(watchId!=null||!navigator.geolocation||todayIdx()<0)return;
+  try{watchId=navigator.geolocation.watchPosition(p=>{lastPos={lat:p.coords.latitude,lng:p.coords.longitude};checkVisits(lastPos.lat,lastPos.lng);updateNextCard()},()=>{},{enableHighAccuracy:false,maximumAge:60000,timeout:20000})}catch(_){}
+}
+function stopVisitWatch(){if(watchId!=null){try{navigator.geolocation.clearWatch(watchId)}catch(_){}watchId=null}}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')startVisitWatch();else stopVisitWatch()});
+let replaceUid=null;
+function startReplace(iuid){
+  const it=items.find(x=>x.uid===iuid);if(!it)return;
+  replaceUid=iuid;$('itemEd').classList.remove('on');closeSheet('sched');
+  setModeQuiet('food');clearRoute();
+  if(hasLoc(it.p)&&map){searchCenter=new kakao.maps.LatLng(+it.p.y,+it.p.x);centerMarker.setPosition(searchCenter);map.setCenter(searchCenter);$('radius').value='500';clearExclusions();searchPlaces(true)}
+  setTimeout(()=>setStatus(`🔁 “${it.p.place_name}” 대신 간 곳을 지도에서 눌러 “이 곳으로 바꾸기”를 누르세요. (주변 500m 검색함)`),1500);
+}
+function replaceWith(p){
+  const it=items.find(x=>x.uid===replaceUid);replaceUid=null;if(!it)return;
+  const old=it.p.place_name;it.p=slimPlace(p);it.visited={at:Date.now(),auto:false};it.memo=(it.memo?it.memo+' · ':'')+`원래: ${old}`;stamp(it);savePlan();
+  $('detail').classList.remove('open');setStatus(`🔁 일정의 “${old}”을(를) “${p.place_name}”(으)로 바꾸고 다녀옴으로 체크했어요.`);
+}
+function openLog(){
+  let h='';let total=0;
+  for(let d=0;d<trip.days;d++){
+    const l=live(items).filter(it=>it.day===d).sort((a,b)=>a.start-b.start);
+    const ex=live(exps).filter(e=>e.day===d), sum=ex.reduce((s,e)=>s+(+e.amt||0),0);total+=sum;
+    h+=`<div class="logDay"><b>${dayLabel(d)}</b>${sum?` <span class="logSum">💳 ${won(sum)}</span>`:''}`+
+      (l.length?l.map(it=>`<div class="logRow${it.visited?' ok':''}"><span>${it.visited?'✅':it.visited===false?'✖️':'⬜'}</span><span class="t">${hm(it.start)}</span><span class="n">${escapeHtml(it.p.place_name)}${it.memo?`<small>${escapeHtml(it.memo)}</small>`:''}</span></div>`).join(''):'<div class="logRow"><span class="n" style="color:#999">일정 없음</span></div>')+'</div>';
+  }
+  $('logBody').innerHTML=`<div style="font-size:12px;color:#666;margin-bottom:8px">✅ 다녀옴 · ⬜ 아직 · ✖️ 안 감 — 일정표에서 일정을 눌러 바꿀 수 있어요.${total?` <b>총 경비 ${won(total)}</b>`:''}</div>`+h;
+  openSheet('logEd');
+}
+function logText(){
+  let s='📒 여행 기록\n';
+  for(let d=0;d<trip.days;d++){
+    s+=`\n[${dayLabel(d)}]\n`;
+    live(items).filter(it=>it.day===d).sort((a,b)=>a.start-b.start).forEach(it=>{s+=`${it.visited?'✅':'⬜'} ${hm(it.start)} ${it.p.place_name}${it.memo?' ('+it.memo+')':''}\n`});
+    const sum=live(exps).filter(e=>e.day===d).reduce((x,e)=>x+(+e.amt||0),0);if(sum)s+=`💳 ${won(sum)}\n`;
+  }
+  return s;
+}
+
+/* ----- ③ 경비 + N빵 정산 (여행방과 같이 맞춰짐) ----- */
+let exps=cleanArr(lsGet('exps',[]),cleanExp);
+function persistExp(){lsSet('exps',exps)}
+function saveExp(){persistExp();scheduleSync()}
+function people(){
+  const s=new Set(trip.people||[]);
+  s.add(myNick()||'나');
+  Object.keys(members||{}).forEach(n=>s.add(n));
+  live(exps).forEach(e=>{if(e.payer)s.add(e.payer);(e.split||[]).forEach(n=>s.add(n))});
+  return [...s].filter(Boolean);
+}
+let expFor=null, expKnown=new Set();
+function openExp(pre){
+  expFor=pre||null;expKnown=new Set();$('exSplit').innerHTML='';
+  $('exTitle').value=pre&&pre.title||'';$('exAmt').value='';
+  $('exDay').innerHTML=Array.from({length:trip.days},(_,i)=>`<option value="${i}">${dayLabel(i)}</option>`).join('');
+  $('exDay').value=pre&&pre.day!=null?pre.day:Math.max(0,todayIdx());
+  renderExp();openSheet('expEd');
+  setTimeout(()=>(pre?$('exAmt'):$('exTitle')).focus(),120);
+}
+function renderExp(){
+  const ps=people();
+  if(!ps.length)ps.push('나');
+  const cur=$('exPayer').value;
+  $('exPayer').innerHTML=ps.map(n=>`<option>${escapeHtml(n)}</option>`).join('');
+  $('exPayer').value=ps.includes(cur)?cur:(ps.includes(myNick())?myNick():ps[0]);
+  // 새로 생긴 사람은 기본으로 '나눌 사람'에 체크, 이미 있던 사람은 사용자가 고른 대로 유지
+  const chk=new Set([...$('exSplit').querySelectorAll('input:checked')].map(c=>c.value));
+  $('exSplit').innerHTML=ps.map(n=>`<label class="pchip"><input type="checkbox" value="${escapeHtml(n)}"${chk.has(n)||!expKnown.has(n)?' checked':''}>${escapeHtml(n)}</label>`).join('');
+  ps.forEach(n=>expKnown.add(n));
+  // 목록
+  const le=live(exps).sort((a,b)=>(a.day-b.day)||(a.upd-b.upd));
+  $('exList').innerHTML=le.length?le.map(e=>`<div class="exRow"><span class="d">${e.day+1}일차</span><span class="n">${escapeHtml(e.title||'경비')}<small>${escapeHtml(e.payer)} 냄 · ${(e.split||[]).length}명 나눔</small></span><b>${won(e.amt)}</b><button data-x="${e.uid}">✕</button></div>`).join('')
+    :'<div class="binEmpty">아직 기록이 없어요.</div>';
+  $('exList').querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{const e=exps.find(x=>x.uid===b.dataset.x);if(e)stamp(e).del=true;saveExp();renderExp()});
+  // 정산
+  const bal={},paid={},owe={};let total=0;
+  le.forEach(e=>{
+    const sp=(e.split&&e.split.length?e.split:[e.payer]);const share=e.amt/sp.length;total+=e.amt;
+    bal[e.payer]=(bal[e.payer]||0)+e.amt;paid[e.payer]=(paid[e.payer]||0)+e.amt;
+    sp.forEach(n=>{bal[n]=(bal[n]||0)-share;owe[n]=(owe[n]||0)+share});
+  });
+  const names=Object.keys(bal);
+  const cr=names.filter(n=>bal[n]>0.5).map(n=>({n,v:bal[n]})).sort((a,b)=>b.v-a.v);
+  const db=names.filter(n=>bal[n]<-0.5).map(n=>({n,v:-bal[n]})).sort((a,b)=>b.v-a.v);
+  const tr=[];let i=0,j=0;
+  while(i<db.length&&j<cr.length){const v=Math.min(db[i].v,cr[j].v);tr.push(`${db[i].n} → ${cr[j].n} <b>${won(Math.round(v/10)*10)}</b>`);db[i].v-=v;cr[j].v-=v;if(db[i].v<0.5)i++;if(cr[j].v<0.5)j++}
+  $('exSum').innerHTML=total?`<div>총 <b>${won(total)}</b> · ${names.map(n=>`${escapeHtml(n)} 부담 ${won(Math.round((owe[n]||0)/10)*10)}`).join(' · ')}</div>`+
+    `<div class="settle"><b>정산</b> ${tr.length?tr.map(x=>`<div>💸 ${x}</div>`).join(''):'<div>주고받을 돈 없음 👍</div>'}</div>`:'';
+  $('exHint').textContent=room?'여행방 사람들과 같이 맞춰집니다.':'혼자 쓰는 중 — 같이 쓰려면 📅 일정 → 👥 같이 쓰기로 방에 들어가세요. 사람 추가는 아래 칸에.';
+}
+$('exAdd').onclick=()=>{
+  const amt=Math.round(+String($('exAmt').value).replace(/[^\d]/g,''));
+  if(!amt){$('exMsg').textContent='금액을 넣어주세요.';$('exAmt').focus();return}
+  const split=[...$('exSplit').querySelectorAll('input:checked')].map(c=>c.value);
+  if(!split.length){$('exMsg').textContent='나눌 사람을 한 명 이상 골라주세요.';return}
+  exps.push(stamp({uid:uid(),title:$('exTitle').value.trim()||'경비',amt,payer:$('exPayer').value,split,day:+$('exDay').value,item:expFor&&expFor.item||null}));
+  $('exTitle').value='';$('exAmt').value='';$('exMsg').textContent=`✅ ${won(amt)} 기록`;expFor=null;saveExp();renderExp();
+};
+$('exAmt').addEventListener('keydown',e=>{if(e.key==='Enter')$('exAdd').click()});
+$('exPersonAdd').onclick=()=>{
+  const n=$('exPerson').value.trim();if(!n)return;
+  trip.people=[...new Set([...(trip.people||[]),n])];trip.upd=Date.now();savePlan();$('exPerson').value='';renderExp();
+};
+$('exCopy').onclick=async()=>{
+  const le=live(exps);let s='💳 여행 경비\n'+le.map(e=>`${e.day+1}일차 ${e.title} ${won(e.amt)} (${e.payer} 냄, ${(e.split||[]).join('·')})`).join('\n');
+  s+='\n\n'+$('exSum').innerText;
+  $('exMsg').textContent=await copyText(s,'📋 복사했어요.');
+};
+
+/* ----- 일정 편집창 버튼들 ----- */
+function refreshEdExtra(it){
+  $('edVisit').textContent=it.visited?'✅ 다녀옴':it.visited===false?'✖️ 안 감':'⬜ 다녀옴 표시';
+  $('edVisit').classList.toggle('on',!!it.visited);
+  const nx=live(items).filter(x=>x.day===it.day&&x.start>it.start).sort((a,b)=>a.start-b.start)[0];
+  $('edRoute').style.display=nx&&hasLoc(nx.p)&&hasLoc(it.p)?'':'none';
+  $('edRoute').dataset.next=nx?nx.uid:'';
+}
+$('edVisit').onclick=()=>{const it=items.find(x=>x.uid===edUid);if(!it)return;it.visited=it.visited?false:(it.visited===false?undefined:{at:Date.now(),auto:false});stamp(it);savePlan();refreshEdExtra(it);renderPlan()};
+$('edReplace').onclick=()=>startReplace(edUid);
+$('edExp').onclick=()=>{const it=items.find(x=>x.uid===edUid);if(!it)return;$('itemEd').classList.remove('on');openExp({title:it.p.place_name,day:it.day,item:it.uid})};
+$('edRoute').onclick=()=>openRouteFind(edUid,$('edRoute').dataset.next);
+document.querySelectorAll('#routeFind [data-k]').forEach(b=>b.onclick=()=>findAlong(b.dataset.k));
+$('rfClose').onclick=()=>$('routeFind').classList.remove('on');
+$('gridIn').addEventListener('click',e=>{const t=e.target.closest('.trav');if(t){e.stopPropagation();openRouteFind(t.dataset.a,t.dataset.b)}},true);
+$('optDay').onclick=optimizeDay;
+$('logBtn').onclick=openLog;
+$('logCopy').onclick=async()=>{$('logMsg').textContent=await copyText(logText(),'📋 복사했어요.')};
+$('expBtn').onclick=()=>openExp();
+
+/* =====================================================================
+   ⓪ 내 설정 코드 — 내 폰·노트북끼리만 설정을 맞춤 (친구와 섞이지 않음)
+   ===================================================================== */
+var SET_KEYS=['starts','startDef','themes','noFran','radiusByMode','fuel','qdong','btnLayout'];
+var setRoom=lsGet('setRoom',null), setTimer=null;
+let setState='', setLast=0, setTry=0;
+function setMeta(){try{return JSON.parse(localStorage.getItem('pinb_setMeta')||'{}')}catch(_){return {}}}
+function markSet(k){if(!SET_KEYS||!SET_KEYS.includes(k))return;const m=setMeta();m[k]=Date.now();try{localStorage.setItem('pinb_setMeta',JSON.stringify(m))}catch(_){}if(setRoom){clearTimeout(setTimer);setTimer=setTimeout(()=>setSync(),800)}}
+let setQ=Promise.resolve();
+function setSync(create){const p=setQ.then(()=>doSetSync(create));setQ=p.catch(()=>{});return p}
+async function doSetSync(create){
+  if(!setRoom)return {err:'none'};
+  const me=setRoom;setTry=Date.now();
+  const m=setMeta(), kv={};
+  SET_KEYS.forEach(k=>{const raw=localStorage.getItem('pinb_'+k);if(raw!==null)kv[k]={v:JSON.parse(raw),upd:m[k]||0}});
+  try{
+    const r=await fetch(SYNC_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({kind:'set',room:me.code,create:!!create,kv})});
+    const j=await r.json().catch(()=>({err:'서버 응답 없음'}));
+    if(setRoom!==me)return {err:'changed'};
+    if(!r.ok||!j.kv){setState=j.err||('오류 '+r.status);renderSetBits();return {err:j.err||r.status}}
+    const changed=[];const mm=setMeta();
+    Object.entries(j.kv).forEach(([k,x])=>{if(SET_KEYS.includes(k)&&(x.upd||0)>(mm[k]||0)){try{localStorage.setItem('pinb_'+k,JSON.stringify(x.v))}catch(_){}mm[k]=x.upd;changed.push(k)}});
+    try{localStorage.setItem('pinb_setMeta',JSON.stringify(mm))}catch(_){}
+    if(changed.length)applySettings(changed);
+    setState='ok';setLast=Date.now();renderSetBits();return {ok:true,changed};
+  }catch(_){setState='offline';renderSetBits();return {err:'offline'}}
+}
+function applySettings(ch){
+  if(ch.includes('btnLayout')&&currentPlace&&$('detail').classList.contains('open'))openDetail(currentPlace);
+  if(ch.includes('themes')){themeList=lsGet('themes',null)||DEFAULT_THEMES.map(t=>({...t}));fillThemeSel(themePrev)}
+  if(ch.includes('starts')||ch.includes('startDef'))fillStartSel();
+  if(ch.includes('noFran')){$('noFran').checked=lsGet('noFran',true);if(appMode()==='food'&&rawItems.length)refilter()}
+  if(ch.includes('radiusByMode'))radiusByMode=Object.assign({},RADIUS_DEF,lsGet('radiusByMode',{}));
+  if(ch.includes('fuel')&&appMode()!=='fuel')$('fuel').value=lsGet('fuel','gas');
+  if(ch.includes('qdong'))qWithDong=lsGet('qdong',false);
+  if($('startEd').classList.contains('on'))renderStartEd();
+  if($('themeEd').classList.contains('on'))renderThemeEd();
+}
+function renderSetBits(){
+  $('setBtn').classList.toggle('on',!!setRoom&&setState==='ok');
+  if(!$('setEd').classList.contains('on'))return;
+  $('setOut').style.display=setRoom?'none':'';$('setIn').style.display=setRoom?'':'none';
+  if(setRoom){$('setCode').textContent=setRoom.code;$('setState').textContent=setState==='ok'?`✅ 맞춰짐 (${ago(setLast)})`:setState==='offline'?'⚠️ 인터넷 연결 없음':setState?'⚠️ '+setState:'연결 중…'}
+}
+$('setBtn').onclick=()=>{openSheet('setEd');$('setMsg').textContent='';renderSetBits()};
+$('setCreate').onclick=async()=>{
+  if(setRoom)return;$('setCreate').disabled=true;$('setMsg').textContent='만드는 중…';
+  try{
+    // 지금 이 기기의 설정을 기준으로 올림
+    const m=setMeta();SET_KEYS.forEach(k=>{if(localStorage.getItem('pinb_'+k)!==null&&!m[k])m[k]=1});try{localStorage.setItem('pinb_setMeta',JSON.stringify(m))}catch(_){}
+    for(let i=0;i<3;i++){
+      const cand={code:newCode()};setRoom=cand;const r=await setSync(true);
+      if(r.ok){setRoom=cand;lsSet('setRoom',cand);$('setMsg').textContent='✅ 만들었어요. 노트북 등 다른 기기에서 이 코드를 넣으세요.';return}
+      if(r.err!=='exists'){setRoom=null;$('setMsg').textContent=r.err==='offline'?'인터넷 연결을 확인해 주세요.':'만들지 못했어요 ('+r.err+')';return}
+    }
+    setRoom=null;
+  }finally{$('setCreate').disabled=false;renderSetBits()}
+};
+$('setJoin').onclick=async()=>{
+  const code=$('setJoinIn').value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(code.length<6){$('setMsg').textContent='설정 코드 6자리를 넣어주세요.';return}
+  $('setJoin').disabled=true;$('setMsg').textContent='가져오는 중…';
+  const cand={code};setRoom=cand;const r=await setSync(false);$('setJoin').disabled=false;
+  if(r.ok){setRoom=cand;lsSet('setRoom',cand);$('setJoinIn').value='';$('setMsg').textContent=`✅ 연결됐어요. ${r.changed&&r.changed.length?'설정 '+r.changed.length+'가지를 가져왔어요.':'이미 같은 설정이에요.'}`;renderSetBits();return}
+  setRoom=null;renderSetBits();$('setMsg').textContent=r.err==='no room'?'그런 설정 코드가 없어요.':r.err==='offline'?'인터넷 연결을 확인해 주세요.':'연결하지 못했어요 ('+r.err+')';
+};
+$('setCopy').onclick=async()=>{$('setMsg').textContent=await copyText(setRoom.code,'📋 코드를 복사했어요.')};
+$('setLeave').onclick=()=>{setRoom=null;setState='';lsSet('setRoom',null);$('setMsg').textContent='연결을 끊었어요. 이 기기 설정은 그대로 남아요.';renderSetBits()};
+setInterval(()=>{if(setRoom&&document.visibilityState==='visible'&&Date.now()-setTry>(($('setEd').classList.contains('on'))?5000:30000))setSync()},2000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&setRoom)setSync()});
+renderSetBits();
+
+
+/* ---------- 상세창 버튼 배치 (각자 순서·숨김, 맛집/관광/주유 따로) ---------- */
+let srcDefs=[], srcShowHidden=false;
+const MODE_NAME={food:'맛집',tour:'관광지',fuel:'주유·충전'};
+// 처음부터 숨겨둘 버튼 (각자 ✏️ 버튼 배치에서 다시 켤 수 있음)
+const DEFAULT_HIDE={food:['캐치테이블','테이블링','다이닝코드','카카오 로드뷰','스트리트뷰'],tour:['카카오 로드뷰','스트리트뷰'],fuel:['카카오 로드뷰','스트리트뷰']};
+function btnLayoutFor(m){const L=lsGet('btnLayout',{})||{};const x=L[m]||{};const order=Array.isArray(x.order)?x.order:[],hide=Array.isArray(x.hide)?x.hide:[];
+  // 아직 내가 손대지 않은(목록에 없던) 버튼에만 기본 숨김 적용
+  return {order,hide:[...hide,...(DEFAULT_HIDE[m]||[]).filter(k=>!order.includes(k)&&!hide.includes(k))]}}
+function saveBtnLayout(m,lay){const L=lsGet('btnLayout',{})||{};L[m]=lay;lsSet('btnLayout',L)}
+function orderedKeys(m){const L=btnLayoutFor(m);const ks=srcDefs.map(d=>d.k);return [...L.order.filter(k=>ks.includes(k)),...ks.filter(k=>!L.order.includes(k))]}
+function mkSrcBtn(d,dim){
+  const b=document.createElement('button');b.className='sourceBtn'+(d.main?' main':'')+(dim?' dim':'');
+  b.innerHTML=`<span>${escapeHtml(d.label)}</span><small>${escapeHtml(d.sub)}</small>`;b.onclick=d.fn;return b;
+}
+function renderSrcButtons(){
+  const m=appMode(),L=btnLayoutFor(m),ks=orderedKeys(m);
+  const vis=ks.filter(k=>!L.hide.includes(k)),hid=ks.filter(k=>L.hide.includes(k));
+  const g=$('sourceGrid');g.innerHTML='';
+  vis.forEach(k=>g.appendChild(mkSrcBtn(srcDefs.find(d=>d.k===k))));
+  if(srcShowHidden)hid.forEach(k=>g.appendChild(mkSrcBtn(srcDefs.find(d=>d.k===k),true)));
+  $('srcTools').innerHTML=(hid.length?`<button id="srcMore">${srcShowHidden?'－ 숨긴 버튼 접기':'＋ 숨긴 버튼 '+hid.length+'개'}</button>`:'')+`<button id="srcEdit">✏️ 버튼 배치</button>`;
+  if(hid.length)$('srcMore').onclick=()=>{srcShowHidden=!srcShowHidden;renderSrcButtons()};
+  $('srcEdit').onclick=openBtnEd;
+}
+function openBtnEd(){renderBtnEd();openSheet('btnEd')}
+function renderBtnEd(){
+  const m=appMode(),L=btnLayoutFor(m),ks=orderedKeys(m);
+  $('btnEdTitle').textContent=`✏️ 상세창 버튼 배치 · ${MODE_NAME[m]}`;
+  $('btnList').innerHTML=ks.map((k,i)=>{const d=srcDefs.find(x=>x.k===k),h=L.hide.includes(k);
+    return `<div class="thRow${h?' off':''}" data-k="${escapeHtml(k)}"><button class="bUp" ${i?'':'disabled'}>↑</button><button class="bDn" ${i<ks.length-1?'':'disabled'}>↓</button>
+      <div class="thTxt"><b>${escapeHtml(d.label)}</b><small>${escapeHtml(d.sub)}</small></div><button class="bHide">${h?'보이기':'숨기기'}</button></div>`}).join('');
+  $('btnList').querySelectorAll('.thRow').forEach(r=>{
+    const k=r.dataset.k;
+    const mv=dir=>{const o=orderedKeys(m),i=o.indexOf(k),j=i+dir;if(j<0||j>=o.length)return;[o[i],o[j]]=[o[j],o[i]];saveBtnLayout(m,{...btnLayoutFor(m),order:o});renderBtnEd()};
+    r.querySelector('.bUp').onclick=()=>mv(-1);r.querySelector('.bDn').onclick=()=>mv(1);
+    r.querySelector('.bHide').onclick=()=>{const L2=btnLayoutFor(m);const hide=L2.hide.includes(k)?L2.hide.filter(x=>x!==k):[...L2.hide,k];saveBtnLayout(m,{order:orderedKeys(m),hide});renderBtnEd()};
+  });
+}
+$('btnReset').onclick=()=>{saveBtnLayout(appMode(),{order:[],hide:[]});renderBtnEd()};
+$('btnEd').querySelector('[data-close]').addEventListener('click',()=>{if(currentPlace)openDetail(currentPlace)});
+
+/* ---------- ≡ 목록 보기 (카드가 겹칠 때) ---------- */
+let lastSelected=[];
+function renderList(){
+  if(!$('listPanel').classList.contains('on'))return;
+  $('listBody').innerHTML=lastSelected.length?lastSelected.map((p,i)=>{const [l1,l2]=cardLines(p);
+    return `<div class="lrow" data-i="${i}"><span class="lno">${i+1}</span><div class="ltxt"><b>${escapeHtml(p.place_name)}</b><small>${l1}</small>${l2?`<small>${l2}</small>`:''}</div><button class="ltmap" data-i="${i}">TMAP</button></div>`}).join('')
+    :'<div class="binEmpty">표시된 결과가 없어요.</div>';
+  $('listBody').querySelectorAll('.lrow').forEach(r=>r.onclick=e=>{if(e.target.closest('.ltmap'))return;$('listPanel').classList.remove('on');openDetail(lastSelected[+r.dataset.i])});
+  $('listBody').querySelectorAll('.ltmap').forEach(b=>b.onclick=e=>{e.stopPropagation();openTmap(lastSelected[+b.dataset.i])});
+  $('listTitle').textContent=$('rank').selectedOptions[0]?`≡ ${$('rank').selectedOptions[0].text} · ${lastSelected.length}곳`:'≡ 목록';
+}
+$('listBtn').onclick=()=>{const on=!$('listPanel').classList.contains('on');$('detail').classList.remove('open');$('listPanel').classList.toggle('on',on);renderList()};
+$('listClose').onclick=()=>$('listPanel').classList.remove('on');
+
+
+/* ---------- 🅿️ 주차장·입구 ---------- */
+// 주차장이 있으면 주차장, 없으면 60m 넘게 떨어진 입구만 (가게 바로 앞 입구는 의미 없음)
+function parkingOf(p){
+  const e=ENRICH[p&&p.id];const nv=e&&e.navi;if(!nv||!nv.length||!hasLoc(p))return null;
+  const withD=nv.map(g=>({...g,d:Math.round(distanceM(+p.y,+p.x,g.y,g.x))}));
+  const pk=withD.find(g=>g.t==='PARKING');if(pk)return pk;
+  const en=withD.filter(g=>/입구/.test(g.n)&&g.d>60).sort((a,b)=>a.d-b.d)[0];return en||null;
+}
+function openTmapSmart(p){const pk=parkingOf(p);openTmap(pk?{place_name:p.place_name+(pk.t==='PARKING'?' 주차장':' 입구'),x:pk.x,y:pk.y}:p)}
+async function ensureEnrich(p){
+  if(!hasLoc(p)||!/^\d+$/.test(String(p.id)))return;
+  if(ENRICH[p.id]&&!isStale(ENRICH[p.id]))return;
+  try{const r=await fetch(API+'?ids='+p.id,{credentials:'same-origin'});const j=r.ok?await r.json():null;const v=j&&j[p.id];if(v&&!v.err){v._t=Date.now();ENRICH[p.id]=v}}catch(_){}
+}
+
+/* ---------- 다음 일정 카드 (여행 당일, 지도 아래쪽) ---------- */
+let lastPos=null, nextHideUid=null;
+function nowMin(){const d=new Date(Date.now()+9*36e5);return d.getUTCHours()*60+d.getUTCMinutes()}
+function nextItem(){
+  const d=todayIdx();if(d<0)return null;
+  const now=nowMin();
+  return live(items).filter(it=>it.day===d&&!it.visited&&it.visited!==false&&it.start+it.dur>=now).sort((a,b)=>a.start-b.start)[0]||null;
+}
+function updateNextCard(){
+  const el=$('nextCard');if(!el)return;
+  const it=nextItem();
+  if(!it||it.uid===nextHideUid){el.style.display='none';return}
+  const now=nowMin(), ongoing=it.start<=now;
+  const t=lastPos&&hasLoc(it.p)?travelMin({x:lastPos.lng,y:lastPos.lat},it.p):null;
+  const late=t!=null&&!ongoing&&now+t>it.start;
+  const pk=parkingOf(it.p);
+  el.innerHTML=`<div class="ncTxt"><small>${ongoing?'지금 일정':'다음 일정'}${t!=null?` · 🚗 약 ${t}분`:''}${late?' · <b style="color:#c0392b">늦을 수 있음</b>':''}</small><b>${hm(it.start)} ${escapeHtml(it.p.place_name)}</b></div>`+
+    (hasLoc(it.p)?`<button class="ncGo">${pk?(pk.t==='PARKING'?'🅿️ ':'🚪 '):''}TMAP</button>`:'')+`<button class="ncOk" title="다녀옴">✅</button><button class="ncX" title="숨기기">✕</button>`;
+  el.style.display='flex';
+  const g=el.querySelector('.ncGo');if(g)g.onclick=e=>{e.stopPropagation();openTmapSmart(it.p)};
+  el.querySelector('.ncOk').onclick=e=>{e.stopPropagation();it.visited={at:Date.now(),auto:false};stamp(it);savePlan();updateNextCard()};
+  el.querySelector('.ncX').onclick=e=>{e.stopPropagation();nextHideUid=it.uid;updateNextCard()};
+  el.querySelector('.ncTxt').onclick=()=>{curDay=it.day;openPlan();openItemEd(it.uid)};
+  if(!ENRICH[it.p.id])ensureEnrich(it.p).then(()=>{if(parkingOf(it.p))updateNextCard()});
+}
+setInterval(updateNextCard,60000);
+
+/* ---------- 지도 안내 문구: 처음 한 번만 ---------- */
+(function(){
+  const h=$('hint');if(!h)return;
+  if(lsGet('hintSeen',false)){h.style.display='none';return}
+  const done=()=>{h.style.display='none';lsSet('hintSeen',true)};
+  setTimeout(done,12000);h.addEventListener('click',done);
+})();
+
 function startApp(){
+  setTimeout(startVisitWatch,2000);
   setTimeout(checkInviteLink,300);
   if(typeof kakao==='undefined'||!kakao.maps){
     setStatus('카카오 지도를 불러오지 못했습니다. 카카오 개발자 사이트에 이 주소(도메인)가 등록돼 있는지 확인하세요.');
@@ -1560,7 +2165,7 @@ function startApp(){
   const def=String(lsGet('startDef','gps')), st=getStarts();
   if(def!=='gps'&&st[+def]&&st[+def].lat){$('startSel').value='s'+def;startSelPrev='s'+def;init(st[+def].lat,st[+def].lng);return}
   navigator.geolocation.getCurrentPosition(
-    p=>init(p.coords.latitude,p.coords.longitude),
+    p=>{lastPos={lat:p.coords.latitude,lng:p.coords.longitude};init(lastPos.lat,lastPos.lng);setTimeout(updateNextCard,500)},
     ()=>{setStatus('위치 권한을 사용할 수 없어 기본 위치에서 시작합니다.');init(33.4996,126.5312)},
     {enableHighAccuracy:true,timeout:10000,maximumAge:15000}
   );

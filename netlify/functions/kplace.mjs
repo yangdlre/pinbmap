@@ -9,7 +9,8 @@ const HEADERS = {
   'Referer': 'https://place.map.kakao.com/',
   'Accept': 'application/json'
 };
-const TTL = 30 * 60 * 1000;
+const TTL = 30 * 60 * 1000;            // 평점·가격
+const TTL_EV = 90 * 1000;               // 충전기 빈자리는 금방 바뀌므로 1분 30초
 const cache = globalThis.__pinbCache || (globalThis.__pinbCache = new Map());
 
 function pick(d) {
@@ -26,6 +27,10 @@ function pick(d) {
   if (Array.isArray(uv)) o.uv = uv;
   const h = d.open_hours && d.open_hours.headline;
   if (h) o.open = { c: h.code || '', t: h.display_text || '', i: h.display_text_info || '' };
+  // 주차장·입구 좌표 (오름·해변은 대표 위치와 차 댈 곳이 다른 경우가 많음)
+  if (Array.isArray(d.navi_guides) && d.navi_guides.length) o.navi = d.navi_guides.slice(0, 4)
+    .filter(g => g && g.point && Number.isFinite(+g.point.lat) && Number.isFinite(+g.point.lon))
+    .map(g => ({ n: String(g.name || '').slice(0, 20), t: g.type || '', y: +g.point.lat, x: +g.point.lon }));
   const g = d.gas_station;
   if (g) o.gas = { g: g.price_gas, p: g.price_premium_gas, d: g.price_diesel, l: g.price_lpg,
     ag: g.avg_price_gas, ad: g.avg_price_diesel, al: g.avg_price_lpg, t: g.time_gas || g.time_diesel || '' };
@@ -52,7 +57,7 @@ function pick(d) {
 
 async function one(id) {
   const c = cache.get(id);
-  if (c && Date.now() - c.t < TTL) return c.v;
+  if (c && Date.now() - c.t < (c.v && c.v.ev ? TTL_EV : TTL)) return c.v;
   const ctl = new AbortController();
   const tm = setTimeout(() => ctl.abort(), 4000);
   try {
@@ -79,10 +84,11 @@ export default async (req) => {
     const res = await Promise.all(part.map(one));
     part.forEach((id, k) => { out[id] = res[k]; });
   }
+  const hasEv = Object.values(out).some(v => v && v.ev);
   return new Response(JSON.stringify(out), {
     headers: {
       'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'public, max-age=600',
+      'cache-control': hasEv ? 'public, max-age=60' : 'public, max-age=600',
       'access-control-allow-origin': '*'
     }
   });
