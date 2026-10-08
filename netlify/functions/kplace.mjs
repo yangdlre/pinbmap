@@ -44,7 +44,7 @@ function pick(d) {
       });
     });
     o.ev = { tot: bi.charger_total_cnt ?? (fast + slow), av: bi.charger_avail_cnt ?? (fastAv + slowAv),
-      kw, fast, fastAv, slow, slowAv, op: bi.op_name || '', pub: bi.open_place_label || '',
+      kw, fast, fastAv, slow, slowAv, op: bi.op_name || '', pub: bi.open_place_label || '', kind: bi.s_code_name || '',
       hours: bi.business_hours || '', park: bi.free_parking_yn || '' };
   }
   return o;

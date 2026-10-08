@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>핀볼 맛집 검색 v0.20</title>
+<title>핀볼 맛집 검색 v0.22</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -155,6 +155,15 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 .roomBtn{font-size:12px;padding:6px 9px}
 .roomBtn.on{background:#e8f6ec;border-color:#5cb87a;color:#1f7a35}
 .rbox{border:1px solid #e3e5e8;border-radius:12px;padding:10px;margin-bottom:10px}
+.thRow{display:flex;align-items:center;gap:8px;padding:8px 4px;border-bottom:1px solid #eee}
+.thRow .thTxt{flex:1;min-width:0}
+.thRow .thTxt b{display:block;font-size:14px}
+.thRow .thTxt small{display:block;font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.thRow button{font-size:12px;padding:5px 8px}
+.thDel{color:#c0392b}
+.tadj{padding:6px 8px!important;font-size:12px!important}
+#edStart{font-size:15px;padding:6px 8px;border:1px solid #cfd3d9;border-radius:10px}
+#edDur{width:64px;font-size:15px;padding:6px 6px;border:1px solid #cfd3d9;border-radius:10px;text-align:center}
 #roomCode{font-size:34px;font-weight:800;letter-spacing:6px;margin:6px 0 10px;font-family:ui-monospace,Menlo,monospace}
 .mem{display:inline-block;background:#f1f2f4;border-radius:10px;padding:4px 9px;margin:0 5px 5px 0;font-size:13px}
 .mem small{color:#888;font-size:10px}
@@ -168,13 +177,7 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 <header>
   <div class="row">
     <select id="mode"><option value="food" selected>🍽 맛집</option><option value="tour">🏝 관광지</option><option value="fuel">⛽ 주유·충전</option></select>
-    <select id="theme" class="foodOnly">
-      <option value="FD6" selected>음식점</option><option value="CE7">카페</option>
-      <option value="흑돼지">흑돼지</option><option value="고기국수">고기국수</option><option value="해물">해물·갈치·전복</option>
-      <option value="해장국">해장국</option><option value="횟집">횟집</option><option value="고깃집">고깃집</option><option value="술집">술집</option>
-      <option value="한식">한식</option><option value="일식">일식</option><option value="중식">중식</option>
-      <option value="브런치">브런치</option><option value="베이커리">베이커리</option>
-    </select>
+    <select id="theme" class="foodOnly"></select>
     <select id="fuel" class="fuelOnly"><option value="gas" selected>휘발유</option><option value="lpg">LPG</option><option value="ev">전기충전</option></select>
     <select id="tourTheme" class="tourOnly"><option value="AT4" selected>명소 전체</option><option value="오름">오름</option><option value="해변">해변</option><option value="폭포">폭포</option><option value="숲">숲·공원</option><option value="박물관">박물관·미술관</option><option value="체험">테마파크·체험</option></select>
     <select id="radius">
@@ -207,6 +210,17 @@ body:not(.fuel-ev) .evOnly{display:none!important}
   <div id="hint">지도를 움직여 가운데 + 를 원하는 곳에 맞추고 “이 지역 검색” · 카드 탭 = 상세 · 카드 드래그 = 회전</div>
 </div>
 </div>
+<div id="themeEd" class="sheet"><div class="sheetHead"><b>✏️ 맛집 테마 편집</b><button data-close="themeEd">닫기</button></div>
+  <div class="sheetBody">
+    <div class="rbox"><b>＋ 테마 추가</b>
+      <div class="row" style="margin-top:8px"><input type="text" id="thName" placeholder="이름 (예: 갈치조림)" style="flex:1 1 120px;min-width:0"><select id="thCg"><option value="FD6" selected>음식점에서</option><option value="CE7">카페에서</option><option value="">전체에서</option></select></div>
+      <div class="row" style="margin-top:6px"><input type="text" id="thKw" placeholder="검색어 (비우면 이름으로 · 여러 개는 쉼표로: 갈치조림,갈치구이)" style="flex:1;min-width:0"><button id="thAdd" class="sourceBtn main" style="min-height:0;padding:8px 14px">추가</button></div>
+    </div>
+    <div id="thMsg" style="font-size:12px;color:#1f5fbf;min-height:16px;margin-bottom:6px"></div>
+    <div id="thList"></div>
+    <button id="thReset" style="margin-top:10px;font-size:12px">기본 목록으로 되돌리기</button>
+    <div style="font-size:11px;color:#777;margin-top:10px;line-height:1.6">· ↑ 로 순서를 바꾸고, － 삭제로 뺄 수 있어요. 바꾼 목록은 이 폰에만 저장됩니다.<br>· 한 번만 찾을 땐 위쪽 입력칸의 +키워드(예: +갈치조림)가 더 간편해요.</div>
+  </div></div>
 <div id="startEd" class="sheet"><div class="sheetHead"><b>📍 시작위치 편집</b><button data-close="startEd">닫기</button></div>
   <div class="sheetBody"><div style="font-size:12px;color:#666;margin-bottom:8px">현재위치 + 4곳까지 저장. ⭐ 기본 = 앱을 열면 처음 보여줄 위치. 상세화면의 “🏷 시작위치로”로도 저장됩니다.</div><div id="startList"></div></div></div>
 <div id="sched" class="sheet"><div class="sheetHead"><b>📅 여행 일정</b><span class="hbtns"><button class="roomBtn">👥 같이 쓰기</button><button data-close="sched">닫기</button></span></div>
@@ -220,7 +234,9 @@ body:not(.fuel-ev) .evOnly{display:none!important}
   <div class="shareBox" id="shareBox"><button id="shareCopy">내 일정 공유코드 복사</button><span>또는 받은 코드 붙여넣기 ↓</span><textarea id="shareIn" placeholder="PINB1:..."></textarea><button id="shareApply">받은 일정으로 바꾸기</button><div id="shareMsg"></div></div>
   <div class="row sheetFoot"><button id="dayMap">🗺 이 날 지도에서 보기</button><button id="copySched">📋 글자로 복사</button><button id="shareSched">🔗 공유코드</button></div>
   <div id="itemEd"><div style="display:flex;justify-content:space-between;gap:8px"><b id="edName"></b><button id="edClose">닫기</button></div>
-    <div class="row"><select id="edDay"></select><select id="edStart"></select><select id="edDur"></select></div>
+    <div class="row"><select id="edDay"></select></div>
+    <div class="row" style="align-items:center"><span style="font-size:12px;width:42px">시작</span><button class="tadj" data-adj="s-5">−5분</button><input type="time" id="edStart" step="300"><button class="tadj" data-adj="s5">+5분</button></div>
+    <div class="row" style="align-items:center"><span style="font-size:12px;width:42px;white-space:nowrap">머무름</span><button class="tadj" data-adj="d-10">−10</button><input type="number" id="edDur" min="5" max="720" step="5" inputmode="numeric"><span style="font-size:12px">분</span><button class="tadj" data-adj="d10">+10</button><span id="edEnd" style="font-size:12px;color:#a0522d"></span></div>
     <div class="row"><input type="text" id="edMemo" placeholder="메모 (예: 예약 13시, 주차 2시간 무료)"></div>
     <div class="row"><button id="edTmap" class="sourceBtn main" style="min-height:0;padding:8px 12px">TMAP 길안내</button><button id="edInfo">상세</button><button id="edBack">담아둔 곳으로</button><button id="edDel">삭제</button></div></div>
 </div>
@@ -237,7 +253,7 @@ body:not(.fuel-ev) .evOnly{display:none!important}
       <div class="rbox"><b>친구에게 코드를 받은 사람</b><div class="row" style="margin-top:8px"><input type="text" id="joinIn" placeholder="방 코드 6자리" style="flex:1;min-width:0;text-transform:uppercase;letter-spacing:3px" maxlength="12"><button id="roomJoin">참여</button></div></div>
     </div>
     <div id="roomIn" style="display:none">
-      <div class="rbox" style="text-align:center"><div style="font-size:12px;color:#666">우리 여행방 코드</div><div id="roomCode"></div><button id="roomCopy">📋 초대 문구 복사</button></div>
+      <div class="rbox" style="text-align:center"><div style="font-size:12px;color:#666">우리 여행방 코드</div><div id="roomCode"></div><button id="roomCopy" class="sourceBtn main" style="min-height:0;display:inline-block;padding:9px 14px">📋 초대 링크 복사</button> <button id="roomShare" style="display:none">↗ 공유하기</button><div style="font-size:11px;color:#777;margin-top:8px">카톡에 붙여넣어 보내면, 친구는 링크를 누르고 이름만 적어 “참여”하면 됩니다.</div></div>
       <div class="rbox"><b>참여한 사람</b><div id="roomMembers" style="margin-top:6px"></div><div id="roomState" style="font-size:12px;margin-top:8px"></div></div>
       <button id="roomLeave" style="margin-top:6px">방에서 나오기</button>
     </div>
@@ -275,13 +291,25 @@ function lsGet(k,d){try{const v=localStorage.getItem('pinb_'+k);return v===null?
 function lsSet(k,v){try{localStorage.setItem('pinb_'+k,JSON.stringify(v))}catch(_){}}
 
 /* ---------- 테마 ---------- */
-const THEMES={
-  FD6:{cat:'FD6'}, CE7:{cat:'CE7'},
-  흑돼지:{kw:['흑돼지'],cg:'FD6'}, 고기국수:{kw:['고기국수'],cg:'FD6'}, 해물:{kw:['갈치','전복','해물'],cg:'FD6'},
-  해장국:{kw:['해장국'],cg:'FD6'}, 횟집:{kw:['횟집'],cg:'FD6'}, 고깃집:{kw:['고깃집'],cg:'FD6'}, 술집:{kw:['술집'],cg:''},
-  한식:{kw:['한식'],cg:'FD6'}, 일식:{kw:['일식'],cg:'FD6'}, 중식:{kw:['중식'],cg:'FD6'},
-  브런치:{kw:['브런치'],cg:''}, 베이커리:{kw:['베이커리'],cg:''}
-};
+// 맛집 테마 목록 — 직접 추가·삭제·순서 변경 가능 (이 폰에 저장)
+const DEFAULT_THEMES=[
+  {id:'FD6',label:'음식점',cat:'FD6'},{id:'CE7',label:'카페',cat:'CE7'},
+  {id:'흑돼지',label:'흑돼지',kw:['흑돼지'],cg:'FD6'},{id:'고기국수',label:'고기국수',kw:['고기국수'],cg:'FD6'},
+  {id:'해물',label:'해물·갈치·전복',kw:['갈치','전복','해물'],cg:'FD6'},{id:'해장국',label:'해장국',kw:['해장국'],cg:'FD6'},
+  {id:'횟집',label:'횟집',kw:['횟집'],cg:'FD6'},{id:'고깃집',label:'고깃집',kw:['고깃집'],cg:'FD6'},{id:'술집',label:'술집',kw:['술집'],cg:''},
+  {id:'한식',label:'한식',kw:['한식'],cg:'FD6'},{id:'일식',label:'일식',kw:['일식'],cg:'FD6'},{id:'중식',label:'중식',kw:['중식'],cg:'FD6'},
+  {id:'브런치',label:'브런치',kw:['브런치'],cg:''},{id:'베이커리',label:'베이커리',kw:['베이커리'],cg:''}
+];
+let themeList=lsGet('themes',null)||DEFAULT_THEMES.map(t=>({...t}));
+function themeById(id){return themeList.find(t=>t.id===id)||themeList[0]||DEFAULT_THEMES[0]}
+let themePrev=null;
+function fillThemeSel(keep){
+  const cur=keep||$('theme').value||themePrev;
+  $('theme').innerHTML=themeList.map(t=>`<option value="${escapeHtml(t.id)}">${escapeHtml(t.label)}</option>`).join('')+
+    '<option value="__add">➕ 테마 추가…</option><option value="__edit">✏️ 테마 편집…</option>';
+  $('theme').value=themeList.some(t=>t.id===cur)?cur:(themeList[0]||{}).id;
+  themePrev=$('theme').value;
+}
 // 관광지 테마: 카카오 분류(관광명소 AT4 / 문화시설 CT1)로 찾고, 분류명으로 세부 종류를 거름
 const TOUR={
   AT4:{q:[{cat:'AT4'}]},
@@ -412,9 +440,9 @@ function buildQueries(){
     if(plus.length) return plus.map(k=>({kw:k}));
     return (TOUR[$('tourTheme').value]||TOUR.AT4).q;
   }
-  const t=THEMES[$('theme').value]||THEMES.FD6;
+  const t=themeById($('theme').value);
   if(plus.length){
-    const cg=$('theme').value==='CE7'?'CE7':'FD6';
+    const cg=(t.cat==='CE7'||t.cg==='CE7')?'CE7':'FD6';
     return plus.map(k=>({kw:k,cg}));
   }
   if(t.cat) return [{cat:t.cat}];
@@ -487,13 +515,18 @@ function searchPlaces(keepCenter){
   }else queries.forEach(q=>lay.pts.forEach(([x,y])=>oneSearch({loc:offsetLatLng(x,y)},q)));
 }
 function filterItems(items){
-  filterStats={fran:0,minus:0};
+  filterStats={fran:0,minus:0,apt:0};
   if(appMode()==='fuel'){
     const f=fuelKind();
     const txt=p=>(p.category_name||'')+' '+(p.place_name||'');
     if(f==='gas') return items.filter(p=>/주유소/.test(p.category_name||''));
     if(f==='lpg') return items.filter(p=>/LPG|가스충전/i.test(txt(p)));
-    return items.filter(p=>/전기차/.test(txt(p))&&!/LPG|가스충전/i.test(txt(p)));
+    // 아파트·오피스텔 등 주민 전용 충전기는 이름으로 먼저 거름 (단, '공영주차장'은 남김)
+    return items.filter(p=>{
+      if(!/전기차/.test(txt(p))||/LPG|가스충전/i.test(txt(p)))return false;
+      if(/아파트|APT|빌라|오피스텔|아이파크|타운하우스|맨션/i.test(p.place_name)&&!/공영|주차장/.test(p.place_name)){filterStats.apt++;return false}
+      return true;
+    });
   }
   const {plus,minus}=parseKw();
   const noFran=appMode()==='food'&&$('noFran').checked;
@@ -629,6 +662,12 @@ function renderFromLast(opt={}){
     if(ok) items=items.filter(p=>{const e=ENRICH[p.id];if(appMode()==='tour'&&(!e||!e.open||!e.open.c))return true;return e&&e.open&&e.open.c==='OPEN'});
     else note=' · 영업중 필터는 평판 데이터 연결 후 적용';
   }
+  if(appMode()==='fuel'&&fuelKind()==='ev'&&ok){
+    // 상세 정보로 한 번 더: 시설 구분이 아파트 등이거나 '비개방'(주민·전용)인 곳 제외
+    const before=items.length;
+    items=items.filter(p=>{const v=(ENRICH[p.id]||{}).ev;return !v||!(/아파트|공동주택|오피스텔|빌라|연립/.test(v.kind||'')||v.pub==='비개방')});
+    filterStats.apt2=before-items.length;
+  }
   if(appMode()==='fuel'&&fuelKind()==='ev'&&$('fastOnly').checked){
     if(ok) items=items.filter(p=>{const e=ENRICH[p.id];return e&&e.ev&&e.ev.fast>0});
     else note=' · 급속 필터는 충전기 데이터 연결 후 적용';
@@ -645,6 +684,10 @@ function renderFromLast(opt={}){
   const label=appMode()==='fuel'?$('fuel').selectedOptions[0].text:themeLabel();
   const rankLabel=$('rank').selectedOptions[0]?$('rank').selectedOptions[0].text:'';
   let extra='';
+  if(appMode()==='fuel'&&fuelKind()==='ev'){
+    const a=(filterStats.apt||0)+(filterStats.apt2||0);
+    if(a)extra+=` · 아파트·비개방 ${a}곳 뺌`;
+  }
   if(appMode()!=='fuel'){
     if(filterStats.fran)extra+=` · 프랜차이즈 ${filterStats.fran}곳 뺌`;
     if(filterStats.minus)extra+=` · 제외어 ${filterStats.minus}곳 뺌`;
@@ -833,7 +876,7 @@ function repHtml(p){
   if(appMode()==='fuel'){
     if(e.ev){
       const v=e.ev;
-      return `<b>⚡ ${v.fast?`급속 ${v.fastAv}/${v.fast}대 가능`:''}${v.fast&&v.slow?' · ':''}${v.slow?`완속 ${v.slowAv}/${v.slow}대 가능`:''}</b><br>최대 ${v.kw||'?'}kW · ${escapeHtml(v.op)} · ${escapeHtml(v.pub)}${v.hours?' · '+escapeHtml(v.hours):''}${v.park==='Y'?' · 무료주차':''}`;
+      return `<b>⚡ ${v.fast?`급속 ${v.fastAv}/${v.fast}대 가능`:''}${v.fast&&v.slow?' · ':''}${v.slow?`완속 ${v.slowAv}/${v.slow}대 가능`:''}</b><br>최대 ${v.kw||'?'}kW · ${escapeHtml(v.op)} · ${escapeHtml(v.pub)}${v.hours?' · '+escapeHtml(v.hours):''}${v.park==='Y'?' · 무료주차':''}${v.kind?' · '+escapeHtml(v.kind):''}`;
     }
     if(e.gas){
       const g=e.gas, f=x=>x>0?won(x):'-';
@@ -975,7 +1018,41 @@ $('mode').onchange=()=>{
   lsSet('mode',appMode());applyModeClass();fillRank(true);updateRadiusCircle();clearExclusions();searchPlaces(true);
 };
 $('fuel').onchange=()=>{lsSet('fuel',fuelKind());applyModeClass();fillRank(true);clearExclusions();searchPlaces(true)};
-$('theme').onchange=()=>{clearExclusions();searchPlaces(true)};
+$('theme').onchange=()=>{
+  const v=$('theme').value;
+  if(v==='__add'||v==='__edit'){$('theme').value=themePrev;openThemeEd(v==='__add');return}
+  themePrev=v;clearExclusions();searchPlaces(true);
+};
+/* ----- 테마 편집 ----- */
+function openThemeEd(focusAdd){renderThemeEd();openSheet('themeEd');if(focusAdd)setTimeout(()=>$('thName').focus(),120)}
+function saveThemes(){lsSet('themes',themeList);fillThemeSel()}
+const CG_LABEL={FD6:'음식점',CE7:'카페','':'전체'};
+function renderThemeEd(msg){
+  $('thMsg').textContent=msg||'';
+  $('thList').innerHTML=themeList.map((t,i)=>`<div class="thRow" data-i="${i}">
+    <button class="thUp" ${i?'':'disabled'}>↑</button>
+    <div class="thTxt"><b>${escapeHtml(t.label)}</b><small>${t.cat?(t.cat==='CE7'?'카카오 분류: 카페 전체':'카카오 분류: 음식점 전체'):'검색어: '+escapeHtml((t.kw||[]).join(', '))+' · '+CG_LABEL[t.cg||'']}</small></div>
+    <button class="thDel">－ 삭제</button></div>`).join('');
+  $('thList').querySelectorAll('.thRow').forEach(r=>{
+    const i=+r.dataset.i;
+    r.querySelector('.thUp').onclick=()=>{if(!i)return;[themeList[i-1],themeList[i]]=[themeList[i],themeList[i-1]];saveThemes();renderThemeEd()};
+    r.querySelector('.thDel').onclick=()=>{if(themeList.length<=1){renderThemeEd('최소 1개는 남겨야 해요.');return}const t=themeList.splice(i,1)[0];saveThemes();renderThemeEd(`“${t.label}” 삭제됨`)};
+  });
+}
+$('thAdd').onclick=()=>{
+  const label=$('thName').value.trim();
+  const kws=($('thKw').value.trim()||label).split(/[,，]/).map(x=>x.trim()).filter(Boolean).slice(0,5);
+  if(!label){renderThemeEd('테마 이름을 적어주세요. (예: 갈치조림)');$('thName').focus();return}
+  if(themeList.some(t=>t.label===label)){renderThemeEd('같은 이름이 이미 있어요.');return}
+  const id='u_'+Date.now().toString(36);
+  themeList.push({id,label,kw:kws,cg:$('thCg').value});
+  $('thName').value='';$('thKw').value='';saveThemes();renderThemeEd(`“${label}” 추가됨 — 목록 맨 아래에 있어요.`);
+};
+$('thName').addEventListener('keydown',e=>{if(e.key==='Enter')$('thAdd').click()});
+$('thKw').addEventListener('keydown',e=>{if(e.key==='Enter')$('thAdd').click()});
+$('thReset').onclick=()=>{themeList=DEFAULT_THEMES.map(t=>({...t}));saveThemes();renderThemeEd('기본 목록으로 되돌렸어요.')};
+$('themeEd').querySelector('[data-close]').addEventListener('click',()=>{closeSheet('themeEd');const was=themePrev;fillThemeSel(was);if($('theme').value!==was){clearExclusions();searchPlaces(true)}});
+fillThemeSel('FD6');
 $('tourTheme').onchange=()=>{clearExclusions();searchPlaces(true)};
 let lastKw='[]';
 $('kw').addEventListener('change',()=>{
@@ -1243,16 +1320,25 @@ let edUid=null;
 function openItemEd(iuid){
   const it=items.find(x=>x.uid===iuid);if(!it)return;edUid=iuid;
   $('edName').textContent=it.p.place_name;
-  let so='';for(let t=trip.from*60;t<trip.to*60;t+=30)so+=`<option value="${t}">${hm(t)}</option>`;
-  $('edStart').innerHTML=so;$('edStart').value=it.start;
-  $('edDur').innerHTML=[30,60,90,120,150,180,240,300,360].map(m=>`<option value="${m}">${m<60?m+'분':(m/60)+'시간'}</option>`).join('');$('edDur').value=it.dur;
+  $('edStart').value=hm(it.start);$('edDur').value=it.dur;$('edEnd').textContent=`→ ${hm(it.start+it.dur)}까지`;
   $('edDay').innerHTML=Array.from({length:trip.days},(_,i)=>`<option value="${i}">${dayLabel(i)}</option>`).join('');$('edDay').value=it.day;
   $('edMemo').value=it.memo||'';
   $('edTmap').style.display=it.p.custom?'none':'';$('edInfo').style.display=it.p.custom?'none':'';
   $('itemEd').classList.add('on');
 }
-function edSave(){const it=items.find(x=>x.uid===edUid);if(!it)return;const n={start:+$('edStart').value,dur:+$('edDur').value,day:+$('edDay').value,memo:$('edMemo').value.trim()};if(n.start===it.start&&n.dur===it.dur&&n.day===it.day&&n.memo===(it.memo||''))return;Object.assign(it,n);stamp(it);savePlan()}
+function parseHM(v){const m=/^(\d{1,2}):(\d{2})/.exec(v||'');return m?(+m[1])*60+(+m[2]):null}
+function edSave(){const it=items.find(x=>x.uid===edUid);if(!it)return;
+  let st=parseHM($('edStart').value);if(st==null)st=it.start;st=clamp(Math.round(st/5)*5,trip.from*60,trip.to*60-5);
+  let du=Math.round((+$('edDur').value||it.dur)/5)*5;du=clamp(du,5,720);
+  $('edStart').value=hm(st);$('edDur').value=du;$('edEnd').textContent=`→ ${hm(st+du)}까지`;
+  const n={start:st,dur:du,day:+$('edDay').value,memo:$('edMemo').value.trim()};if(n.start===it.start&&n.dur===it.dur&&n.day===it.day&&n.memo===(it.memo||''))return;Object.assign(it,n);stamp(it);savePlan()}
 ['edStart','edDur','edDay'].forEach(id=>$(id).onchange=()=>{edSave();renderPlan()});
+document.querySelectorAll('#itemEd .tadj').forEach(b=>b.onclick=()=>{
+  const a=b.dataset.adj, n=+a.slice(1);
+  if(a[0]==='s'){const v=(parseHM($('edStart').value)??trip.from*60)+n;$('edStart').value=hm(clamp(v,trip.from*60,trip.to*60-5))}
+  else $('edDur').value=Math.max(5,(+$('edDur').value||60)+n);
+  edSave();renderPlan();
+});
 $('edMemo').onchange=()=>{edSave();renderPlan()};
 $('edClose').onclick=()=>{edSave();$('itemEd').classList.remove('on');renderPlan()};
 $('edBack').onclick=()=>{unplace(edUid);$('itemEd').classList.remove('on');renderPlan()};
@@ -1296,7 +1382,7 @@ $('dayMap').onclick=()=>showDayOnMap(curDay);
 
 /* ----- 텍스트 복사 / 공유코드 ----- */
 async function copyText(t,okMsg){
-  try{await navigator.clipboard.writeText(t);return okMsg}
+  try{await Promise.race([navigator.clipboard.writeText(t),new Promise((_,rej)=>setTimeout(()=>rej(0),1500))]);return okMsg}
   catch(_){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(_){}ta.remove();return okMsg}
 }
 function planText(){
@@ -1357,19 +1443,22 @@ let members={}, syncState='', syncTimer=null, syncBusy=false, syncAgain=false, l
 function myNick(){return (room&&room.nick)||lsGet('nick','')||''}
 function mergeArr(a=[],b=[]){const m=new Map();for(const x of a)if(x&&x.uid)m.set(x.uid,x);for(const x of b){if(!x||!x.uid)continue;const y=m.get(x.uid);if(!y||(x.upd||0)>(y.upd||0))m.set(x.uid,x)}return [...m.values()]}
 function scheduleSync(){if(!room)return;clearTimeout(syncTimer);syncTimer=setTimeout(()=>syncNow(),600)}
-async function syncNow(create){
+// 동기화 요청은 한 줄로 세워서 하나씩 처리 (버튼을 두 번 눌러도 꼬이지 않게)
+let syncQ=Promise.resolve();
+function syncNow(create){const p=syncQ.then(()=>doSync(create));syncQ=p.catch(()=>{});return p}
+async function doSync(create){
   if(!room)return {err:'none'};
-  if(syncBusy){syncAgain=true;return {busy:true}}
+  const myRoom=room;
   syncBusy=true;lastTry=Date.now();let res;
   try{
     const r=await fetch(SYNC_API,{method:'POST',headers:{'content-type':'application/json'},
       body:JSON.stringify({room:room.code,nick:room.nick,create:!!create,doc:{trip,picks,items,todos}})});
     const j=await r.json().catch(()=>({err:'서버 응답 없음'}));
+    if(room!==myRoom){syncBusy=false;return {err:'changed'}}   // 도중에 방을 나가거나 바꾼 경우 결과 무시
     if(r.ok&&j.doc){applyRemote(j.doc);members=j.members||{};lastSync=Date.now();syncState='ok';res={ok:true}}
     else{syncState=j.err||('오류 '+r.status);res={err:j.err||r.status}}
   }catch(_){syncState='offline';res={err:'offline'}}
   syncBusy=false;renderRoomBits();
-  if(syncAgain){syncAgain=false;scheduleSync()}
   return res;
 }
 function applyRemote(d){
@@ -1404,30 +1493,49 @@ $('roomEd').querySelector('[data-close]').onclick=()=>{   // 닫으면 원래 �
 function needNick(){const n=$('nickIn').value.trim();if(!n){$('roomMsg').textContent='먼저 내 이름(친구들에게 보일 이름)을 적어주세요.';$('nickIn').focus();return null}lsSet('nick',n);return n}
 const RC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 function newCode(){let s='';const a=new Uint32Array(6);(crypto.getRandomValues?crypto.getRandomValues(a):a.forEach((_,i)=>a[i]=Math.random()*1e9));a.forEach(v=>s+=RC[v%RC.length]);return s}
+let roomWorking=false;
+function roomBusy(on){roomWorking=on;['roomCreate','roomJoin'].forEach(id=>$(id).disabled=on)}
 $('roomCreate').onclick=async()=>{
+  if(roomWorking||room)return;
   const nick=needNick();if(!nick)return;
-  $('roomMsg').textContent='방 만드는 중…';
-  for(let i=0;i<3;i++){
-    room={code:newCode(),nick};
-    const r=await syncNow(true);
-    if(r.ok){lsSet('room',room);$('roomMsg').textContent='✅ 방을 만들었어요. 아래 코드를 친구에게 보내주세요.';renderRoomBits();return}
-    if(r.err!=='exists'){room=null;$('roomMsg').textContent=r.err==='offline'?'인터넷 연결을 확인해 주세요.':'방을 만들지 못했어요 ('+r.err+'). Netlify 주소에서만 동작합니다.';renderRoomBits();return}
-  }
-  room=null;$('roomMsg').textContent='잠시 후 다시 시도해 주세요.';
+  roomBusy(true);$('roomMsg').textContent='방 만드는 중…';
+  try{
+    for(let i=0;i<3;i++){
+      const cand={code:newCode(),nick};room=cand;
+      const r=await syncNow(true);
+      if(r.ok){room=cand;lsSet('room',cand);$('roomMsg').textContent='✅ 방을 만들었어요. 위 코드나 “초대 링크 복사”로 친구를 부르세요.';return}
+      if(r.err!=='exists'){room=null;$('roomMsg').textContent=r.err==='offline'?'인터넷 연결을 확인해 주세요.':'방을 만들지 못했어요 ('+r.err+'). Netlify 주소에서만 동작합니다.';return}
+    }
+    room=null;$('roomMsg').textContent='잠시 후 다시 시도해 주세요.';
+  }finally{roomBusy(false);renderRoomBits()}
 };
 $('roomJoin').onclick=async()=>{
+  if(roomWorking)return;
   const nick=needNick();if(!nick)return;
   const code=$('joinIn').value.toUpperCase().replace(/[^A-Z0-9]/g,'');
   if(code.length<6){$('roomMsg').textContent='방 코드 6자리를 입력하세요.';return}
-  $('roomMsg').textContent='참여하는 중…';
-  room={code,nick};
-  const r=await syncNow(false);
-  if(r.ok){lsSet('room',room);$('roomMsg').textContent='✅ 참여했어요. 이제 일정표와 할일이 같이 맞춰집니다.';$('joinIn').value='';renderRoomBits();return}
+  roomBusy(true);$('roomMsg').textContent='참여하는 중…';
+  const cand={code,nick};room=cand;
+  const r=await syncNow(false);roomBusy(false);
+  if(r.ok){room=cand;lsSet('room',cand);$('roomMsg').textContent='✅ 참여했어요. 이제 일정표와 할일이 같이 맞춰집니다.';$('joinIn').value='';try{history.replaceState(null,'',location.pathname)}catch(_){}renderRoomBits();return}
   room=null;renderRoomBits();
   $('roomMsg').textContent=r.err==='no room'?'그런 방 코드가 없어요. 코드를 다시 확인해 주세요.':r.err==='offline'?'인터넷 연결을 확인해 주세요.':'참여하지 못했어요 ('+r.err+')';
 };
 $('roomLeave').onclick=()=>{room=null;members={};syncState='';lsSet('room',null);$('roomMsg').textContent='방에서 나왔어요. 지금까지의 일정·할일은 이 폰에 그대로 남아 있습니다.';renderRoomBits()};
-$('roomCopy').onclick=async()=>{$('roomMsg').textContent=await copyText(`핀볼 지도 여행방 코드: ${room.code}\n${location.origin}\n(📅 일정 → 👥 같이 쓰기 → 코드로 참여)`,'📋 초대 문구를 복사했어요. 카톡에 붙여넣으세요.')};
+function inviteUrl(){return `${location.origin}${location.pathname}?room=${room.code}`}
+$('roomCopy').onclick=async()=>{$('roomMsg').textContent=await copyText(`🍊 핀볼 지도 여행방에 초대합니다\n아래 링크를 누르고 이름만 적으면 바로 참여돼요.\n${inviteUrl()}\n(방 코드: ${room.code}${'  · 앱 비밀번호는 따로 알려줄게요'})`,'📋 초대 링크를 복사했어요. 카톡에 붙여넣어 보내세요.')};
+if(navigator.share)$('roomShare').style.display='';
+$('roomShare').onclick=()=>{try{navigator.share({title:'핀볼 지도 여행방',text:`여행방 코드 ${room.code} — 링크를 누르고 이름만 적으면 참여돼요.`,url:inviteUrl()})}catch(_){}};
+// 초대 링크(?room=코드)로 들어온 경우: 참여 화면을 코드가 채워진 채로 열어줌
+function checkInviteLink(){
+  const m=/[?&]room=([A-Za-z0-9]{6,12})/.exec(location.search);if(!m)return;
+  const code=m[1].toUpperCase();
+  if(room&&room.code===code){try{history.replaceState(null,'',location.pathname)}catch(_){}return}
+  openSheet('roomEd');renderRoomBits();
+  $('joinIn').value=code;
+  $('roomMsg').textContent=room?`지금 다른 방(${room.code})에 있어요. “방에서 나오기” 후 참여하세요.`:'초대받은 방 코드가 채워졌어요. 내 이름을 적고 “참여”를 누르세요.';
+  if(!room&&!$('nickIn').value)setTimeout(()=>$('nickIn').focus(),150);
+}
 $('nickIn').onchange=()=>{const n=$('nickIn').value.trim();if(!n)return;lsSet('nick',n);if(room){room.nick=n;lsSet('room',room);scheduleSync()}};
 document.querySelectorAll('.roomBtn').forEach(b=>b.onclick=openRoom);
 // 화면을 보고 있는 동안만: 일정/할일 창이 열려 있으면 5초, 아니면 20초마다 맞춤
@@ -1444,6 +1552,7 @@ $('todoBtn').onclick=()=>{renderTodo();openSheet('todo');if(room)syncNow()};
 updateBadge();persistTodo();fillStartSel();
 
 function startApp(){
+  setTimeout(checkInviteLink,300);
   if(typeof kakao==='undefined'||!kakao.maps){
     setStatus('카카오 지도를 불러오지 못했습니다. 카카오 개발자 사이트에 이 주소(도메인)가 등록돼 있는지 확인하세요.');
     return;
