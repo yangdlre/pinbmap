@@ -85,10 +85,11 @@ export default async (req) => {
     part.forEach((id, k) => { out[id] = res[k]; });
   }
   const hasEv = Object.values(out).some(v => v && v.ev);
+  const hasErr = Object.values(out).some(v => !v || v.err);   // 실패가 섞인 응답은 캐시하지 않음 (다시 검색하면 새로 시도)
   return new Response(JSON.stringify(out), {
     headers: {
       'content-type': 'application/json; charset=utf-8',
-      'cache-control': hasEv ? 'public, max-age=60' : 'public, max-age=600',
+      'cache-control': hasErr ? 'no-store' : hasEv ? 'public, max-age=60' : 'public, max-age=600',
       'access-control-allow-origin': '*'
     }
   });

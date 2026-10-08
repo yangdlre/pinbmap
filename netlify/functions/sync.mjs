@@ -38,12 +38,15 @@ export function mergeKV(a = {}, b = {}) {
 function cleanDoc(d) {
   const o = { trip: d && typeof d.trip === 'object' ? d.trip : null };
   // 항목 번호는 영문·숫자만, 수정시각은 숫자만 허용 (이상한 값이 친구 화면에 들어가지 않게)
-  for (const k of ARR) o[k] = Array.isArray(d && d[k]) ? d[k].filter(x => x && typeof x === 'object' && typeof x.uid === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(x.uid) && (x.upd === undefined || Number.isFinite(+x.upd))).slice(0, 1500) : [];
+  // 수정시각은 숫자로 맞추고(문자열 비교 방지) 하루 넘는 미래 값은 지금으로, 개수 제한 시 최신 것부터 남김
+  const lim = Date.now() + 864e5;
+  for (const k of ARR) o[k] = Array.isArray(d && d[k]) ? d[k].filter(x => x && typeof x === 'object' && typeof x.uid === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(x.uid) && (x.upd === undefined || Number.isFinite(+x.upd)))
+    .map(x => ({ ...x, upd: Math.min(+x.upd || 0, lim) })).sort((a, b) => b.upd - a.upd).slice(0, 1500) : [];
   return o;
 }
 function cleanKV(kv) {
   const o = {};
-  if (kv && typeof kv === 'object') for (const [k, x] of Object.entries(kv).slice(0, 40)) if (/^[a-zA-Z]{1,20}$/.test(k) && x && typeof x === 'object') o[k] = { v: x.v, upd: +x.upd || 0 };
+  if (kv && typeof kv === 'object') for (const [k, x] of Object.entries(kv).slice(0, 40)) if (/^[a-zA-Z]{1,20}$/.test(k) && x && typeof x === 'object') o[k] = { v: x.v, upd: Math.min(+x.upd || 0, Date.now() + 864e5) };
   return o;
 }
 // 주의: @netlify/blobs 10.0.x 의 setJSON()은 onlyIfMatch/onlyIfNew 조건을 서버에 넘기지 않음(동시 저장 시 덮어씀).
@@ -63,6 +66,7 @@ export default async (req) => {
   if (req.method !== 'POST') return ok({ err: 'POST only' }, 405);
   let body;
   try { body = await req.json(); } catch { return ok({ err: 'bad json' }, 400); }
+  if (!body || typeof body !== 'object') return ok({ err: 'bad json' }, 400);
   const code = String(body.room || '').toUpperCase();
   if (!/^[A-Z0-9]{6,12}$/.test(code)) return ok({ err: 'bad room' }, 400);
   const isSet = body.kind === 'set';
@@ -77,6 +81,7 @@ export default async (req) => {
       if (!body.create) return ok({ err: 'no room' }, 404);
       const rec = isSet ? { kv: cleanKV(body.kv), created: Date.now() }
                         : { doc: cleanDoc(body.doc || {}), members: { [nick]: Date.now() }, created: Date.now() };
+      if (Buffer.byteLength(JSON.stringify(rec)) > MAX_BYTES) return ok({ err: 'too big' }, 413);
       const w = await put(st, key, rec, { onlyIfNew: true });
       if (w === 'conflict') continue;
       if (w === 'fail') return ok({ err: 'save failed' }, 503);
@@ -87,7 +92,7 @@ export default async (req) => {
     let rec;
     if (isSet) rec = { ...data, kv: mergeKV(data.kv || {}, cleanKV(body.kv)) };
     else rec = { ...data, doc: mergeDoc(cleanDoc(data.doc || {}), cleanDoc(body.doc || {})), members: { ...(data.members || {}), [nick]: Date.now() } };
-    if (JSON.stringify(rec).length > MAX_BYTES) return ok({ err: 'too big' }, 413);
+    if (Buffer.byteLength(JSON.stringify(rec)) > MAX_BYTES) return ok({ err: 'too big' }, 413);
     const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
     if (w === 'conflict') continue;
     if (w === 'fail') return ok({ err: 'save failed' }, 503);
