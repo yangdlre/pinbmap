@@ -46,6 +46,15 @@ function cleanKV(kv) {
   if (kv && typeof kv === 'object') for (const [k, x] of Object.entries(kv).slice(0, 40)) if (/^[a-zA-Z]{1,20}$/.test(k) && x && typeof x === 'object') o[k] = { v: x.v, upd: +x.upd || 0 };
   return o;
 }
+// 주의: @netlify/blobs 10.0.x 의 setJSON()은 onlyIfMatch/onlyIfNew 조건을 서버에 넘기지 않음(동시 저장 시 덮어씀).
+// 그래서 조건이 제대로 전달되는 set()에 JSON 글자를 넣어 저장하고,
+// 저장 서버 오류인데 성공처럼 돌아오는 경우(etag 없음)는 실패로 처리한다.
+async function put(st, key, rec, cond) {
+  const w = await st.set(key, JSON.stringify(rec), cond);
+  if (w && w.modified === false) return 'conflict';
+  if (!w || !w.etag) return 'fail';
+  return 'ok';
+}
 function store() {
   return globalThis.__pinbStore || getStore({ name: 'pinb-rooms', consistency: 'strong' });
 }
@@ -68,8 +77,9 @@ export default async (req) => {
       if (!body.create) return ok({ err: 'no room' }, 404);
       const rec = isSet ? { kv: cleanKV(body.kv), created: Date.now() }
                         : { doc: cleanDoc(body.doc || {}), members: { [nick]: Date.now() }, created: Date.now() };
-      const w = await st.setJSON(key, rec, { onlyIfNew: true });
-      if (w && w.modified === false) continue;
+      const w = await put(st, key, rec, { onlyIfNew: true });
+      if (w === 'conflict') continue;
+      if (w === 'fail') return ok({ err: 'save failed' }, 503);
       return ok(isSet ? { kv: rec.kv } : { doc: rec.doc, members: rec.members });
     }
     if (body.create) return ok({ err: 'exists' }, 409);
@@ -78,8 +88,9 @@ export default async (req) => {
     if (isSet) rec = { ...data, kv: mergeKV(data.kv || {}, cleanKV(body.kv)) };
     else rec = { ...data, doc: mergeDoc(cleanDoc(data.doc || {}), cleanDoc(body.doc || {})), members: { ...(data.members || {}), [nick]: Date.now() } };
     if (JSON.stringify(rec).length > MAX_BYTES) return ok({ err: 'too big' }, 413);
-    const w = await st.setJSON(key, rec, { onlyIfMatch: cur.etag });
-    if (w && w.modified === false) continue;
+    const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
+    if (w === 'conflict') continue;
+    if (w === 'fail') return ok({ err: 'save failed' }, 503);
     return ok(isSet ? { kv: rec.kv } : { doc: rec.doc, members: rec.members });
   }
   return ok({ err: 'busy' }, 503);
