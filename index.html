@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>핀볼 맛집 검색 v0.37</title>
+<title>핀볼 맛집 검색 v0.38</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -151,6 +151,12 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 #pbOv{position:fixed;inset:0;z-index:150;touch-action:none;user-select:none;-webkit-user-select:none}
 .pbHud button{background:#fff3;color:#fff;border:0;border-radius:12px;padding:3px 9px;font-size:12px;min-height:0}
 .pbBall{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 10%,#d5dae0 28%,#7c8691 68%,#3f464e);box-shadow:0 3px 6px #0007;will-change:transform}
+.pbGeo{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.pbGeo .pbSling{fill:#7a0000cc;stroke:#2a0000;stroke-width:1.5}
+.pbGeo .pbKick{stroke:#ff3b3b;stroke-width:5;stroke-linecap:round}.pbGeo .pbKick.on{stroke:#ffe36b;filter:drop-shadow(0 0 4px #ff3b3b)}
+.pbGeo .pbLaneWall{stroke:#8a929b;stroke-width:6;stroke-linecap:round}
+.pbGeo .pbArc{fill:none;stroke:#8a929b;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.pbGeo .pbSpring{fill:#ff8a00;opacity:.85}
 .pbAim{position:absolute;height:0;border-top:3px dashed #d40000;transform-origin:0 0;display:none;pointer-events:none;z-index:4;filter:drop-shadow(0 0 2px #fff)}
 .pbAim::after{content:'';position:absolute;right:-2px;top:-8px;border:6px solid transparent;border-left:10px solid #d40000}
 .pbAim.full{border-top-color:#ff8a00}.pbAim.full::after{border-left-color:#ff8a00}
@@ -240,7 +246,10 @@ body:not(.fuel-ev) .evOnly{display:none!important}
 #areaSug.on{display:block}
 .sugHead{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;font-size:12px;color:#555;border-bottom:1px solid #eee}
 .sugHead button{font-size:11px;padding:3px 8px}
-.sug{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid #f0f0f0;border-radius:0;padding:8px 10px}
+.sug{display:block;width:100%;text-align:left;border:0;border-radius:0;padding:8px 10px;flex:1;min-width:0;background:none}
+.sugRow{display:flex;align-items:center;border-bottom:1px solid #f0f0f0}
+.sugAct{flex:none;width:40px;height:36px;padding:0;margin-right:4px;border-radius:9px;font-size:16px}
+.sugFoot{display:flex;gap:6px;align-items:center;justify-content:flex-end;padding:7px 10px;font-size:11px;color:#777;flex-wrap:wrap}.sugFoot button{font-size:11px;padding:4px 8px}
 .sug b{display:block;font-size:14px}
 .sug small{display:block;font-size:11px;color:#777;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .target span{display:inline-block;background:#ff5a1f;color:#fff;font-weight:700;font-size:12px;padding:4px 9px;border-radius:12px;box-shadow:0 2px 8px #0005;white-space:nowrap}
@@ -323,7 +332,7 @@ body:not(.fuel-ev) .evOnly{display:none!important}
   </div>
   <div class="row">
     <button id="again">이 지역 검색</button>
-    <input type="text" id="areaInput" autocomplete="off" placeholder="지역 이동 (예: 애월)" enterkeyhint="go"><button id="areaBtn">이동</button><select id="startSel" title="시작위치"></select>
+    <input type="text" id="areaInput" autocomplete="off" placeholder="📍 장소·지역 찾기 (공항·주차장·숙소)" enterkeyhint="go"><button id="areaBtn">이동</button><select id="startSel" title="시작위치"></select>
   </div>
   <div id="areaSug"></div>
 </header>
@@ -434,9 +443,10 @@ body:not(.fuel-ev) .evOnly{display:none!important}
         <label>축소 <select id="pinShrink"><option value="1">없음</option><option value="2">2배</option><option value="3">3배</option><option value="4">4배</option><option value="5">5배</option></select></label>
         <label><input type="checkbox" id="pinRand"> 랜덤</label>
         <label><input type="checkbox" id="pinMove"> 무브</label>
-        <label style="flex-basis:100%">게임 속도 <input type="range" id="pinSpeed" min="40" max="150" step="5" value="70" style="width:140px;accent-color:#d40000"> <b id="pinSpeedV">70%</b> <small style="color:#888">(A·B·C 따로 · 느려도 천장까지)</small></label>
+        <label style="flex-basis:100%">게임 속도 <input type="range" id="pinSpeed" min="10" max="150" step="5" value="70" style="width:140px;accent-color:#d40000"> <b id="pinSpeedV">70%</b> <small style="color:#888">(A·B·C 따로 · 느려도 천장까지)</small></label>
         <label><input type="checkbox" id="pinChill"> 편하게 놀기 · 공 무제한</label>
         <label><input type="checkbox" id="pinSound"> 효과음</label>
+        <label>C 발사 통로 <select id="pinLane"><option value="R">오른쪽</option><option value="L">왼쪽</option></select></label>
       </div>
     </div>
     <div class="rbox"><b>✏️ 편집</b><div class="row" style="margin-top:8px;flex-wrap:wrap"><button id="goStartEd">📍 시작위치 (8곳)</button><button id="goThemeEd">🍽 맛집 테마</button><button id="goBtnEd">🔘 상세창 버튼 배치</button></div></div>
@@ -1123,12 +1133,14 @@ function pbSound(g,type){if(!g.opt.sound)return;try{
 function pbBuildBumpers(g){   // 지도 카드 → 게임용 카드(원래 카드는 숨김)
   g.ov.querySelectorAll('.pbCard').forEach(e=>e.remove());
   const o=g.opt,W=g.W,top=64,bot=g.H*(g.mode==='C'?.62:.72),sc=1/o.shrink,placed=[],gapW=Math.round(PB_D*1.6);
-  g.area={top,bot};
+  const xl=g.lane&&g.lane.side==='L'?g.lane.wx+gapW:0,xr=g.lane&&g.lane.side==='R'?g.lane.wx-gapW:W;   // 발사 통로 쪽은 비워둠
+  g.area={top,bot,xl,xr};
   g.bumpers=g.src.map(({w,c,r})=>{
     const hw=r.width*sc/2,hh=r.height*sc/2;let cx=r.left+r.width/2,cy=r.top+r.height/2;
     if(o.rand){   // 랜덤 배치: 벽·다른 카드와 공 1.6개 이상 띄움(끼임 방지)
-      for(let k=0;k<50;k++){const tx=hw+gapW+Math.random()*Math.max(1,W-2*hw-2*gapW),ty=top+hh+Math.random()*Math.max(1,bot-top-2*hh);
+      for(let k=0;k<50;k++){const tx=Math.max(xl,0)+hw+gapW+Math.random()*Math.max(1,(xr-Math.max(xl,0))-2*hw-2*gapW),ty=top+hh+Math.random()*Math.max(1,bot-top-2*hh);
         cx=tx;cy=ty;if(!placed.some(q=>Math.abs(q.cx-tx)<q.hw+hw+gapW&&Math.abs(q.cy-ty)<q.hh+hh+gapW))break}}
+    if(g.lane){if(cx+hw>xr)cx=xr-hw;if(cx-hw<xl)cx=xl+hw}
     const el=document.createElement('div');el.className='card pbCard';el.innerHTML=c.innerHTML;
     el.style.cssText=`left:${cx-r.width/2}px;top:${cy-r.height/2}px;width:${r.width}px;height:${r.height}px;scale:${sc}`;
     g.ov.insertBefore(el,g.ballEl);
@@ -1156,20 +1168,36 @@ function startPinball(fromWrap,x,y,vx,vy){
     `<div class="pbAim" id="pbAim"></div><div class="pbBall" id="pbBall"></div><div class="pbTip" id="pbTip"></div><div class="pbNote" id="pbNote"></div>`;
   document.body.appendChild(ov);
   const sb=$('schedBtn').getBoundingClientRect();
-  const g=pb={mode,opt:o,W,H,ov,ballEl:ov.querySelector('#pbBall'),ball:{x,y,vx,vy,r:PB_R},src,bumpers:[],total:0,broken:0,hits:0,
+  const g=pb={mode,opt:o,lane:null,slings:[],walls:[],W,H,ov,ballEl:ov.querySelector('#pbBall'),ball:{x,y,vx,vy,r:PB_R},src,bumpers:[],total:0,broken:0,hits:0,
     balls:3,chill:o.chill,speed:o.speed[mode],phase:'live',paused:false,simT:0,acc:0,
     t0:performance.now(),last:performance.now(),raf:0,jack:{l:sb.left,t:sb.top,rr:sb.right,b:sb.bottom},over:false,endAt:0,
     flip:null,flipP:null,flipLen:0,rails:null,jackHits:0,jackNeed:5*o.hp,jackCool:0,saveUntil:0,saveUsed:false,
     pad:mode==='B'?{x:W/2,w:Math.min(W*.3,150),y:H-46,h:14}:null,aim:null,padId:null,keys:new Set(),stuck:{t:0,x,y},off:[]};
+  if(mode==='C'){   // 발사 통로: 화면 한쪽 끝(공 1.7개 폭), 위쪽 모서리 곡선이 공을 판 안으로 꺾어줌
+    const side=o.lane,lw=Math.round(PB_D*1.7),wx=side==='R'?W-lw:lw,R=Math.round(PB_D*3.6),topY=70;
+    g.lane={side,lw,wx,cx:side==='R'?W-lw/2:lw/2,floor:H-26,wallTop:topY+R+12,topY,R};
+  }
   pbBuildBumpers(g);
   if(mode==='C'){   // 공 크기 기준: 플리퍼 길이 공 3.6개, 쉬는 상태 끝 사이 틈 = 공 1.6개 (실제 핀볼 비율)
     const L=g.flipLen=Math.min(PB_D*3.6,W*.24),ca=Math.cos(PB_FL.L[0]*Math.PI/180),sa=Math.sin(PB_FL.L[0]*Math.PI/180);
     const tipX=W/2-(PB_D*1.6/2+PB_CAP),px=tipX-L*ca,py=H-40-L*sa;
     g.flipP={L:{x:px,y:py},R:{x:W-px,y:py}};
     g.flip={L:{ang:PB_FL.L[0],w:0,ids:new Set()},R:{ang:PB_FL.R[0],w:0,ids:new Set()}};
-    const ry=py-px*Math.tan(30*Math.PI/180);   // 벽에서 플리퍼 축까지 빈틈없이 이어진 레일(30°)
-    g.rails=[{a:{x:0,y:ry},b:{x:px,y:py}},{a:{x:W,y:ry},b:{x:W-px,y:py}}];
+    // 벽(발사 통로 쪽은 통로 벽)에서 플리퍼 축까지 빈틈없이 이어진 레일(30°)
+    const t30=Math.tan(30*Math.PI/180),lx=g.lane.side==='L'?g.lane.wx:0,rx=g.lane.side==='R'?g.lane.wx:W;
+    g.rails=[{a:{x:lx,y:py-(px-lx)*t30},b:{x:px,y:py}},{a:{x:rx,y:py-(rx-(W-px))*t30},b:{x:W-px,y:py}}];
     g.rails.forEach((r,k)=>{const el=$(k?'pbRR':'pbRL'),dx=r.b.x-r.a.x,dy=r.b.y-r.a.y;el.style.cssText=`left:${r.a.x}px;top:${r.a.y-4}px;width:${Math.hypot(dx,dy)+6}px;transform:rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`});
+    // 삼각 범퍼(슬링샷): 레일 윗끝 벽에 붙여 만든 삼각형 → 벽·레일과 틈이 없어 공이 끼지 않음. 안쪽 빗면에 맞으면 튕겨냄
+    g.slings=g.rails.map(r=>{const t=.72,S={x:r.a.x,y:r.a.y-PB_D*2.2},B={x:r.a.x+(r.b.x-r.a.x)*t,y:r.a.y+(r.b.y-r.a.y)*t};return {A:r.a,S,B,flash:0}});
+    // 발사 통로 벽 + 위쪽 곡선(선분 10개)
+    const Ln=g.lane,cxA=Ln.side==='R'?W-Ln.R:Ln.R,cyA=Ln.topY+Ln.R;
+    g.walls=[{a:{x:Ln.wx,y:H+40},b:{x:Ln.wx,y:Ln.wallTop}}];
+    let prev=null;for(let k=0;k<=10;k++){const an=(Ln.side==='R'?0:Math.PI)+(Ln.side==='R'?-1:1)*k/10*Math.PI/2,pt={x:cxA+Math.cos(an)*Ln.R,y:cyA+Math.sin(an)*Ln.R};if(prev)g.walls.push({a:prev,b:pt,arc:1});prev=pt}
+    const svg=g.slings.map(q=>`<polygon class="pbSling" points="${q.S.x},${q.S.y} ${q.A.x},${q.A.y} ${q.B.x},${q.B.y}"/><line class="pbKick" x1="${q.S.x}" y1="${q.S.y}" x2="${q.B.x}" y2="${q.B.y}"/>`).join('')+
+      `<line class="pbLaneWall" x1="${Ln.wx}" y1="${H}" x2="${Ln.wx}" y2="${Ln.wallTop}"/><polyline class="pbArc" points="${g.walls.filter(w=>w.arc).map((w,k)=>(k?'':w.a.x+','+w.a.y+' ')+w.b.x+','+w.b.y).join(' ')}"/>`+
+      `<rect class="pbSpring" id="pbSpring" x="${Ln.cx-8}" y="${Ln.floor}" width="16" height="${H-Ln.floor}"/>`;
+    $(Ln.side==='R'?'pbBR':'pbBL').style[Ln.side==='R'?'right':'left']=(Ln.lw+8)+'px';   // 플리퍼 버튼이 발사 통로를 가리지 않게
+    ov.insertAdjacentHTML('afterbegin',`<svg class="pbGeo" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${svg}</svg>`);
   }
   const on=(el,t,fn,op)=>{el.addEventListener(t,fn,op);g.off.push(()=>el.removeEventListener(t,fn,op))};
   on(ov,'pointerdown',e=>pbDown(g,e),{passive:false});on(ov,'pointermove',e=>pbMove(g,e),{passive:false});
@@ -1179,6 +1207,7 @@ function startPinball(fromWrap,x,y,vx,vy){
   on(window,'blur',()=>{if(!g.over)pbPause(g,true)});
   on(window,'keydown',e=>pbKey(g,e,true));on(window,'keyup',e=>pbKey(g,e,false));
   g.saveUntil=performance.now()+8000;pbVib(g,20);pbSound(g,'launch');
+  if(mode==='C')pbServe(g);   // 핀볼은 발사 통로에서 시작
   pbHud();g.raf=requestAnimationFrame(t=>pbFrame(g,t));
 }
 function bmRect(bm){return {l:bm.cx-bm.hw,t:bm.cy-bm.hh,rr:bm.cx+bm.hw,b:bm.cy+bm.hh}}
@@ -1189,19 +1218,25 @@ function pbHud(){const g=pb;if(!g)return;
 }
 function pbNote(g,t){const n=$('pbNote');n.textContent=t;n.classList.remove('show');void n.offsetWidth;n.classList.add('show')}
 // ----- 발사 준비: 공이 빠지면 대기, 공을 잡고 아래로 당겼다 놓으면 당긴 반대 방향으로 발사 -----
-function pbReadyPos(g){const b=g.ball;if(g.mode==='B'){b.x=g.pad.x;b.y=g.pad.y-b.r-1}else{b.x=g.W/2;b.y=Math.max(g.area.bot+40,g.flipP.L.y-150)}}
+function pbReadyPos(g){const b=g.ball;if(g.mode==='B'){b.x=g.pad.x;b.y=g.pad.y-b.r-1}else{b.x=g.lane.cx;b.y=g.lane.floor-b.r-1}}
 function pbServe(g){g.phase='ready';g.aim=null;const b=g.ball;b.vx=b.vy=0;pbReadyPos(g);g.ballEl.style.display='';
-  $('pbTip').textContent='공을 잡고 아래로 당겼다 놓으면 반대 방향으로 발사';$('pbTip').classList.add('on');pbDrawAim(g)}
+  $('pbTip').textContent=g.lane?'통로의 공을 아래로 당겼다 놓으면 발사':'공을 잡고 아래로 당겼다 놓으면 반대 방향으로 발사';$('pbTip').classList.add('on');pbDrawAim(g)}
 function pbAimVec(g){   // 당긴 벡터 → 발사 방향·세기 (위쪽 ±75° 안, 세게 당기면 천장까지)
-  const a=g.aim;if(!a)return null;let dx=-(a.cx-a.sx),dy=-(a.cy-a.sy);const pull=Math.hypot(dx,dy);
+  const a=g.aim;if(!a)return null;
+  if(g.lane){const pull=a.cy-a.sy;if(pull<10)return null;const p=Math.min(1,pull/120),vTop=Math.sqrt(2*PB_G*(g.lane.floor-g.lane.topY));   // 발사 통로: 곧게 위로, 세게 당길수록 멀리
+    return {ang:0,p,v:vTop*(.55+.6*p),plunger:1}}
+  let dx=-(a.cx-a.sx),dy=-(a.cy-a.sy);const pull=Math.hypot(dx,dy);
   if(a.cy-a.sy<12||pull<14)return null;
   let ang=Math.atan2(dx,-dy);ang=Math.max(-75,Math.min(75,ang*180/Math.PI))*Math.PI/180;
   const p=Math.min(1,pull/110),vTop=Math.sqrt(2*PB_G*Math.max(80,g.ball.y-PB_R-4))*1.06;
   return {ang,p,v:vTop*(.4+.6*p)};
 }
-function pbDrawAim(g){const el=$('pbAim'),v=pbAimVec(g);if(!v){el.style.display='none';return}
+function pbDrawAim(g){const el=$('pbAim'),v=pbAimVec(g);
+  if(g.lane){el.style.display='none';const pull=g.aim&&v?Math.min(40,(g.aim.cy-g.aim.sy)*.35):0,sp=$('pbSpring');   // 스프링이 눌리고 공이 내려감
+    if(g.phase==='ready'){g.ball.y=g.lane.floor-g.ball.r-1+pull;if(sp){sp.setAttribute('y',g.lane.floor+pull);sp.setAttribute('height',Math.max(4,g.H-g.lane.floor-pull))}}return}
+  if(!v){el.style.display='none';return}
   el.style.display='block';el.style.width=(30+v.p*130)+'px';el.style.left=g.ball.x+'px';el.style.top=(g.ball.y-2)+'px';el.style.transform=`rotate(${v.ang*180/Math.PI-90}deg)`;el.classList.toggle('full',v.p>=1)}
-function pbFire(g,v){const b=g.ball;b.vx=v.v*Math.sin(v.ang);b.vy=-v.v*Math.cos(v.ang);g.phase='live';g.aim=null;$('pbAim').style.display='none';$('pbTip').classList.remove('on');
+function pbFire(g,v){const b=g.ball;if(g.lane){const sp=$('pbSpring');if(sp){sp.setAttribute('y',g.lane.floor);sp.setAttribute('height',g.H-g.lane.floor)}b.x=g.lane.cx}b.vx=v.v*Math.sin(v.ang);b.vy=-v.v*Math.cos(v.ang);g.phase='live';g.aim=null;$('pbAim').style.display='none';$('pbTip').classList.remove('on');
   g.saveUntil=performance.now()+8000;g.saveUsed=false;g.stuck={t:0,x:b.x,y:b.y};pbVib(g,15);pbSound(g,'launch')}
 // ----- 입력 -----
 function pbDown(g,e){
@@ -1209,7 +1244,7 @@ function pbDown(g,e){
   if(g.over){if(performance.now()>g.endAt&&!g.ov.querySelector('.pbEnd button'))pbCleanup();return}
   if(g.paused)return;
   const b=g.ball;
-  if(g.phase==='ready'&&Math.hypot(e.clientX-b.x,e.clientY-b.y)<48){g.aim={id:e.pointerId,sx:e.clientX,sy:e.clientY,cx:e.clientX,cy:e.clientY};try{g.ov.setPointerCapture(e.pointerId)}catch(_){}return}
+  if(g.phase==='ready'&&(Math.hypot(e.clientX-b.x,e.clientY-b.y)<48||(g.lane&&Math.abs(e.clientX-g.lane.cx)<g.lane.lw&&e.clientY>g.H*.55))){g.aim={id:e.pointerId,sx:e.clientX,sy:e.clientY,cx:e.clientX,cy:e.clientY};try{g.ov.setPointerCapture(e.pointerId)}catch(_){}return}
   if(g.flip){const k=e.clientX<g.W/2?'L':'R';g.flip[k].ids.add(e.pointerId);if(!g.flip[k].on)pbSound(g,'flip')}
   if(g.pad){g.padId=e.pointerId;pbPadTo(e.clientX)}
 }
@@ -1229,7 +1264,7 @@ function pbKey(g,e,down){
   if(g.paused)return;
   if(L||R){e.preventDefault();if(g.flip)g.flip[L?'L':'R'].ids[down?'add':'delete']('key');else if(g.pad)g.keys[down?'add':'delete'](L?'L':'R')}
   if(e.code==='Space'){e.preventDefault();
-    if(down&&!e.repeat&&g.phase==='ready')pbFire(g,{ang:0,p:.9,v:Math.sqrt(2*PB_G*Math.max(80,g.ball.y))*.98});
+    if(down&&!e.repeat&&g.phase==='ready')pbFire(g,g.lane?{ang:0,p:.9,v:Math.sqrt(2*PB_G*(g.lane.floor-g.lane.topY))*1.05}:{ang:0,p:.9,v:Math.sqrt(2*PB_G*Math.max(80,g.ball.y))*.98});
     else if(g.flip){g.flip.L.ids[down?'add':'delete']('space');g.flip.R.ids[down?'add':'delete']('space')}}
 }
 function pbPadTo(x){const g=pb,p=g.pad;p.x=Math.max(p.w/2,Math.min(g.W-p.w/2,x));if(g.phase==='ready')pbReadyPos(g)}   // 바: 손가락 위치를 바로 따라감(속도와 무관)
@@ -1239,7 +1274,7 @@ function pbPause(g,on){
   let p=g.ov.querySelector('.pbPanel');if(p)p.remove();
   if(!on){g.last=performance.now();return}
   p=document.createElement('div');p.className='pbEnd pbPanel';
-  p.innerHTML=`<div class="pbBig">⏸ 일시정지</div><label class="pbSet">게임 속도 <input type="range" id="pbSpd" min="40" max="150" step="5" value="${Math.round(g.speed*100)}"> <b id="pbSpdV">${Math.round(g.speed*100)}%</b></label>
+  p.innerHTML=`<div class="pbBig">⏸ 일시정지</div><label class="pbSet">게임 속도 <input type="range" id="pbSpd" min="10" max="150" step="5" value="${Math.round(g.speed*100)}"> <b id="pbSpdV">${Math.round(g.speed*100)}%</b></label>
     <div class="pbSmall">느리게 해도 공은 천장까지 가요(슬로모션)</div>
     <label class="pbSet"><input type="checkbox" id="pbChl" ${g.chill?'checked':''}> 편하게 놀기 · 공 무제한</label>
     <label class="pbSet"><input type="checkbox" id="pbSnd" ${g.opt.sound?'checked':''}> 효과음</label>
@@ -1267,14 +1302,14 @@ function pbRect(b,R){
   return {nx:dx/d,ny:dy/d,px:cx+dx/d*(b.r+.5),py:cy+dy/d*(b.r+.5)};
 }
 function pbBounce(b,c,e,kick){const vn=b.vx*c.nx+b.vy*c.ny;if(vn<0){b.vx-=(1+e)*vn*c.nx;b.vy-=(1+e)*vn*c.ny;b.vx+=c.nx*kick;b.vy+=c.ny*kick}b.x=c.px;b.y=c.py;return vn<0}
-function pbSeg(b,P,ex,ey,w,rad){   // P에서 (ex,ey)까지의 막대, w=회전속도(rad/s, P 기준)
+function pbSeg(b,P,ex,ey,w,rad,kf){   // P에서 (ex,ey)까지의 막대, w=회전속도(rad/s, P 기준)
   const sx=ex-P.x,sy=ey-P.y,L2=sx*sx+sy*sy||1;let t=((b.x-P.x)*sx+(b.y-P.y)*sy)/L2;t=Math.max(0,Math.min(1,t));
   const qx=P.x+sx*t,qy=P.y+sy*t,dx=b.x-qx,dy=b.y-qy,d=Math.hypot(dx,dy),rr=b.r+rad;
   if(d>=rr||d<1e-3)return false;
   const nx=dx/d,ny=dy/d,vsx=-w*(qy-P.y),vsy=w*(qx-P.x);
   let rvx=b.vx-vsx,rvy=b.vy-vsy;const vn=rvx*nx+rvy*ny;
-  if(vn<0){rvx-=(w?1.5:1.7)*vn*nx;rvy-=(w?1.5:1.7)*vn*ny;b.vx=rvx+vsx;b.vy=rvy+vsy}
-  b.x=qx+nx*(rr+.5);b.y=qy+ny*(rr+.5);return true;
+  const f=kf||(w?1.5:1.7);if(vn<0){rvx-=f*vn*nx;rvy-=f*vn*ny;b.vx=rvx+vsx;b.vy=rvy+vsy}
+  b.x=qx+nx*(rr+.5);b.y=qy+ny*(rr+.5);return vn<0?{nx,ny,vn}:{nx,ny,vn:0};
 }
 function pbJack(g){   // 📅 일정 버튼 명중: 정해진 횟수를 채우면 7777 잭팟
   g.jackHits++;pbVib(g,[20,30,20]);pbSound(g,'jack');
@@ -1319,17 +1354,23 @@ function pbSim(g,h){
     f.ang+=Math.sign(target-f.ang)*Math.min(Math.abs(target-f.ang),(on?1500:700)*h);f.w=(f.ang-prev)/h*Math.PI/180;f.on=on}
   if(g.opt.move)for(const bm of g.bumpers){if(bm.dead)continue;   // 무브: 살짝살짝 떠다님
     bm.cx+=bm.vx*h;bm.cy+=bm.vy*h;
-    if(bm.cx-bm.hw<6){bm.cx=6+bm.hw;bm.vx=Math.abs(bm.vx)}if(bm.cx+bm.hw>g.W-6){bm.cx=g.W-6-bm.hw;bm.vx=-Math.abs(bm.vx)}
+    const L0=Math.max(6,g.area.xl),R0=Math.min(g.W-6,g.area.xr);
+    if(bm.cx-bm.hw<L0){bm.cx=L0+bm.hw;bm.vx=Math.abs(bm.vx)}if(bm.cx+bm.hw>R0){bm.cx=R0-bm.hw;bm.vx=-Math.abs(bm.vx)}
     if(bm.cy-bm.hh<g.area.top){bm.cy=g.area.top+bm.hh;bm.vy=Math.abs(bm.vy)}if(bm.cy+bm.hh>g.area.bot){bm.cy=g.area.bot-bm.hh;bm.vy=-Math.abs(bm.vy)}}
   if(g.phase!=='live')return;
   b.vy+=PB_G*h;b.x+=b.vx*h;b.y+=b.vy*h;
   if(b.x<b.r){b.x=b.r;b.vx=Math.abs(b.vx)*.92}
   if(b.x>g.W-b.r){b.x=g.W-b.r;b.vx=-Math.abs(b.vx)*.92}
   if(b.y<b.r){b.y=b.r;b.vy=Math.abs(b.vy)*.92}
+  const inLane=g.lane&&(g.lane.side==='R'?b.x>g.lane.wx:b.x<g.lane.wx);
+  if(inLane&&b.y>g.lane.floor-b.r){b.y=g.lane.floor-b.r;if(b.vy>=0){pbServe(g);return}}   // 약하게 쏴서 통로로 돌아오면 공 차감 없이 다시 대기
   if(g.mode==='A'){if(b.y>g.H-b.r){b.y=g.H-b.r;pbFloorA(g,b)}}
-  else if(b.y-b.r>g.H){pbLost(g);return}
+  else if(!inLane&&b.y-b.r>g.H){pbLost(g);return}
+  for(const w of g.walls)pbSeg(b,w.a,w.b.x,w.b.y,0,3,w.arc?1.9:1.7);   // 통로 벽·위쪽 곡선(곡선은 거의 손실 없이 미끄러짐)
+  for(const q of g.slings){const c=pbSeg(b,q.S,q.B.x,q.B.y,0,4,1.6);if(c&&c.vn<-60){b.vx+=c.nx*520;b.vy+=c.ny*520;q.flash=.12;pbVib(g,6);pbSound(g,'hit')}   // 슬링샷 킥
+    pbSeg(b,q.A,q.S.x,q.S.y,0,3)}
   for(const bm of g.bumpers){if(bm.dead)continue;const c=pbRect(b,bmRect(bm));if(!c)continue;if(pbBounce(b,c,.9,220)&&g.simT>bm.cool){bm.cool=g.simT+.12;pbHit(g,bm)}if(g.over)return}
-  {const c=pbRect(b,g.jack);if(c){pbBounce(b,c,.9,260);if(g.simT>g.jackCool){g.jackCool=g.simT+.4;pbJack(g);if(g.over)return}}}
+  if(!inLane){const c=pbRect(b,g.jack);if(c){pbBounce(b,c,.9,260);if(g.simT>g.jackCool){g.jackCool=g.simT+.4;pbJack(g);if(g.over)return}}}
   if(g.pad){const P=g.pad,c=pbRect(b,{l:P.x-P.w/2,t:P.y,rr:P.x+P.w/2,b:P.y+P.h});   // 받아치기: 바 가운데=수직, 끝=60°
     if(c){if(c.ny<0&&b.vy>0){const off=Math.max(-1,Math.min(1,(b.x-P.x)/(P.w/2))),sp=Math.max(Math.hypot(b.vx,b.vy),Math.sqrt(2*PB_G*g.H*.85)),an=off*60*Math.PI/180;
         b.vx=sp*Math.sin(an);b.vy=-sp*Math.cos(an);b.y=P.y-b.r-.5;pbVib(g,6);pbSound(g,'pad');
@@ -1367,12 +1408,13 @@ function pbFrame(g,now){
   if(g.flip)for(const k of ['L','R']){const f=g.flip[k],P=g.flipP[k];
     $(k==='L'?'pbFL':'pbFR').style.cssText=`left:${P.x-8}px;top:${P.y-8}px;width:${g.flipLen+16}px;transform:rotate(${f.ang}deg)`;
     $(k==='L'?'pbBL':'pbBR').classList.toggle('on',f.ids.size>0)}
-  if(g.phase==='ready'){$('pbTip').style.left=g.ball.x+'px';$('pbTip').style.top=(g.ball.y-44)+'px'}
+  if(g.slings.length){const ks=g.ov.querySelectorAll('.pbKick');g.slings.forEach((q,k)=>{if(q.flash>0){q.flash-=dt;ks[k].classList.add('on')}else ks[k].classList.remove('on')})}
+  if(g.phase==='ready'){$('pbTip').style.left=Math.max(90,Math.min(g.W-90,g.ball.x))+'px';$('pbTip').style.top=(g.ball.y-44)+'px'}
   g.raf=requestAnimationFrame(t=>pbFrame(g,t));
 }
 function endPinball(why){
-  const g=pb;if(!g||g.over)return;g.over=true;g.overWhy=why;cancelAnimationFrame(g.raf);
-  if(why==='quit'){pbCleanup();return}
+  const g=pb;if(!g)return;if(why==='quit'){pbCleanup();return}   // 그만은 언제든 바로 닫힘
+  if(g.over)return;g.over=true;g.overWhy=why;cancelAnimationFrame(g.raf);
   const p=g.ov.querySelector('.pbPanel');if(p)p.remove();
   const sec=((performance.now()-g.t0)/1000).toFixed(1),box=document.createElement('div');box.className='pbEnd';
   if(why==='jackpot'){
@@ -1425,21 +1467,32 @@ function searchArea(){
   const q=$('areaInput').value.trim();if(!q)return;
   $('areaInput').blur();hideSug();
   setStatus(`“${q}” 찾는 중…`);
-  const opt={size:8};if(searchCenter)opt.location=searchCenter;
-  ps.keywordSearch(q,(data,status)=>{
-    if(status!==kakao.maps.services.Status.OK||!data.length){setStatus(`“${q}”을(를) 찾지 못했습니다.`);return}
-    if(data.length===1){goPlace(data[0]);return}
+  placeSearch(q,data=>{
+    if(!data.length){setStatus(`“${q}”을(를) 찾지 못했습니다.`);showSug(q,[]);return}
+    if(data.length===1){goPlace(data[0]);return}   // 하나뿐이면 바로 그곳(상세창의 📅로 담기)
     showSug(q,data);
-  },opt);
+  });
 }
 function isPoi(d){return !!(d.category_group_code||/음식점|카페|여행|관광|문화|숙박|주유|충전/.test(d.category_name||''))}
+// 📍 장소 찾기: 음식점만이 아니라 공항·주차장·터미널·숙소 등 모든 장소 (카카오 장소 검색, 가까운 곳 우선)
+function placeSearch(q,cb){
+  const opt={size:15};if(searchCenter)opt.location=searchCenter;
+  ps.keywordSearch(q,(data,status)=>cb(status===kakao.maps.services.Status.OK?data:[]),opt);
+}
 function showSug(q,data){
-  const c=searchCenter;
-  $('areaSug').innerHTML=`<div class="sugHead">“${escapeHtml(q)}” ${data.length}곳 — 고르세요<button id="sugX">닫기</button></div>`+data.map((d,i)=>{
+  const c=searchCenter,eq=encodeURIComponent(q);
+  $('areaSug').innerHTML=`<div class="sugHead">📍 “${escapeHtml(q)}” ${data.length}곳 <button id="sugX">닫기</button></div>`+data.map((d,i)=>{
     const dist=c?fmtDist(distanceM(c.getLat(),c.getLng(),+d.y,+d.x)):'';
-    return `<button class="sug" data-i="${i}"><b>${escapeHtml(d.place_name)}</b><small>${escapeHtml((d.category_name||'').split(' > ').pop())}${dist?' · '+dist:''} · ${escapeHtml(d.road_address_name||d.address_name||'')}</small></button>`}).join('');
+    return `<div class="sugRow"><button class="sug" data-i="${i}"><b>${escapeHtml(d.place_name)}</b><small>${escapeHtml((d.category_name||'').split(' > ').pop()||'장소')}${dist?' · '+dist:''} · ${escapeHtml(d.road_address_name||d.address_name||'')}</small></button>`+
+      `<button class="sugAct" data-pick="${i}" title="일정에 담기">${isPicked(d)?'✓':'📅'}</button><button class="sugAct" data-tmap="${i}" title="TMAP 길안내">🚗</button></div>`}).join('')+
+    `<div class="sugFoot">다른 앱 목록에서 찾기 <button id="sugNaver">네이버 지도</button><button id="sugTmap">TMAP</button></div>`;
   $('areaSug').classList.add('on');
   $('areaSug').querySelectorAll('.sug').forEach(b=>b.onclick=()=>{hideSug();goPlace(data[+b.dataset.i])});
+  $('areaSug').querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{const d=data[+b.dataset.pick];if(addPick(d)||isPicked(d))b.textContent='✓'});
+  $('areaSug').querySelectorAll('[data-tmap]').forEach(b=>b.onclick=()=>openTmap(data[+b.dataset.tmap]));
+  $('sugNaver').onclick=()=>openUrl(`https://map.naver.com/p/search/${eq}`);
+  $('sugTmap').onclick=()=>{if(isAndroid())location.href=`intent://search?name=${eq}#Intent;scheme=tmap;package=com.skt.tmap.ku;S.browser_fallback_url=${encodeURIComponent('https://play.google.com/store/apps/details?id=com.skt.tmap.ku')};end`;
+    else if(isIOS())tryApp(`tmap://search?name=${eq}`,'https://apps.apple.com/kr/app/id431589174');else openUrl('https://www.tmap.co.kr/')};
   $('sugX').onclick=hideSug;
 }
 function hideSug(){$('areaSug').classList.remove('on')}
@@ -1708,6 +1761,9 @@ fillThemeSel('FD6');
 $('tourTheme').onchange=()=>{clearExclusions();searchPlaces(true)};
 let lastKw='[]';
 $('kw').addEventListener('change',()=>{
+  const raw=$('kw').value.trim();
+  if(raw&&!/(^|\s)[+-]/.test(raw)&&raw.length>=2)placeSearch(raw,data=>{   // 공항·주차장처럼 가게가 아닌 곳이 나오면 장소 목록을 보여줌
+    if(data.some(d=>!['FD6','CE7'].includes(d.category_group_code)))showSug(raw,data)});
   const now=JSON.stringify(parseKw().plus);
   if(now!==lastKw){lastKw=now;clearExclusions();searchPlaces(true)}  // + 키워드가 바뀌면 다시 검색
   else refilter();                                                     // - 제외어만 바뀌면 다시 거르기만
@@ -2707,16 +2763,16 @@ renderSetBits();
 
 /* ---------- 🃏 지도 카드 동작 옵션 ---------- */
 function cardOpt(){const o=lsGet('cardOpt',null)||{},n=(v,a,b)=>Math.max(a,Math.min(b,Math.round(+v||a))),
-    sp=k=>{const v=+(o.speed&&o.speed[k]);return Number.isFinite(v)&&v>0?Math.max(.4,Math.min(1.5,Math.round(v*20)/20)):.7};
+    sp=k=>{const v=+(o.speed&&o.speed[k]);return Number.isFinite(v)&&v>0?Math.max(.1,Math.min(1.5,Math.round(v*20)/20)):.7};
   return {len:!!o.len,pin:!!o.pin,mode:['A','B','C'].includes(o.mode)?o.mode:'A',hp:n(o.hp,1,10),shrink:n(o.shrink,1,5),rand:!!o.rand,move:!!o.move,
-    speed:{A:sp('A'),B:sp('B'),C:sp('C')},chill:o.chill!==false,sound:!!o.sound}}
+    speed:{A:sp('A'),B:sp('B'),C:sp('C')},chill:o.chill!==false,sound:!!o.sound,lane:o.lane==='L'?'L':'R'}}
 function fillCardOpt(){const o=cardOpt();$('optLen').checked=o.len;$('optPin').checked=o.pin;$('pinMode').value=o.mode;$('pinHp').value=String(o.hp);$('pinShrink').value=String(o.shrink);
-  $('pinRand').checked=o.rand;$('pinMove').checked=o.move;$('pinChill').checked=o.chill;$('pinSound').checked=o.sound;
+  $('pinRand').checked=o.rand;$('pinMove').checked=o.move;$('pinChill').checked=o.chill;$('pinSound').checked=o.sound;$('pinLane').value=o.lane;
   const v=Math.round(o.speed[o.mode]*100);$('pinSpeed').value=String(v);$('pinSpeedV').textContent=v+'%';$('pinModeRow').style.opacity=o.pin?1:.45}
 function saveCardOpt(modeChanged){const o=cardOpt(),mode=$('pinMode').value;
   lsSet('cardOpt',{...o,len:$('optLen').checked,pin:$('optPin').checked,mode,hp:+$('pinHp').value,shrink:+$('pinShrink').value,rand:$('pinRand').checked,move:$('pinMove').checked,
-    chill:$('pinChill').checked,sound:$('pinSound').checked,speed:modeChanged?o.speed:{...o.speed,[mode]:+$('pinSpeed').value/100}});fillCardOpt()}
-['optLen','optPin','pinMode','pinHp','pinShrink','pinRand','pinMove','pinChill','pinSound'].forEach(id=>$(id).onchange=()=>saveCardOpt(id==='pinMode'));
+    chill:$('pinChill').checked,sound:$('pinSound').checked,lane:$('pinLane').value,speed:modeChanged?o.speed:{...o.speed,[mode]:+$('pinSpeed').value/100}});fillCardOpt()}
+['optLen','optPin','pinMode','pinHp','pinShrink','pinRand','pinMove','pinChill','pinSound','pinLane'].forEach(id=>$(id).onchange=()=>saveCardOpt(id==='pinMode'));
 $('pinSpeed').oninput=()=>{$('pinSpeedV').textContent=$('pinSpeed').value+'%'};$('pinSpeed').onchange=()=>saveCardOpt(false);
 $('goStartEd').onclick=()=>openStartEd();
 $('goThemeEd').onclick=()=>openThemeEd();
