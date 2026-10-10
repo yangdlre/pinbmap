@@ -3,8 +3,8 @@
 //             일행이 함께 보는 일정표·담아둔 곳·할일·경비
 // ② 내 설정  : POST {kind:'set', room:<설정코드>, create?, kv:{키:{v,upd}}}
 //             내 폰·노트북끼리만 맞추는 시작위치·테마 등 개인 설정
-// ③ 계정    : POST {kind:'acct', action:'signup'|'login'|'sync'|'logout'|'delete', email, pin|token, kv, trips}
-//             이메일 + 숫자 4자리로 내 설정·여행 보관함을 어느 기기에서나 불러오기 (중요 정보용 아님)
+// ③ 계정    : POST {kind:'acct', action:'signup'|'login'|'sync'|'logout'|'delete', email, pin|token, kv, trips, saved}
+//             이메일 + 숫자 4자리로 내 설정·여행 보관함·📌 보류 맛집을 어느 기기에서나 불러오기 (중요 정보용 아님)
 // 서버에 있는 것과 보낸 것을 "항목별 최신 수정 우선"으로 합쳐 저장하고, 합친 결과를 돌려줍니다.
 import { getStore } from '@netlify/blobs';
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
@@ -46,6 +46,13 @@ function cleanDoc(d) {
   for (const k of ARR) o[k] = Array.isArray(d && d[k]) ? d[k].filter(x => x && typeof x === 'object' && typeof x.uid === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(x.uid) && (x.upd === undefined || Number.isFinite(+x.upd)))
     .map(x => ({ ...x, upd: Math.min(+x.upd || 0, lim) })).sort((a, b) => b.upd - a.upd).slice(0, 1500) : [];
   return o;
+}
+// 📌 보류 맛집: 여행과 상관없이 계정에 남는 장소 목록 (항목별 최신 수정 우선, 지운 것은 del 표시로 남김)
+export function cleanSaved(a) {
+  if (!Array.isArray(a)) return [];
+  const lim = Date.now() + 864e5;
+  return a.filter(x => x && typeof x === 'object' && typeof x.uid === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(x.uid) && (x.del || (x.p && typeof x.p === 'object')))
+    .map(x => ({ ...x, upd: Math.min(+x.upd || 0, lim) })).sort((a, b) => b.upd - a.upd).slice(0, 1000);
 }
 function cleanKV(kv) {
   const o = {};
@@ -106,12 +113,12 @@ async function acct(body, st) {
       if (!/^\d{4}$/.test(String(body.pin || ''))) return ok({ err: 'bad pin' }, 400);
       if (cur) return ok({ err: 'exists' }, 409);
       const salt = randomBytes(16).toString('hex'), tok = randomBytes(24).toString('hex');
-      const rec = { salt, hash: pinHash(body.pin, salt), fails: 0, lock: 0, tokens: [{ t: sha(tok), at: now }], kv: cleanKV(body.kv), trips: cleanTrips(body.trips), created: now };
+      const rec = { salt, hash: pinHash(body.pin, salt), fails: 0, lock: 0, tokens: [{ t: sha(tok), at: now }], kv: cleanKV(body.kv), trips: cleanTrips(body.trips), saved: cleanSaved(body.saved), created: now };
       if (Buffer.byteLength(JSON.stringify(rec)) > MAX_BYTES) return ok({ err: 'too big' }, 413);
       const w = await put(st, key, rec, { onlyIfNew: true });
       if (w === 'conflict') continue;
       if (w === 'fail') return ok({ err: 'save failed' }, 503);
-      return ok({ token: tok, kv: rec.kv, trips: rec.trips });
+      return ok({ token: tok, kv: rec.kv, trips: rec.trips, saved: rec.saved });
     }
     if (!cur) return ok({ err: 'no account' }, 404);
     const rec = { ...(cur.data || {}) };
@@ -136,12 +143,12 @@ async function acct(body, st) {
       if (act === 'delete') { await st.delete(key); return ok({ deleted: true }); }
       if (act === 'logout') rec.tokens = rec.tokens.filter(x => x.t !== th);
     } else return ok({ err: 'bad action' }, 400);
-    if (act !== 'logout') { rec.kv = mergeKV(rec.kv || {}, cleanKV(body.kv)); rec.trips = mergeTrips(rec.trips || {}, cleanTrips(body.trips)); }
+    if (act !== 'logout') { rec.kv = mergeKV(rec.kv || {}, cleanKV(body.kv)); rec.trips = mergeTrips(rec.trips || {}, cleanTrips(body.trips)); rec.saved = cleanSaved(mergeArr(rec.saved || [], cleanSaved(body.saved))); }
     if (Buffer.byteLength(JSON.stringify(rec)) > MAX_BYTES) return ok({ err: 'too big' }, 413);
     const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
     if (w === 'conflict') continue;
     if (w === 'fail') return ok({ err: 'save failed' }, 503);
-    return ok({ token: newTok || undefined, kv: rec.kv, trips: rec.trips });
+    return ok({ token: newTok || undefined, kv: rec.kv, trips: rec.trips, saved: rec.saved || [] });
   }
   return ok({ err: 'busy' }, 503);
 }
