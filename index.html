@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#111111">
 <link rel="icon" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<title>핀볼 맛집 검색 v0.41</title>
+<title>핀볼 맛집 검색 v0.42</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -671,6 +671,32 @@ body.mode-fuel #mapTools #pickBtn{grid-column:span 6}
 .smRow .smT small{display:block;font-size:12.5px;color:#888;margin-top:2px}.smRow b{grid-area:a;font-size:16px}.smRow select{grid-area:g;font-size:14px;padding:6px}
 .smRow.off{opacity:.45}
 #bkSmsGo{background:#0f766e;border-color:#0f766e}
+
+/* 👣 다녀온 곳 */
+#visitedBtn{font-weight:700}#visitedBtn.on{background:#0f766e!important;color:#fff;border-color:#0f766e}
+.vsPin{position:relative;width:12px;height:12px;cursor:pointer}
+.vsPin i{position:absolute;inset:0;border-radius:50%;background:#0f766e;border:2px solid #fff;box-shadow:0 1px 4px #0006}
+.vsPin.ph{width:30px;height:30px}
+.vsPin .phT{position:absolute;inset:0;width:30px;height:30px;border-radius:50%;border:2px solid #0f766e;box-shadow:0 1px 5px #0006;pointer-events:none}
+.vsPin span{position:absolute;left:calc(100% + 3px);top:50%;transform:translateY(-50%);white-space:nowrap;background:#ffffffee;border:1px solid #5fb3a5;border-radius:7px;padding:1px 5px;font-size:11px;font-weight:700;color:#0f4f49;max-width:110px;overflow:hidden;text-overflow:ellipsis;box-shadow:0 1px 3px #0002}
+.vsPin span u{text-decoration:none;color:#b45309}
+.vsReg{display:none;flex-direction:column;align-items:center;cursor:pointer}
+.vsReg i{font-style:normal;min-width:36px;height:30px;border-radius:15px;padding:0 8px;background:#0f766e;color:#fff;font-weight:900;font-size:13.5px;display:grid;place-items:center;border:2px solid #fff;box-shadow:0 2px 6px #0005}
+.vsReg b{background:#0f4f49dd;color:#fff;font-size:11.5px;border-radius:7px;padding:1px 6px;margin-bottom:2px;white-space:nowrap}
+#map.far .vsPin{display:none}#map.far .vsReg{display:flex}
+.card .tag.vis{background:#e6f4f1;color:#0f766e}
+#vsPop{position:fixed;left:8px;right:8px;bottom:8px;z-index:79;background:#fff;border:2px solid #0f766e;border-radius:16px;box-shadow:0 6px 22px #0004;padding:12px;display:none;flex-direction:column;gap:8px}
+#vsPop.on{display:flex}
+.vsTop b{display:block;font-size:17px}.vsTop small{display:block;font-size:13px;color:#0f766e;margin-top:2px}
+.vsMemo{font-size:14px;color:#7a5200;background:#fff8e6;border-radius:8px;padding:6px 9px}
+.vsThumbs{display:flex;gap:5px;align-items:center}.vsThumbs .phT{width:64px;height:64px;flex:0 0 auto}.vsThumbs span{font-size:14px;color:#666;padding-left:4px}
+#vsPop .pcRow button{white-space:nowrap}
+.sheetHead{gap:8px}.sheetHead>b{min-width:0}.sheetHead .hbtns button,.sheetHead>button{white-space:nowrap}
+#vsPop .hot{background:#0f766e;color:#fff;border-color:#0f766e;font-weight:700}
+.vsAddr{font-size:13.5px;color:#666;margin-bottom:6px}
+.vsVisit{border:1px solid #e3e5e8;border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:8px}
+.vsVh b{display:block;font-size:16px}.vsVh small{display:block;font-size:13px;color:#888}
+.vsTr{font-size:14px;padding:9px;background:#f3edff;border-color:#b79cf5;color:#5b21b6;font-weight:700}
 </style>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=47e6f1005ee8102053deac6824764b3a&libraries=services"></script>
 </head>
@@ -707,7 +733,7 @@ body.mode-fuel #mapTools #pickBtn{grid-column:span 6}
 </header>
 <div id="status">현재 위치 확인 중…</div>
 <div id="map">
-  <div id="mapFloatTools"><button id="roadMapBtn" class="active">🗺 일반</button><button id="hybridMapBtn">🛰 위성</button></div>
+  <div id="mapFloatTools"><button id="roadMapBtn" class="active">🗺 일반</button><button id="hybridMapBtn">🛰 위성</button><button id="visitedBtn">👣 다녀온 곳</button></div>
   <div id="leftTools"><button id="schedBtn">📅 일정<span class="badge" id="pickBadge"></span></button><button id="todoBtn">✅ 할일<span class="badge" id="todoBadge"></span></button><button id="expBtn">💳 경비</button><button id="savedBtn">📌 보류</button><button id="setBtn" title="내 설정 동기화">⚙️</button></div>
   <div id="restoreTools"><button id="listBtn" style="font-weight:700">≡ 목록</button><button id="regionBtn">🗺 지역 ▾</button></div>
   <div id="regionPop"></div>
@@ -898,6 +924,8 @@ body.mode-fuel #mapTools #pickBtn{grid-column:span 6}
   <div class="sheetFoot impFoot"><button id="impGo" class="exGo">☁️ 올리기</button><div id="impDone"><div id="impZips"></div><button id="impToTrace">🗺 흔적으로 돌아가기</button></div></div></div>
 <div id="imMenu"><div class="imHead"><div id="imMenuT"></div><button id="imMenuX">닫기</button></div><div id="imMenuL"></div></div>
 <input type="file" id="impIn" accept="image/*" multiple hidden>
+<div id="vsPop"><div id="vsPopBody"></div><div class="pcRow"><button id="vsPopMore" class="hot">📷 자세히</button><button id="vsPopInfo">상세·길찾기</button><button id="vsPopX">닫기</button></div></div>
+<div id="visEd" class="sheet"><div class="sheetHead"><b id="vsTitle">👣</b><span class="hbtns"><button id="vsInfo">상세·길찾기</button><button data-close="visEd">닫기</button></span></div><div class="sheetBody" id="vsBody"></div></div>
 <div id="listPanel"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b id="listTitle">≡ 목록</b><button id="listClose">닫기</button></div><div id="listBody"></div></div>
 <div id="btnEd" class="sheet"><div class="sheetHead"><b id="btnEdTitle">✏️ 상세창 버튼 배치</b><button data-close="btnEd">닫기</button></div>
   <div class="sheetBody"><div style="font-size:12px;color:#666;margin-bottom:8px">↑↓로 순서를 바꾸고, 잘 안 쓰는 건 숨기세요. 숨긴 버튼은 상세창의 “＋ 숨긴 버튼”으로 언제든 열 수 있어요. 맛집·관광지·주유 화면마다 따로 저장되고, ⚙️ 내 설정 코드로 내 기기끼리 맞춰집니다.</div>
@@ -1063,6 +1091,7 @@ function init(lat,lng){
   centerMarker=new kakao.maps.Marker({map,position:searchCenter});
   updateRadiusCircle();
   try{kakao.maps.event.addListener(map,'zoom_changed',updFar)}catch(_){}
+  if(visOn)setTimeout(()=>renderVis(false),1200);
   kakao.maps.event.addListener(map,'dragend',()=>{
     $('again').classList.add('pulse');if($('hint').style.display!=='none'){$('hint').style.display='none';lsSet('hintSeen',true)}
     setStatus('지도를 옮겼습니다. 가운데 + 위치로 찾으려면 “이 지역 검색”을 누르세요.');
@@ -1427,7 +1456,7 @@ function cardLines(p){
     const diff=avg?pr-avg:null;
     return [`<span class="sc">${won(pr)}</span>${diff!=null?` <span class="tag${diff>0?' off':''}">평균${diff>0?'+':''}${diff}</span>`:''}`,`${dist} · ${escapeHtml(cat)}`];
   }
-  const l1=`${dist} · ${escapeHtml(cat)}`;
+  const l1=`${dist} · ${escapeHtml(cat)}${beenTag(p)}`;
   if(!Object.keys(e).length) return [l1,''];
   const parts=[];
   if(e.n) parts.push(`★${(+e.r).toFixed(1)}(${e.n})`);
@@ -2385,7 +2414,7 @@ function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2
 const live=a=>a.filter(x=>!x.del);
 function stamp(o){o.upd=Date.now();o.by=myNick();return o}
 function persistPlan(){acctDirty=true;lsSet('trip',trip);lsSet('picks',picks);lsSet('items',items);updateBadge();if(typeof updateNextCard==='function')try{updateNextCard()}catch(_){}}
-function savePlan(){persistPlan();scheduleSync();if(typeof maybeAutoShare==='function')maybeAutoShare()}
+function savePlan(){persistPlan();scheduleSync();if(typeof maybeAutoShare==='function')maybeAutoShare();if(typeof visSoon==='function')visSoon()}
 function updateBadge(){const n=live(picks).length;$('pickBadge').textContent=n?String(n):'';$('pickBadge').style.display=n?'inline-block':'none'}
 function byTag(o){return room&&o.by?` · ${escapeHtml(o.by)}`:''}
 function slimPlace(p){return {id:p.id,place_name:p.place_name,category_name:p.category_name||'',x:String(p.x),y:String(p.y),address_name:p.address_name||'',road_address_name:p.road_address_name||'',custom:!!p.custom}}
@@ -4162,6 +4191,88 @@ function handleLaunch(){
   else if(q.has('book')){openBook();used=true}
   else if(q.has('sched')){openPlan();used=true}
   if(used)try{history.replaceState(null,'',location.pathname)}catch(_){}
+}
+
+/* =====================================================================
+   👣 다녀온 곳 — 그동안의 여행(보관함 + 지금 여행 ✅)에서 들른 곳을 지도에 한꺼번에
+   - 켜고 끄는 버튼(검색해도 그대로 보임), 작은 사진 핀 + 이름, 멀리 보면 지역별 개수
+   - 핀 → 미니 팝업(언제·메모·사진 몇 장) → 자세히(같은 곳 갔던 날 모두·전체 사진)
+   - 검색 카드에 '👣 가봄' 표시
+   ===================================================================== */
+var visOn=lsGet('visOn',false), visOvs=[], beenCache=null;
+function beenKey(p){return /^\d+$/.test(String(p.id))?'k'+p.id:'c'+Math.round(+p.x*2e3)+'_'+Math.round(+p.y*2e3)}   // 카카오 장소는 번호, 그 밖은 약 50m 칸
+function visitedPlaces(){
+  const map=new Map();
+  const add=(k,D,it)=>{const key=beenKey(it.p);let g=map.get(key);if(!g)map.set(key,g={key,p:it.p,visits:[]});
+    const ph=D.photos.filter(x=>x.item===it.uid&&phVisible(x)).sort((a,b)=>(b.star?1:0)-(a.star?1:0)||a.at-b.at);
+    g.visits.push({k,trip:D.trip,it,ph});};
+  Object.keys(archive).forEach(k=>{const D=docOf(k);if(!D)return;live(D.items).filter(i=>i.visited!==false&&hasLoc(i.p)&&i.day<D.trip.days).forEach(it=>add(k,D,it))});
+  {const D=docOf('cur');live(D.items).filter(i=>i.visited&&hasLoc(i.p)).forEach(it=>add('cur',D,it))}   // 지금 여행은 ✅ 다녀온 곳만
+  const out=[...map.values()];
+  out.forEach(g=>{g.visits.sort((a,b)=>(b.trip.start+b.it.day).localeCompare(a.trip.start+a.it.day));g.ph=g.visits.flatMap(v=>v.ph);g.cover=g.ph[0]||null});
+  return out;
+}
+function beenSet(){if(!beenCache){beenCache=new Set();try{visitedPlaces().forEach(g=>beenCache.add(g.key))}catch(_){}}return beenCache}
+function beenTag(p){try{return p&&hasLoc(p)&&beenSet().has(beenKey(p))?' <span class="tag vis">👣 가봄</span>':''}catch(_){return ''}}
+const visWhen=v=>`${v.trip.name||v.trip.start.slice(0,7).replace('-','.')+' 여행'} · ${dayDateT(v.trip,v.it.day).slice(2).replace(/-/g,'.')}`;
+function clearVis(){visOvs.forEach(o=>o.setMap(null));visOvs=[]}
+function renderVis(fit){
+  clearVis();beenCache=null;$('visitedBtn').classList.toggle('on',visOn);if(!visOn||!map)return;
+  const gs=visitedPlaces();
+  if(!gs.length){setStatus('👣 아직 다녀온 곳이 없어요. 여행을 🗂 보관함에 넣거나, 지금 여행 일정에서 ✅ 다녀옴을 체크하면 여기 쌓여요.');return}
+  const b=new kakao.maps.LatLngBounds();
+  gs.forEach(g=>{
+    const pos=new kakao.maps.LatLng(+g.p.y,+g.p.x);b.extend(pos);
+    const el=document.createElement('div');el.className='vsPin'+(g.cover?' ph':'');
+    el.innerHTML=`${g.cover?phThumb(g.cover,' tabindex="-1"'):'<i></i>'}<span>${escapeHtml(g.p.place_name)}${g.visits.length>1?` <u>×${g.visits.length}</u>`:''}</span>`;
+    el.addEventListener('click',e=>{e.stopPropagation();openVisPop(g)});
+    ['mousedown','touchstart','pointerdown'].forEach(ev=>el.addEventListener(ev,x=>x.stopPropagation(),{passive:true}));
+    const ov=new kakao.maps.CustomOverlay({position:pos,content:el,xAnchor:.5,yAnchor:.5,zIndex:7});ov.setMap(map);visOvs.push(ov);hydrate(el);
+  });
+  // 멀리 볼 때: 지역별 개수
+  const reg=new Map();gs.forEach(g=>{const r=regionOf(g.p);if(!reg.has(r))reg.set(r,[]);reg.get(r).push(g)});
+  reg.forEach((list,r)=>{
+    const lat=list.reduce((a,g)=>a+ +g.p.y,0)/list.length,lng=list.reduce((a,g)=>a+ +g.p.x,0)/list.length;
+    const el=document.createElement('div');el.className='vsReg';el.innerHTML=`<b>${escapeHtml(r.replace(/ 시내$/,''))}</b><i>👣${list.length}</i>`;
+    el.addEventListener('click',e=>{e.stopPropagation();const bb=new kakao.maps.LatLngBounds();list.forEach(g=>bb.extend(new kakao.maps.LatLng(+g.p.y,+g.p.x)));if(list.length>1)map.setBounds(bb,90,60,110,60);else{map.setCenter(new kakao.maps.LatLng(+list[0].p.y,+list[0].p.x));try{map.setLevel(6)}catch(_){}}updFar()});
+    ['mousedown','touchstart','pointerdown'].forEach(ev=>el.addEventListener(ev,x=>x.stopPropagation(),{passive:true}));
+    const ov=new kakao.maps.CustomOverlay({position:new kakao.maps.LatLng(lat,lng),content:el,xAnchor:.5,yAnchor:.5,zIndex:8});ov.setMap(map);visOvs.push(ov);
+  });
+  if(fit&&gs.length>1)map.setBounds(b,80,40,120,40);
+  updFar();setTimeout(updFar,350);
+  if(fit)setStatus(`👣 다녀온 곳 ${gs.length}곳 (지역 ${reg.size}곳) · 핀을 누르면 언제 갔는지·사진 · 켜 둔 채로 검색해도 같이 보여요`);
+}
+$('visitedBtn').onclick=()=>{visOn=!visOn;lsSet('visOn',visOn);renderVis(visOn);if(!visOn){$('vsPop').classList.remove('on');setStatus('👣 다녀온 곳 표시를 껐어요.')}};
+let visT=null;function visSoon(){beenCache=null;if(!visOn)return;clearTimeout(visT);visT=setTimeout(()=>renderVis(false),800)}
+{const sa=saveArc;saveArc=function(){sa();visSoon()}}
+{const at=applyAcctTrips;applyAcctTrips=function(t){at(t);visSoon()}}
+// 미니 팝업
+let vsG=null;
+function openVisPop(g){
+  vsG=g;const v=g.visits[0],memo=g.visits.map(v=>v.it.memo).find(Boolean)||'';
+  $('vsPopBody').innerHTML=`<div class="vsTop"><b>${escapeHtml(g.p.place_name)}</b><small>👣 ${g.visits.length}번 · ${escapeHtml(visWhen(v))}${g.visits.length>1?' 외':''}</small></div>`+
+    (memo?`<div class="vsMemo">📝 ${escapeHtml(memo.split('\n')[0])}</div>`:'')+
+    (g.ph.length?`<div class="vsThumbs">${g.ph.slice(0,4).map(p=>phThumb(p)).join('')}${g.ph.length>4?`<span>+${g.ph.length-4}</span>`:''}</div>`:'');
+  hydrate($('vsPopBody'));
+  $('vsPopBody').querySelectorAll('[data-ph]').forEach(b=>b.onclick=()=>{const i=g.ph.findIndex(p=>p.uid===b.dataset.ph),vk=g.visits.find(v=>v.ph.some(p=>p.uid===b.dataset.ph));if(vk)openViewer(vk.k,vk.ph,vk.ph.findIndex(p=>p.uid===b.dataset.ph))});
+  $('vsPop').classList.add('on');
+}
+$('vsPopX').onclick=()=>$('vsPop').classList.remove('on');
+$('vsPopMore').onclick=()=>{if(vsG)openVisEd(vsG)};
+$('vsPopInfo').onclick=()=>{if(vsG){$('vsPop').classList.remove('on');openDetail(withDist(vsG.p))}};
+// 자세히: 같은 곳 갔던 날 모두 + 전체 사진
+function openVisEd(g){
+  $('vsPop').classList.remove('on');$('vsTitle').textContent=`👣 ${g.p.place_name}`;
+  $('vsBody').innerHTML=`<div class="vsAddr">${escapeHtml(g.p.road_address_name||g.p.address_name||'')}${g.p.category_name?' · '+escapeHtml(g.p.category_name.split(' > ').pop()):''}</div>`+
+    g.visits.map((v,vi)=>`<div class="vsVisit"><div class="vsVh"><b>${escapeHtml(visWhen(v))}</b><small>${dayLabelT(v.trip,v.it.day)} ${hm(v.it.start)}~${hm(v.it.start+v.it.dur)}${v.it.visited?' · ✅ 다녀옴':''}</small></div>`+
+      (v.it.memo?`<div class="vsMemo">📝 ${escapeHtml(v.it.memo)}</div>`:'')+
+      (v.ph.length?`<div class="albGrid">${v.ph.map(p=>phThumb(p)).join('')}</div>`:'<div class="pcNone">사진 없음</div>')+
+      (v.k!=='cur'?`<button data-tr="${vi}" class="vsTr">🗺 그 여행 흔적 보기</button>`:'')+`</div>`).join('');
+  hydrate($('vsBody'));
+  $('vsBody').querySelectorAll('[data-ph]').forEach(b=>b.onclick=()=>{const v=g.visits.find(v=>v.ph.some(p=>p.uid===b.dataset.ph));if(v)openViewer(v.k,v.ph,v.ph.findIndex(p=>p.uid===b.dataset.ph))});
+  $('vsBody').querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>{closeSheet('visEd');openTrace(g.visits[+b.dataset.tr].k)});
+  $('vsInfo').onclick=()=>{closeSheet('visEd');openDetail(withDist(g.p))};
+  openSheet('visEd');
 }
 
 /* ----- 일정 편집창 버튼들 ----- */
