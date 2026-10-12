@@ -3,7 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>핀볼 맛집 검색 v0.40</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>핀볼 맛집 검색 v0.41</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -611,6 +615,62 @@ body.mode-fuel #mapTools #pickBtn{grid-column:span 6}
 #inboxList .arc span{flex:1;min-width:0}#inboxList .arc small{display:block;color:#8a6d00;font-size:12.5px}
 #inboxList button.hot{background:#b45309;color:#fff;border-color:#b45309;font-weight:700}
 .roomBtn.mail::after{content:' 📨'}
+
+/* 📍 주소로 찾기 */
+.sugAddr{background:#f3f8ff}.sugAddr .sug{cursor:pointer}
+.addrName{display:block;width:100%;margin-top:6px;font-size:15px;padding:8px 10px;border:1px solid #9cc3ff;border-radius:9px}
+.addrName.need{outline:2px solid #ff5a1f}
+.customBox input{font-size:15px}#customAddr{flex:1 1 100%;order:2}#customName{order:1}#customOk{order:1}#customMsg{order:3;flex-basis:100%;font-size:13px;color:#c0392b}
+
+/* 📒 가계부 */
+.exModeSw{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.exModeSw button{font-size:15px;padding:10px 4px;font-weight:700;border-radius:12px}
+.exModeSw button.on{background:#111;color:#fff;border-color:#111}
+.exModeSw button[data-xm="me"].on{background:#0f766e;border-color:#0f766e}
+#expEd.exMe .exPick label:nth-child(2),#expEd.exMe .exLbl,#expEd.exMe #exSplit,#expEd.exMe .exAddP,#expEd.exMe #exPer,#expEd.exMe #exHint{display:none}
+#expEd.exMe .exPick{grid-template-columns:1fr}
+#expEd.exMe .exGo{background:#0f766e;border-color:#0f766e}
+#exCats:empty{display:none}
+.bkCats{display:flex;flex-wrap:wrap;gap:6px}
+.bkCats button{font-size:15px;padding:9px 12px;border-radius:20px;background:#f4f5f7}
+.bkCats button.on{background:#0f766e;color:#fff;border-color:#0f766e;font-weight:700}
+#exMine{font-size:14px;color:#0f766e}#exMine:empty{display:none}#exMine button{font-size:13px;padding:4px 9px;margin-left:4px}
+#expBook{font-size:14px;padding:8px 11px;background:#e6f4f1;border-color:#5fb3a5;color:#0f766e;font-weight:700}
+.bkMonth{display:flex;align-items:center;justify-content:center;gap:16px;margin:2px 0 6px}.bkMonth b{font-size:19px}.bkMonth button{font-size:20px;padding:4px 16px}
+#bkTotSub{font-size:13px;color:#666;text-align:right;margin:4px 2px 0}#bkTotSub:empty{display:none}
+.bkForm{margin-top:12px}.bkForm .exGo{background:#0f766e;border-color:#0f766e}
+.bkForm input[type=date]{font-size:17px;padding:10px 8px;border:1px solid #cfd3d9;border-radius:12px;width:100%;min-width:0;font-family:inherit}
+.bkSmsBtn{font-size:15px;padding:11px;border-style:dashed}
+#bkCancel{font-size:15px;padding:10px}
+#bkMsg{font-size:14.5px;color:#0f766e;text-align:center}#bkMsg:empty{display:none}#bkMsg button{font-size:13px;padding:4px 9px}
+.bkTripSw{display:flex;gap:8px;align-items:center;font-size:14.5px;margin:12px 2px}.bkTripSw input{width:19px;height:19px}
+.bkBar{display:grid;grid-template-columns:7.5em 1fr auto;gap:8px;align-items:center;padding:6px 2px;font-size:15px}
+.bkBar .n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bkBar .b{position:relative;height:14px;background:#eef0f3;border-radius:7px;overflow:visible}
+.bkBar .b i{position:absolute;left:0;top:0;bottom:0;background:#0f766e;border-radius:7px}
+.bkBar .b u{position:absolute;top:-4px;bottom:-4px;width:0;border-left:2px dashed #333}
+.bkBar.over .b i{background:#e11d48}.bkBar.over .v{color:#e11d48}
+.bkBar .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}.bkBar .v small{display:block;font-size:11.5px;color:#888;font-weight:500}
+.bkNone{font-size:14px;color:#888;padding:14px 4px;line-height:1.6;text-align:center}
+.bkListHead{font-size:16px;font-weight:800;margin:18px 0 4px;display:flex;justify-content:space-between;align-items:center}.bkListHead button{font-size:13px;padding:6px 10px;font-weight:500}
+.bkDay{font-size:14px;font-weight:800;color:#444;margin:12px 0 2px;padding-bottom:4px;border-bottom:2px solid #e3e5e8;display:flex;justify-content:space-between}.bkDay small{font-size:13px;color:#888}
+.bkRow{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid #f0f1f3;cursor:pointer}
+.bkRow .ic{font-size:21px;width:28px;text-align:center}.bkRow .t{flex:1;min-width:0}.bkRow .t b{display:block;font-size:15.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bkRow .t small{display:block;font-size:12.5px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bkRow .a{font-size:16px;font-variant-numeric:tabular-nums}.bkRow .a.neg,.smRow b.neg{color:#16a34a}
+.bkRow button{padding:4px 8px;font-size:13px}.bkRow.v{background:#f6fbfa}
+.bcRow{display:flex;gap:6px;align-items:center;padding:6px 0;border-bottom:1px solid #eee}
+.bcRow input{min-width:0;font-size:15px;padding:9px 8px;border:1px solid #cfd3d9;border-radius:10px}.bcRow .ic{width:46px;text-align:center}.bcRow .n{flex:1.3}.bcRow .bud{flex:1;text-align:right}
+.bcRow button{font-size:14px;padding:8px 10px}.bcNew{border:0;margin-top:8px}
+#bkSmsBox{position:fixed;inset:0;z-index:130;background:#fff;display:none;flex-direction:column;gap:10px;padding:14px;overflow:auto}
+#bkSmsBox.on{display:flex}
+#bkSmsIn{width:100%;min-height:120px;font-size:14.5px;padding:10px;border:1px solid #cfd3d9;border-radius:12px;font-family:inherit}
+#bkSmsBox .hot{background:#0f766e;color:#fff;border-color:#0f766e;font-weight:700}
+.smRow{display:grid;grid-template-columns:auto 1fr auto;grid-template-areas:"c t a" "c g g";gap:4px 10px;align-items:center;padding:10px 4px;border-bottom:1px solid #eee}
+.smRow label{grid-area:c}.smRow label input{width:22px;height:22px}.smRow .smT{grid-area:t;min-width:0}.smRow .smT input{width:100%;font-size:15.5px;font-weight:700;padding:6px 8px;border:1px solid #e3e5e8;border-radius:8px}
+.smRow .smT small{display:block;font-size:12.5px;color:#888;margin-top:2px}.smRow b{grid-area:a;font-size:16px}.smRow select{grid-area:g;font-size:14px;padding:6px}
+.smRow.off{opacity:.45}
+#bkSmsGo{background:#0f766e;border-color:#0f766e}
 </style>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=47e6f1005ee8102053deac6824764b3a&libraries=services"></script>
 </head>
@@ -676,7 +736,7 @@ body.mode-fuel #mapTools #pickBtn{grid-column:span 6}
   <div id="dayTabs"></div>
   <div id="dayWx"></div>
   <div class="binHead">담아둔 곳 <small id="binHint"></small><button id="addCustom">+ 직접</button></div>
-  <div class="customBox" id="customBox"><input type="text" id="customName" placeholder="예) 공항 도착, 렌터카 픽업, 숙소 체크인"><button id="customOk">추가</button></div>
+  <div class="customBox" id="customBox"><input type="text" id="customName" placeholder="이름 (예: 홉히, 숙소 체크인)"><input type="text" id="customAddr" placeholder="주소 (선택 · 넣으면 지도·길안내 가능)"><button id="customOk">추가</button><span id="customMsg"></span></div>
   <div id="bin"></div>
   <div id="planSum"></div>
   <div id="grid"><div id="gridIn"></div></div>
@@ -723,18 +783,21 @@ body.mode-fuel #mapTools #pickBtn{grid-column:span 6}
   <div class="row" style="margin-top:10px"><button data-k="food">🍽 맛집</button><button data-k="cafe">☕ 카페</button><button data-k="gas">⛽ 주유·충전</button><button data-k="tour">🏝 관광</button></div></div>
 <div id="logEd" class="sheet"><div class="sheetHead"><b>📒 여행 기록</b><span class="hbtns"><button id="logCopy">📋 복사</button><button data-close="logEd">닫기</button></span></div>
   <div class="sheetBody"><div id="logMsg" style="font-size:12px;color:#1f7a35"></div><div id="logBody"></div></div></div>
-<div id="expEd" class="sheet"><div class="sheetHead"><b>💳 경비 · 정산</b><span class="hbtns"><button class="roomBtn">👥 같이 쓰기</button><button data-close="expEd">닫기</button></span></div>
+<div id="expEd" class="sheet"><div class="sheetHead"><b>💳 경비</b><span class="hbtns"><button id="expBook">📒 가계부</button><button class="roomBtn">👥 같이 쓰기</button><button data-close="expEd">닫기</button></span></div>
   <div class="sheetBody">
     <div class="rbox exBox">
+      <div class="exModeSw"><button data-xm="with">👥 같이 (N빵)</button><button data-xm="me">👤 나만 (가계부)</button></div>
       <input type="text" id="exTitle" placeholder="어디에 썼나요? (예: 흑돼지 저녁)" enterkeyhint="next" maxlength="80">
       <div class="exAmtWrap"><input type="text" id="exAmt" inputmode="numeric" placeholder="금액" enterkeyhint="done" autocomplete="off"><span>원</span></div>
       <div id="exPer"></div>
+      <div id="exCats" class="bkCats"></div>
       <div class="exPick"><label><span>날짜</span><select id="exDay"></select></label><label><span>낸 사람</span><select id="exPayer"></select></label></div>
       <div class="exLbl">나눌 사람 <button id="exAll" type="button">전체 선택</button></div><div id="exSplit"></div>
       <div class="exAddP"><input type="text" id="exPerson" placeholder="사람 추가 (이름)" maxlength="20"><button id="exPersonAdd">+ 추가</button></div>
       <button id="exAdd" class="exGo">기록하기</button>
       <div id="exMsg"></div>
       <div id="exHint"></div>
+      <div id="exMine"></div>
     </div>
     <div id="exSum"></div>
     <div style="font-size:13px;font-weight:700;margin:16px 0 4px">기록 <button id="exCopy" style="font-size:11px;padding:3px 8px;margin-left:6px">📋 복사</button></div>
@@ -744,9 +807,37 @@ body.mode-fuel #mapTools #pickBtn{grid-column:span 6}
   <div class="sheetBody"><div id="savedTop"></div><div id="savedList"></div></div>
   <div class="row sheetFoot"><button id="savedCopy">📋 글자로 복사</button><span id="savedMsg"></span></div>
 </div>
+<div id="bookEd" class="sheet"><div class="sheetHead"><b>📒 가계부</b><span class="hbtns"><button id="bkCatBtn">⚙️ 카테고리·예산</button><button data-close="bookEd">닫기</button></span></div>
+  <div class="sheetBody">
+    <div class="bkMonth"><button id="bkPrev">‹</button><b id="bkMon"></b><button id="bkNext">›</button></div>
+    <div class="exTot"><span>이 달 쓴 돈</span><b id="bkTotal">0원</b></div><div id="bkTotSub"></div>
+    <div class="rbox exBox bkForm">
+      <div class="exAmtWrap"><input type="text" id="bkAmt" inputmode="numeric" placeholder="금액" autocomplete="off"><span>원</span></div>
+      <input type="text" id="bkTitle" placeholder="어디에 썼나요? (예: 감귤 선물)" maxlength="80">
+      <div id="bkCats" class="bkCats"></div>
+      <div class="exPick"><label><span>날짜</span><input type="date" id="bkDate"></label><label><span>결제</span><select id="bkPay"><option>카드</option><option>현금</option><option>계좌이체</option><option>기타</option></select></label></div>
+      <button id="bkAdd" class="exGo">기록하기</button><button id="bkCancel" style="display:none">취소</button>
+      <button id="bkSms" class="bkSmsBtn">📋 카드 문자로 넣기</button>
+      <div id="bkMsg"></div>
+    </div>
+    <label class="bkTripSw"><input type="checkbox" id="bkTripOn"> ✈️ 여행 N빵 경비 중 <b>내 몫</b>도 포함해서 보기</label>
+    <div id="bkBreak"></div>
+    <div class="bkListHead">기록 <button id="bkCsv">⬇ 이 달 엑셀(CSV)</button></div>
+    <div id="bkList"></div>
+  </div></div>
+<div id="bkCatEd" class="sheet"><div class="sheetHead"><b>⚙️ 카테고리 · 월 예산</b><button data-close="bkCatEd">닫기</button></div>
+  <div class="sheetBody"><div class="idHint">아이콘·이름·월 예산을 고치면 바로 저장돼요. 예산을 넣으면 가계부 막대에 선이 생기고 넘으면 빨갛게 보여요.</div>
+    <div id="bkCatList"></div>
+    <div class="bcRow bcNew"><input id="bkCatIc" class="ic" placeholder="🏷" maxlength="2"><input id="bkCatNew" class="n" placeholder="새 카테고리" maxlength="10"><button id="bkCatAdd">+ 추가</button></div>
+    <div id="bkCatMsg" class="idHint"></div><button id="bkCatReset" style="margin-top:10px">기본 목록으로 되돌리기</button></div></div>
+<div id="bkSmsBox"><div class="pcHead"><b>📋 카드 문자로 넣기</b><button id="bkSmsX">닫기</button></div>
+  <div class="idHint">카드 승인 문자를 길게 눌러 복사 → 아래 칸에 붙여넣기. 여러 통을 한꺼번에 붙여도 돼요. (홈 화면에 앱을 설치했다면 문자 → 공유 → 핀볼 지도로 바로 보낼 수도 있어요)</div>
+  <textarea id="bkSmsIn" placeholder="[Web발신] 신한카드(1234)승인 양*길 12,500원(일시불)10/12 14:20 스타벅스제주공항 누적…"></textarea>
+  <div class="pcRow"><button id="bkSmsPaste">📋 붙여넣기</button><button id="bkSmsRun" class="hot">🔍 인식하기</button></div>
+  <div id="bkSmsOut"></div><button id="bkSmsGo" class="exGo" style="display:none"></button></div>
 <div id="setEd" class="sheet"><div class="sheetHead"><b>⚙️ 설정</b><button data-close="setEd">닫기</button></div>
   <div class="sheetBody">
-    <div class="rbox"><b>👤 내 계정</b> <small style="color:#888">설정·시작위치·여행 보관함·📌 보류 맛집을 어느 기기에서나 불러오기</small>
+    <div class="rbox"><b>👤 내 계정</b> <small style="color:#888">설정·시작위치·여행 보관함·📌 보류 맛집·📒 가계부를 어느 기기에서나 불러오기</small>
       <div id="acctOut" style="margin-top:8px">
         <div class="row"><input type="email" id="acctEmail" placeholder="이메일" autocomplete="email" style="flex:1;min-width:0"></div>
         <div class="row" style="margin-top:6px"><input type="password" id="acctPin" placeholder="숫자 4자리" inputmode="numeric" maxlength="4" autocomplete="off" style="width:110px;letter-spacing:6px"><button id="acctLogin" class="sourceBtn main" style="min-height:0;padding:8px 14px">로그인</button><button id="acctSignup">가입</button></div>
@@ -860,6 +951,7 @@ function setOK(k,v){
     case 'fuel':return ['gas','lpg','ev'].includes(v);
     case 'radiusByMode':case 'btnLayout':case 'cardOpt':case 'photoOpt':case 'shareOpt':return obj(v);
     case 'friends':return Array.isArray(v)&&v.every(x=>obj(x)&&typeof x.e==='string');
+    case 'bookCats':return Array.isArray(v)&&v.length>0&&v.every(x=>obj(x)&&typeof x.id==='string'&&typeof x.n==='string');
   }return true}
 let themeList=setOK('themes',lsGet('themes',null))?lsGet('themes',null):DEFAULT_THEMES.map(t=>({...t}));
 function themeById(id){return themeList.find(t=>t.id===id)||themeList[0]||DEFAULT_THEMES[0]}
@@ -1808,11 +1900,22 @@ function searchArea(){
   const q=$('areaInput').value.trim();if(!q)return;
   $('areaInput').blur();hideSug();
   setStatus(`“${q}” 찾는 중…`);
-  placeSearch(q,data=>{
-    if(!data.length){setStatus(`“${q}”을(를) 찾지 못했습니다.`);showSug(q,[]);return}
-    if(data.length===1){goPlace(data[0]);return}   // 하나뿐이면 바로 그곳(상세창의 📅로 담기)
-    showSug(q,data);
-  });
+  let got=0,data=[],addr=[];const both=()=>{if(++got<2)return;
+    if(!data.length&&!addr.length){setStatus(`“${q}”을(를) 찾지 못했습니다. 주소라면 “제주시 서해안로 468-2”처럼 시·도로명·번호로 넣어보세요.`);showSug(q,[]);return}
+    if(data.length===1&&!addr.length){goPlace(data[0]);return}   // 하나뿐이면 바로 그곳(상세창의 📅로 담기)
+    showSug(q,data,addr);};
+  placeSearch(q,d=>{data=d;both()});
+  if(looksAddr(q))addrSearch(q,a=>{addr=a;both()});else got++;
+}
+// 📍 주소로 찾기: 카카오에 가게가 없어도(새 가게 등) 주소만 있으면 위치를 찾아 이름 붙여 담기
+function looksAddr(q){return /\d/.test(q)&&/(로|길|대로|번길|동|리|가|읍|면)\s*\d+(-\d+)?(\s|$)|\d+(-\d+)?\s*번지/.test(q)}
+function addrSearch(q,cb){
+  try{new kakao.maps.services.Geocoder().addressSearch(q,(res,st)=>cb(st===kakao.maps.services.Status.OK?(res||[]).slice(0,3):[]))}catch(_){cb([])}
+}
+function addrPlace(a,name){
+  const road=a.road_address&&a.road_address.address_name||'',jib=a.address&&a.address.address_name||a.address_name||'';
+  const nm=(name||'').trim(),hh=[...nm].reduce((h,c)=>(h*31+c.charCodeAt(0))>>>0,7).toString(36).slice(0,6);   // 같은 주소에 다른 이름이면 다른 장소
+  return {id:'a'+Math.round(+a.x*1e5)+'_'+Math.round(+a.y*1e5)+(nm?'_'+hh:''),place_name:nm||(a.road_address&&a.road_address.building_name)||road||jib,category_name:'',x:String(a.x),y:String(a.y),address_name:jib,road_address_name:road,_addr:true};
 }
 function isPoi(d){return !!(d.category_group_code||/음식점|카페|여행|관광|문화|숙박|주유|충전/.test(d.category_name||''))}
 // 📍 장소 찾기: 음식점만이 아니라 공항·주차장·터미널·숙소 등 모든 장소 (카카오 장소 검색, 가까운 곳 우선)
@@ -1820,9 +1923,13 @@ function placeSearch(q,cb){
   const opt={size:15};if(searchCenter)opt.location=searchCenter;
   ps.keywordSearch(q,(data,status)=>cb(status===kakao.maps.services.Status.OK?data:[]),opt);
 }
-function showSug(q,data){
+function showSug(q,data,addr=[]){
   const c=searchCenter,eq=encodeURIComponent(q);
-  $('areaSug').innerHTML=`<div class="sugHead">📍 “${escapeHtml(q)}” ${data.length}곳 <button id="sugX">닫기</button></div>`+data.map((d,i)=>{
+  $('areaSug').innerHTML=`<div class="sugHead">📍 “${escapeHtml(q)}” ${data.length+addr.length}곳 <button id="sugX">닫기</button></div>`+
+    addr.map((a,i)=>{const road=a.road_address&&a.road_address.address_name||'',jib=a.address&&a.address.address_name||a.address_name||'',dist=c?fmtDist(distanceM(c.getLat(),c.getLng(),+a.y,+a.x)):'';
+      return `<div class="sugRow sugAddr"><div class="sug" data-ai="${i}"><b>📍 ${escapeHtml(road||jib)}</b><small>주소로 찾음${dist?' · '+dist:''}${road&&jib?' · '+escapeHtml(jib):''}</small><input type="text" class="addrName" data-an="${i}" placeholder="이름 붙이기 (예: 홉히)" maxlength="40"></div>`+
+      `<button class="sugAct" data-apick="${i}" title="일정에 담기">📅</button><button class="sugAct" data-atmap="${i}" title="TMAP 길안내">🚗</button></div>`}).join('')+
+    data.map((d,i)=>{
     const dist=c?fmtDist(distanceM(c.getLat(),c.getLng(),+d.y,+d.x)):'';
     return `<div class="sugRow"><button class="sug" data-i="${i}"><b>${escapeHtml(d.place_name)}</b><small>${escapeHtml((d.category_name||'').split(' > ').pop()||'장소')}${dist?' · '+dist:''} · ${escapeHtml(d.road_address_name||d.address_name||'')}</small></button>`+
       `<button class="sugAct" data-pick="${i}" title="일정에 담기">${isPicked(d)?'✓':'📅'}</button><button class="sugAct" data-tmap="${i}" title="TMAP 길안내">🚗</button></div>`}).join('')+
@@ -1831,6 +1938,12 @@ function showSug(q,data){
   $('areaSug').querySelectorAll('.sug').forEach(b=>b.onclick=()=>{hideSug();goPlace(data[+b.dataset.i])});
   $('areaSug').querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{const d=data[+b.dataset.pick];if(addPick(d)||isPicked(d))b.textContent='✓'});
   $('areaSug').querySelectorAll('[data-tmap]').forEach(b=>b.onclick=()=>openTmap(data[+b.dataset.tmap]));
+  const an=i=>{const el=$('areaSug').querySelector(`[data-an="${i}"]`);return el?el.value:''};
+  $('areaSug').querySelectorAll('[data-ai]').forEach(b=>b.onclick=e=>{if(e.target.tagName==='INPUT')return;hideSug();goPlace(addrPlace(addr[+b.dataset.ai],an(b.dataset.ai)))});
+  $('areaSug').querySelectorAll('[data-apick]').forEach(b=>b.onclick=()=>{const i=+b.dataset.apick,nm=an(i);
+    if(!nm.trim()){const el=$('areaSug').querySelector(`[data-an="${i}"]`);el.focus();el.classList.add('need');setStatus('📍 이름을 먼저 적어주세요 (예: 홉히). 일정표에 그 이름으로 들어가요.');return}
+    if(addPick(addrPlace(addr[i],nm)))b.textContent='✓'});
+  $('areaSug').querySelectorAll('[data-atmap]').forEach(b=>b.onclick=()=>openTmap(addrPlace(addr[+b.dataset.atmap],an(b.dataset.atmap)||'목적지')));
   $('sugNaver').onclick=()=>openUrl(`https://map.naver.com/p/search/${eq}`);
   $('sugTmap').onclick=()=>{if(isAndroid())location.href=`intent://search?name=${eq}#Intent;scheme=tmap;package=com.skt.tmap.ku;S.browser_fallback_url=${encodeURIComponent('https://play.google.com/store/apps/details?id=com.skt.tmap.ku')};end`;
     else if(isIOS())tryApp(`tmap://search?name=${eq}`,'https://apps.apple.com/kr/app/id431589174');else openUrl('https://www.tmap.co.kr/')};
@@ -1840,7 +1953,7 @@ function hideSug(){$('areaSug').classList.remove('on')}
 function goPlace(d){
   moveCenter(+d.y,+d.x);
   if(targetOv){targetOv.setMap(null);targetOv=null}
-  if(!isPoi(d)){setStatus(`📍 ${d.place_name} 주변을 찾는 중…`);return}
+  if(!isPoi(d)&&!d._addr){setStatus(`📍 ${d.place_name} 주변을 찾는 중…`);return}
   const el=document.createElement('div');el.className='target';el.innerHTML=`<span>📍 ${escapeHtml(d.place_name)}</span>`;
   const p={...d,_dist:0};
   el.addEventListener('click',e=>{e.stopPropagation();openDetail(p)});
@@ -2532,11 +2645,16 @@ function withDist(p){return {...p,_dist:searchCenter?distanceM(searchCenter.getL
 $('addCustom').onclick=()=>{$('customBox').classList.toggle('on');$('customName').focus()};
 $('customOk').onclick=()=>{
   const n=$('customName').value.trim();if(!n)return;
+  const ad=$('customAddr').value.trim();
+  if(ad){$('customMsg').textContent='📍 주소 찾는 중…';addrSearch(ad,res=>{
+    if(!res.length){$('customMsg').textContent='주소를 못 찾았어요. 시·도로명·번호로 넣어주세요 (예: 제주시 서해안로 468-2). 주소 칸을 비우면 위치 없이 넣어요.';return}
+    $('customMsg').textContent='';addPick(addrPlace(res[0],n));$('customName').value='';$('customAddr').value='';$('customBox').classList.remove('on');renderPlan();
+    $('planSum').textContent=`📍 “${n}” 주소 위치로 담았어요 (지도·길안내 가능)`});return}
   const c=searchCenter||{getLat:()=>33.5,getLng:()=>126.5};
   picks.push(stamp({uid:uid(),p:{id:'c'+uid(),place_name:n,category_name:'',x:String(c.getLng()),y:String(c.getLat()),address_name:'',road_address_name:'',custom:true},memo:''}));
   $('customName').value='';$('customBox').classList.remove('on');savePlan();renderPlan();
 };
-$('customName').addEventListener('keydown',e=>{if(e.key==='Enter')$('customOk').click()});
+$('customName').addEventListener('keydown',e=>{if(e.key==='Enter')$('customOk').click()});$('customAddr').addEventListener('keydown',e=>{if(e.key==='Enter')$('customOk').click()});
 
 /* ----- 이 날 지도에서 보기 ----- */
 let dayLine=null;
@@ -3826,6 +3944,226 @@ function endImport(){if(!imp)return;imp.stop=true;imp.list.forEach(x=>{if(x.thum
 $('impX').onclick=()=>{const k=imp&&imp.k;if(imp&&imp.busy&&!imp.done&&imp.list.some(x=>x.saved))return;endImport();closeSheet('impEd');if(k&&tr&&tr.k===k)renderTrace()};
 $('impToTrace').onclick=()=>$('impX').click();
 
+/* =====================================================================
+   📒 가계부 — 여행 N빵과 별개로 내 돈 기록 (선물·기념품·평소 지출)
+   - 친구 여행방에는 절대 안 올라가고, 계정으로 내 기기끼리만 맞춤
+   - 여행 N빵 경비는 "내가 낸 돈"이 아니라 "내 몫"만 가계부에 더해 봄 (켜고 끌 수 있음)
+   - 카드 문자: 복사해서 붙여넣기 → 금액·가게·날짜·카드 자동 인식 / 홈 화면 앱이면 문자 → 공유 → 이 앱
+   ===================================================================== */
+const BOOK_CATS=[{id:'food',n:'식비',ic:'🍚'},{id:'cafe',n:'카페·간식',ic:'☕'},{id:'drink',n:'술',ic:'🍺'},{id:'move',n:'교통·주유',ic:'🚗'},{id:'stay',n:'숙박',ic:'🏨'},
+  {id:'shop',n:'쇼핑',ic:'🛍'},{id:'gift',n:'선물',ic:'🎁'},{id:'souv',n:'기념품',ic:'🧸'},{id:'tour',n:'관광·입장료',ic:'🎫'},{id:'life',n:'생활',ic:'🧺'},
+  {id:'med',n:'의료',ic:'💊'},{id:'event',n:'경조사',ic:'💐'},{id:'etc',n:'기타',ic:'📦'}];
+const TRIP_CAT={id:'trip',n:'여행 N빵 내 몫',ic:'✈️'};
+function bookCats(){const v=lsGet('bookCats',null);return Array.isArray(v)&&v.length?v.filter(c=>c&&typeof c.id==='string'&&typeof c.n==='string'):BOOK_CATS.map(c=>({...c}))}
+function catById(id){return id==='trip'?TRIP_CAT:bookCats().find(c=>c.id===id)||{id,n:'기타',ic:'📦'}}
+function cleanBook(o){
+  const b=cleanBase(o);if(!b)return null;
+  return {...b,d:/^\d{4}-\d{2}-\d{2}$/.test(o.d)?o.d:todayPlus(0),tm:Math.round(num(o.tm,-1,1439,-1)),amt:Math.round(num(o.amt,-1e9,1e9,0)),cat:str(o.cat,20)||'etc',
+    title:str(o.title,80),pay:str(o.pay,30),memo:str(o.memo,200),trip:str(o.trip,40),src:str(o.src,8)};
+}
+var book=cleanArr(lsGet('book',[]),cleanBook), bookDirty=true;
+function persistBook(){bookDirty=true;acctDirty=true;lsSet('book',book);if(acct){clearTimeout(acctSoon);acctSoon=setTimeout(()=>{if(!acctBusy)doAcctSync()},2500)}}
+function bookSig(){return `${book.length}:${book.reduce((m,x)=>Math.max(m,+x.upd||0),0)}`}
+function applyAcctBook(arr){
+  if(!Array.isArray(arr))return;const before=bookSig();
+  book=mergeArr(book,cleanArr(arr,cleanBook));if(bookSig()!==before){lsSet('book',book);if($('bookEd').classList.contains('on'))renderBook()}
+}
+const nowKST=()=>{const d=new Date(Date.now()+9*36e5);return {d:d.toISOString().slice(0,10),m:d.getUTCHours()*60+d.getUTCMinutes()}};
+function tripOf(d){   // 그 날짜가 지금 여행 기간이면 여행 이름
+  for(let i=0;i<trip.days;i++)if(dayDate(i)===d)return trip.name||`${trip.start} 여행`;
+  return '';
+}
+function addBook(e){const x=stamp({uid:'b'+uid(),d:e.d,tm:e.tm??-1,amt:Math.round(e.amt),cat:e.cat||'etc',title:(e.title||'').slice(0,80),pay:e.pay||'',memo:e.memo||'',trip:e.trip??tripOf(e.d),src:e.src||'m'});book.push(x);persistBook();return x}
+
+/* ----- 여행 N빵 중 내 몫 (지금 여행 + 보관함 여행) ----- */
+function myShares(){
+  const me=new Set([myNick(),'나'].filter(Boolean)),out=[];
+  const docs=[{t:trip,ex:live(exps)}];
+  Object.values(archive).forEach(e=>{if(e&&!e.del&&e.data&&Array.isArray(e.data.exps)){const t=cleanTrip(e.data.trip);if(t)docs.push({t,ex:live(cleanArr(e.data.exps,cleanExp))})}});
+  const seen=new Set();
+  docs.forEach(({t,ex})=>ex.forEach(e=>{
+    if(seen.has(e.uid))return;seen.add(e.uid);
+    let sp=e.split&&e.split.length?e.split:[e.payer];if(!sp.some(n=>me.has(n)))return;
+    if(sp.includes(e.payer))sp=[e.payer,...sp.filter(n=>n!==e.payer)];
+    const base=Math.floor(e.amt/sp.length),rem=e.amt-base*sp.length,k=sp.findIndex(n=>me.has(n)),share=base+(k<rem?1:0);
+    out.push({uid:'t'+e.uid,d:dayDateT(t,e.day),tm:-1,amt:share,cat:'trip',title:`${e.title||'경비'} (${sp.length}명 N빵)`,pay:`${e.payer} 냄`,trip:t.name||t.start+' 여행',virtual:true});
+  }));
+  return out;
+}
+
+/* ----- 화면 ----- */
+let bkYM=nowKST().d.slice(0,7), bkCat=null, bkEdit=null;
+function openBook(){bkEdit=null;renderBook();openSheet('bookEd');resetBookForm()}
+function resetBookForm(){bkEdit=null;$('bkAmt').value='';$('bkTitle').value='';$('bkDate').value=nowKST().d;$('bkPay').value=lsGet('bkPay','카드');bkCat=null;$('bkAdd').textContent='기록하기';$('bkCancel').style.display='none';renderBkCats()}
+function renderBkCats(){
+  $('bkCats').innerHTML=bookCats().map(c=>`<button data-c="${escapeHtml(c.id)}" class="${bkCat===c.id?'on':''}">${escapeHtml(c.ic||'')} ${escapeHtml(c.n)}</button>`).join('');
+  $('bkCats').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{bkCat=b.dataset.c;renderBkCats()});
+}
+function bookMonth(){
+  const inc=lsGet('bkTrip',true),all=live(book).concat(inc?myShares():[]);
+  return all.filter(x=>x.d.startsWith(bkYM)).sort((a,b)=>b.d.localeCompare(a.d)||(b.tm-a.tm)||(b.upd||0)-(a.upd||0));
+}
+function renderBook(){
+  const [y,m]=bkYM.split('-').map(Number);$('bkMon').textContent=`${y}년 ${m}월`;
+  $('bkTripOn').checked=lsGet('bkTrip',true);
+  const list=bookMonth(),total=list.reduce((s,x)=>s+x.amt,0),own=list.filter(x=>!x.virtual).reduce((s,x)=>s+x.amt,0);
+  $('bkTotal').textContent=won(total);$('bkTotSub').textContent=list.some(x=>x.virtual)?`내 기록 ${won(own)} + 여행 N빵 내 몫 ${won(total-own)}`:'';
+  // 카테고리별
+  const by={};list.forEach(x=>by[x.cat]=(by[x.cat]||0)+x.amt);
+  const cats=bookCats(),rows=Object.entries(by).sort((a,b)=>b[1]-a[1]);
+  const max=Math.max(1,...rows.map(r=>r[1]),...cats.map(c=>+c.bud||0));
+  $('bkBreak').innerHTML=rows.length?rows.map(([id,v])=>{const c=catById(id),bud=+c.bud||0,over=bud&&v>bud;
+    return `<div class="bkBar${over?' over':''}"><span class="n">${escapeHtml(c.ic||'')} ${escapeHtml(c.n)}</span><span class="b"><i style="width:${Math.max(2,v/max*100)}%"></i>${bud?`<u style="left:${bud/max*100}%"></u>`:''}</span><span class="v">${won(v)}${bud?`<small>/ ${won(bud)}</small>`:`<small>${total?Math.round(v/total*100):0}%</small>`}</span></div>`}).join('')
+    +cats.filter(c=>+c.bud&&!by[c.id]).map(c=>`<div class="bkBar"><span class="n">${escapeHtml(c.ic||'')} ${escapeHtml(c.n)}</span><span class="b"><u style="left:${(+c.bud)/max*100}%"></u></span><span class="v">0원<small>/ ${won(+c.bud)}</small></span></div>`).join('')
+    :'<div class="bkNone">이 달 기록이 없어요.</div>';
+  // 목록 (날짜별)
+  let h='',lastD='';
+  list.forEach(x=>{
+    if(x.d!==lastD){lastD=x.d;const dd=new Date(x.d+'T00:00:00'),sum=list.filter(z=>z.d===x.d).reduce((s,z)=>s+z.amt,0);
+      h+=`<div class="bkDay">${dd.getMonth()+1}/${dd.getDate()} (${WD[dd.getDay()]}) <small>${won(sum)}</small></div>`}
+    const c=catById(x.cat);
+    h+=`<div class="bkRow${x.virtual?' v':''}" data-u="${x.uid}"><span class="ic">${escapeHtml(c.ic||'')}</span><span class="t"><b>${escapeHtml(x.title||c.n)}</b><small>${escapeHtml(c.n)}${x.tm>=0?' · '+hm(x.tm):''}${x.pay?' · '+escapeHtml(x.pay):''}${x.trip?' · ✈️ '+escapeHtml(x.trip):''}${x.memo?' · '+escapeHtml(x.memo):''}</small></span><b class="a${x.amt<0?' neg':''}">${won(x.amt)}</b>${x.virtual?'':`<button data-bx="${x.uid}">✕</button>`}</div>`;
+  });
+  $('bkList').innerHTML=h||'<div class="bkNone">아직 기록이 없어요. 위에서 금액·내용·카테고리를 넣고 기록하세요.<br>카드 문자를 복사해 두었다면 📋 카드 문자로 한 번에 넣을 수 있어요.</div>';
+  $('bkList').querySelectorAll('.bkRow:not(.v)').forEach(r=>r.onclick=e=>{if(e.target.closest('button'))return;editBook(r.dataset.u)});
+  $('bkList').querySelectorAll('.bkRow.v').forEach(r=>r.onclick=()=>{$('bkMsg').textContent='✈️ 여행 N빵 내 몫은 💳 경비·정산에서 고쳐요. (위 체크를 끄면 가계부에서 빠져요)'});
+  $('bkList').querySelectorAll('[data-bx]').forEach(b=>b.onclick=()=>{const x=book.find(z=>z.uid===b.dataset.bx);if(!x)return;stamp(x).del=true;persistBook();renderBook();
+    $('bkMsg').innerHTML=`“${escapeHtml(x.title||'기록')}” 지웠어요 <button id="bkUndo">↶ 되돌리기</button>`;$('bkUndo').onclick=()=>{delete x.del;stamp(x);persistBook();$('bkMsg').textContent='';renderBook()}});
+}
+function editBook(u){const x=book.find(z=>z.uid===u&&!z.del);if(!x)return;bkEdit=u;
+  $('bkAmt').value=String(x.amt).replace(/\B(?=(\d{3})+(?!\d))/g,',');$('bkTitle').value=x.title;$('bkDate').value=x.d;$('bkPay').value=['카드','현금','계좌이체','기타'].includes(x.pay)?x.pay:'카드';
+  bkCat=x.cat;renderBkCats();$('bkAdd').textContent='수정 저장';$('bkCancel').style.display='';$('bookEd').querySelector('.sheetBody').scrollTop=0;$('bkMsg').textContent='✏️ 고친 뒤 “수정 저장”을 누르세요.'}
+$('bkAmt').addEventListener('input',()=>{const d=$('bkAmt').value.replace(/[^\d]/g,'').replace(/^0+/,'').slice(0,10),v=d.replace(/\B(?=(\d{3})+(?!\d))/g,',');if($('bkAmt').value!==v)$('bkAmt').value=v});
+$('bkAmt').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('bkTitle').focus()}});
+$('bkCancel').onclick=()=>{resetBookForm();$('bkMsg').textContent=''};
+$('bkAdd').onclick=()=>{
+  const amt=Math.round(+$('bkAmt').value.replace(/[^\d]/g,''));if(!amt){$('bkMsg').textContent='금액을 넣어주세요.';$('bkAmt').focus();return}
+  if(!bkCat){$('bkMsg').textContent='카테고리를 하나 골라주세요.';return}
+  const d=$('bkDate').value||nowKST().d,pay=$('bkPay').value;lsSet('bkPay',pay);
+  if(bkEdit){const x=book.find(z=>z.uid===bkEdit);if(x){Object.assign(x,{amt,title:$('bkTitle').value.trim(),d,pay,cat:bkCat,trip:tripOf(d)||x.trip});stamp(x);persistBook()}$('bkMsg').textContent='✅ 고쳤어요.'}
+  else{const t=nowKST();addBook({d,tm:d===t.d?t.m:-1,amt,cat:bkCat,title:$('bkTitle').value.trim(),pay});$('bkMsg').textContent=`✅ ${catById(bkCat).ic} ${won(amt)} 기록했어요.`}
+  bkYM=d.slice(0,7);resetBookForm();renderBook();
+};
+$('bkPrev').onclick=()=>{const [y,m]=bkYM.split('-').map(Number),d=new Date(y,m-2,1);bkYM=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;renderBook()};
+$('bkNext').onclick=()=>{const [y,m]=bkYM.split('-').map(Number),d=new Date(y,m,1);bkYM=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;renderBook()};
+$('bkTripOn').onchange=()=>{lsSet('bkTrip',$('bkTripOn').checked);renderBook()};
+$('bkCsv').onclick=()=>{
+  const list=bookMonth(),q=v=>`"${String(v??'').replace(/"/g,'""')}"`;
+  const rows=[['날짜','시간','카테고리','내용','금액','결제','메모','여행','구분'],...list.map(x=>[x.d,x.tm>=0?hm(x.tm):'',catById(x.cat).n,x.title,x.amt,x.pay,x.memo||'',x.trip||'',x.virtual?'여행 N빵 내 몫':'내 기록'])];
+  downloadBlob(new Blob(['\ufeff'+rows.map(r=>r.map(q).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),`가계부_${bkYM}.csv`);
+  $('bkMsg').textContent=`⬇ ${bkYM.replace('-','년 ')}월 ${list.length}건을 엑셀(CSV)로 받았어요.`;
+};
+$('expBook').onclick=()=>openBook();
+
+/* ----- 카테고리·예산 편집 ----- */
+function openBkCat(){renderBkCatEd();openSheet('bkCatEd')}
+function renderBkCatEd(){
+  const cs=bookCats();
+  $('bkCatList').innerHTML=cs.map((c,i)=>`<div class="bcRow" data-i="${i}"><input class="ic" value="${escapeHtml(c.ic||'')}" maxlength="2"><input class="n" value="${escapeHtml(c.n)}" maxlength="10"><input class="bud" inputmode="numeric" placeholder="월 예산" value="${+c.bud?String(c.bud).replace(/\B(?=(\d{3})+(?!\d))/g,','):''}"><button data-up="${i}"${i?'':' disabled'}>↑</button><button data-del="${i}">✕</button></div>`).join('');
+  const save=()=>{const rows=[...$('bkCatList').querySelectorAll('.bcRow')],cur=bookCats();
+    lsSet('bookCats',rows.map((r,i)=>({id:cur[i].id,ic:r.querySelector('.ic').value.trim().slice(0,2),n:r.querySelector('.n').value.trim().slice(0,10)||cur[i].n,bud:Math.round(+r.querySelector('.bud').value.replace(/[^\d]/g,''))||0})))};
+  $('bkCatList').querySelectorAll('input').forEach(x=>x.onchange=()=>{save();$('bkCatMsg').textContent='저장했어요.'});
+  $('bkCatList').querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{save();const cs=bookCats(),i=+b.dataset.up;[cs[i-1],cs[i]]=[cs[i],cs[i-1]];lsSet('bookCats',cs);renderBkCatEd()});
+  $('bkCatList').querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{save();const cs=bookCats(),i=+b.dataset.del;if(cs.length<=1)return;
+    if(!b.dataset.sure){b.dataset.sure='1';b.textContent='빼기?';setTimeout(()=>{if(b.isConnected){delete b.dataset.sure;b.textContent='✕'}},3000);return}
+    cs.splice(i,1);lsSet('bookCats',cs);renderBkCatEd();$('bkCatMsg').textContent='뺐어요. 이미 기록한 건 “기타”로 보여요.'});
+}
+$('bkCatBtn').onclick=openBkCat;
+$('bkCatAdd').onclick=()=>{const n=$('bkCatNew').value.trim().slice(0,10);if(!n)return;const cs=bookCats();cs.push({id:'c'+uid(),n,ic:$('bkCatIc').value.trim().slice(0,2)||'🏷',bud:0});lsSet('bookCats',cs);$('bkCatNew').value='';$('bkCatIc').value='';renderBkCatEd()};
+$('bkCatReset').onclick=()=>{lsSet('bookCats',BOOK_CATS.map(c=>({...c})));renderBkCatEd();$('bkCatMsg').textContent='기본 목록으로 되돌렸어요.'};
+$('bkCatEd').querySelector('[data-close]').addEventListener('click',()=>{renderBook();openSheet('bookEd')});
+
+/* ----- 📋 카드 문자 인식 ----- */
+const CARD_RE=/(KB국민|국민|신한|삼성|현대|롯데|하나|우리|NH농협|농협|NH|BC|비씨|씨티|IBK기업|IBK|기업|카카오뱅크|카카오페이|카카오|토스뱅크|토스|케이뱅크|SC제일|수협|광주|전북|부산|경남|대구|제주|새마을|신협|우체국)\s*(체크|신용)?\s*(카드)?/;
+const CAT_KW=[['cafe',/스타벅스|커피|카페|이디야|투썸|메가|빽다방|컴포즈|폴바셋|할리스|베이커리|제과|빵|파리바게|뚜레쥬르|던킨|배스킨|디저트|아이스크림|설빙/],
+  ['drink',/포차|호프|주점|이자카야|와인|맥주|술집|bar\b|펍/i],['move',/주유|칼텍스|SK에너지|S-?OIL|에쓰오일|현대오일|알뜰|충전|택시|카카오T|티머니|버스|코레일|KTX|SRT|항공|에어|대한항공|아시아나|주차|하이패스|렌터카|렌트/],
+  ['stay',/호텔|모텔|펜션|리조트|게스트하우스|에어비앤비|야놀자|여기어때|스테이|민박/],['life',/편의점|GS25|CU\b|씨유|세븐일레븐|이마트24|미니스톱|다이소|마트|이마트|홈플러스|롯데마트|하나로|생활/],
+  ['med',/약국|병원|의원|치과|한의원|안과|내과/],['souv',/기념품|감귤|한라봉|천혜향|오메기|기프트|소품|굿즈|농장/],['tour',/입장|매표|박물관|미술관|아쿠아|랜드|테마파크|체험|관광|투어/],['shop',/쿠팡|11번가|G마켓|옥션|무신사|올리브영|백화점|아울렛|면세/],
+  ['food',/식당|국수|고기|흑돼지|횟집|회|치킨|피자|버거|맥도날드|롯데리아|김밥|분식|해장국|국밥|돈까스|초밥|라멘|중국|짜장|한식|식육|갈비|순대|밥|찌개|탕|면/]];
+function guessCat(t){for(const [c,re] of CAT_KW)if(re.test(t))return bookCats().some(x=>x.id===c)?c:'etc';return 'etc'}
+function parseSms(text){
+  const parts=String(text||'').replace(/\r/g,'').split(/(?=\[Web발신\])|\n\s*\n/).map(s=>s.trim()).filter(s=>/\d[\d,]*\s*원/.test(s));
+  const now=nowKST(),cy=+now.d.slice(0,4),cm=+now.d.slice(5,7);
+  return parts.map(raw=>{
+    const s=raw.replace(/\[Web발신\]/g,' ');
+    let amt=0;const re=/([\d,]{1,12})\s*원/g;let m;
+    while((m=re.exec(s))){const pre=s.slice(Math.max(0,m.index-6),m.index);if(/누적|잔액|한도|총|합계|이용가능/.test(pre))continue;amt=+m[1].replace(/,/g,'');break}
+    const cancel=/취소/.test(s);if(cancel)amt=-amt;
+    const dm=/(\d{1,2})[\/.](\d{1,2})(?![\d.]*원)/.exec(s),tmm=/(\d{1,2}):(\d{2})/.exec(s);
+    let d=now.d;if(dm){const mo=+dm[1],da=+dm[2];if(mo>=1&&mo<=12&&da>=1&&da<=31){const y=mo>cm+1?cy-1:cy;d=`${y}-${String(mo).padStart(2,'0')}-${String(da).padStart(2,'0')}`}}
+    const tm=tmm?Math.min(1439,+tmm[1]*60+ +tmm[2]):-1;
+    const cm2=CARD_RE.exec(s);const card=cm2?(cm2[1]+(cm2[2]||'')+'카드').replace('카드카드','카드'):'';
+    // 가게 이름: 대부분 '시각 다음'에 옴 → 그 뒤에서 금액·누적·일시불 등을 빼고 첫 줄
+    const clean=t=>t.replace(/(총?누적|잔액|이용가능|한도)[\s\S]*$/,'').replace(/[\d,]+\s*원(\([^)]*\))?/g,' ').replace(/일시불|할부\s*\d*\s*(개월)?|승인(취소)?|취소|체크|사용|결제/g,' ').replace(/[가-힣A-Za-z]\*[가-힣A-Za-z*]*님?/g,' ');
+    let title='';
+    if(tmm){const after=clean(s.slice(tmm.index+tmm[0].length));title=(after.split('\n').map(x=>x.replace(/\s+/g,' ').trim()).find(x=>x&&!/^[\d\s*()\-:.,/]+$/.test(x))||'')}
+    if(!title){const toks=clean(s.replace(CARD_RE,' ').replace(/\d{1,2}[\/.]\d{1,2}/g,' ').replace(/\d{1,2}:\d{2}/g,' ')).split(/\n|\s+/).map(x=>x.trim()).filter(x=>x.length>=2&&!/^[\d\s*()\-:.,/]+$/.test(x)&&!/님$/.test(x));title=toks.sort((a,b)=>b.length-a.length)[0]||''}
+    title=title.slice(0,40);
+    return {raw,amt,d,tm,title,pay:card,cat:guessCat(title),cancel,ok:amt!==0};
+  }).filter(x=>x.ok);
+}
+let smsRows=[];
+function openSms(text){
+  $('bkSmsBox').classList.add('on');$('bkSmsIn').value=text||'';$('bkSmsOut').innerHTML='';$('bkSmsGo').style.display='none';
+  if(text)runSms();else setTimeout(()=>$('bkSmsIn').focus(),80);
+}
+function runSms(){
+  smsRows=parseSms($('bkSmsIn').value);
+  const dup=x=>live(book).some(b=>b.d===x.d&&b.amt===x.amt&&(b.tm===x.tm||b.title===x.title));
+  smsRows.forEach(x=>{x.dup=dup(x);x.on=!x.dup});
+  if(!smsRows.length){$('bkSmsOut').innerHTML='<div class="bkNone">금액(○○원)이 있는 카드 문자를 찾지 못했어요. 문자 전체를 복사해서 붙여넣어 주세요.</div>';$('bkSmsGo').style.display='none';return}
+  const cats=bookCats();
+  $('bkSmsOut').innerHTML=smsRows.map((x,i)=>`<div class="smRow${x.on?'':' off'}"><label><input type="checkbox" data-sc="${i}"${x.on?' checked':''}></label><div class="smT"><input data-st="${i}" value="${escapeHtml(x.title)}" placeholder="가게 이름"><small>${x.d.slice(5).replace('-','/')}${x.tm>=0?' '+hm(x.tm):''}${x.pay?' · '+escapeHtml(x.pay):''}${x.cancel?' · 취소(환불)':''}${x.dup?' · 이미 있음':''}</small></div><b class="${x.amt<0?'neg':''}">${won(x.amt)}</b><select data-sg="${i}">${cats.map(c=>`<option value="${escapeHtml(c.id)}"${c.id===x.cat?' selected':''}>${escapeHtml(c.ic||'')} ${escapeHtml(c.n)}</option>`).join('')}</select></div>`).join('');
+  $('bkSmsOut').querySelectorAll('[data-sc]').forEach(c=>c.onchange=()=>{smsRows[+c.dataset.sc].on=c.checked;c.closest('.smRow').classList.toggle('off',!c.checked);smsCount()});
+  $('bkSmsOut').querySelectorAll('[data-st]').forEach(c=>c.oninput=()=>{smsRows[+c.dataset.st].title=c.value});
+  $('bkSmsOut').querySelectorAll('[data-sg]').forEach(c=>c.onchange=()=>{smsRows[+c.dataset.sg].cat=c.value});
+  smsCount();
+}
+function smsCount(){const n=smsRows.filter(x=>x.on).length;$('bkSmsGo').style.display='';$('bkSmsGo').disabled=!n;$('bkSmsGo').textContent=`✅ ${n}건 가계부에 기록`}
+$('bkSms').onclick=()=>openSms('');
+$('bkSmsRun').onclick=runSms;
+$('bkSmsPaste').onclick=async()=>{try{const t=await navigator.clipboard.readText();if(t){$('bkSmsIn').value=t;runSms()}}catch(_){$('bkSmsIn').focus();$('bkSmsOut').innerHTML='<div class="bkNone">칸을 길게 눌러 “붙여넣기” 해주세요.</div>'}};
+$('bkSmsX').onclick=()=>$('bkSmsBox').classList.remove('on');
+$('bkSmsGo').onclick=()=>{
+  const go=smsRows.filter(x=>x.on);go.forEach(x=>addBook({d:x.d,tm:x.tm,amt:x.amt,cat:x.cat,title:x.title,pay:x.pay,src:'sms'}));
+  $('bkSmsBox').classList.remove('on');if(go.length)bkYM=go[0].d.slice(0,7);renderBook();$('bkMsg').textContent=`📋 카드 문자 ${go.length}건을 기록했어요.`;
+};
+
+/* ----- 💳 경비 화면: 👥 같이(N빵) / 👤 나만(가계부) ----- */
+let exCat=null;
+function exMode(){return lsGet('exMode','with')==='me'?'me':'with'}
+function applyExMode(){
+  const me=exMode()==='me';
+  document.querySelectorAll('.exModeSw [data-xm]').forEach(b=>b.classList.toggle('on',b.dataset.xm===(me?'me':'with')));
+  $('expEd').classList.toggle('exMe',me);
+  $('exAdd').textContent=me?'📒 내 가계부에 기록':'기록하기';
+  $('exCats').innerHTML=me?bookCats().map(c=>`<button data-c="${escapeHtml(c.id)}" class="${exCat===c.id?'on':''}">${escapeHtml(c.ic||'')} ${escapeHtml(c.n)}</button>`).join(''):'';
+  $('exCats').querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>{exCat=b.dataset.c;applyExMode()});
+  const mine=live(book).filter(x=>x.trip&&x.trip===(trip.name||`${trip.start} 여행`)).reduce((s,x)=>s+x.amt,0);
+  $('exMine').innerHTML=me||mine?`👤 이 여행 내 개인 지출 <b>${won(mine)}</b> <button id="exMineGo">📒 가계부</button>`:'';
+  if($('exMineGo'))$('exMineGo').onclick=()=>openBook();
+}
+document.querySelectorAll('.exModeSw [data-xm]').forEach(b=>b.onclick=()=>{lsSet('exMode',b.dataset.xm);applyExMode()});
+{const add=$('exAdd').onclick;$('exAdd').onclick=()=>{
+  if(exMode()!=='me')return add();
+  const amt=exAmtVal();if(!amt){$('exMsg').textContent='금액을 넣어주세요.';$('exAmt').focus();return}
+  if(!exCat){$('exMsg').textContent='카테고리를 하나 골라주세요 (선물·기념품 등).';return}
+  const d=dayDate(+$('exDay').value||0),t=nowKST();
+  addBook({d,tm:d===t.d?t.m:-1,amt,cat:exCat,title:$('exTitle').value.trim(),pay:'',src:'trip',trip:trip.name||`${trip.start} 여행`});
+  $('exTitle').value='';$('exAmt').value='';exPreview();$('exMsg').textContent=`📒 ${catById(exCat).ic} ${won(amt)} 내 가계부에 기록했어요 (친구에게 안 보여요)`;applyExMode();
+}}
+{const oe=openExp;openExp=function(pre){oe(pre);applyExMode()}}
+
+/* ----- 바로 열기: ?book (가계부) · ?sched (일정) · 문자 공유로 들어온 글 ----- */
+function handleLaunch(){
+  const q=new URLSearchParams(location.search);let used=false;
+  const shared=[q.get('title'),q.get('text')].filter(Boolean).join('\n');
+  if(shared&&/\d[\d,]*\s*원/.test(shared)){openBook();openSms(shared);used=true}
+  else if(q.has('book')){openBook();used=true}
+  else if(q.has('sched')){openPlan();used=true}
+  if(used)try{history.replaceState(null,'',location.pathname)}catch(_){}
+}
+
 /* ----- 일정 편집창 버튼들 ----- */
 function refreshEdExtra(it){
   $('edVisit').textContent=it.visited?'✅ 다녀옴':it.visited===false?'✖️ 안 감':'⬜ 다녀옴 표시';
@@ -3850,7 +4188,7 @@ $('expBtn').onclick=()=>openExp();
 /* =====================================================================
    ⓪ 내 설정 코드 — 내 폰·노트북끼리만 설정을 맞춤 (친구와 섞이지 않음)
    ===================================================================== */
-var SET_KEYS=['starts','startDef','themes','noFran','radiusByMode','fuel','qdong','btnLayout','cardOpt','photoOpt','friends','shareOpt'];
+var SET_KEYS=['starts','startDef','themes','noFran','radiusByMode','fuel','qdong','btnLayout','cardOpt','photoOpt','friends','shareOpt','bookCats'];
 var setRoom=lsGet('setRoom',null), setTimer=null;
 let setState='', setLast=0, setTry=0;
 function setMeta(){try{return JSON.parse(localStorage.getItem('pinb_setMeta')||'{}')}catch(_){return {}}}
@@ -3981,10 +4319,10 @@ function doAcctSync(){
   const p=acctQ.then(async()=>{
     const me=acct;acctBusy=true;acctDirty=false;
     try{
-      const del=inboxDelQ.slice();const r=await acctCall({action:'sync',email:me.email,token:me.token,kv:acctKV(),trips:acctTrips(),saved,inboxDel:del});
+      const del=inboxDelQ.slice(),sendBook=bookDirty;const r=await acctCall({action:'sync',email:me.email,token:me.token,kv:acctKV(),trips:acctTrips(),saved,inboxDel:del,book:sendBook?book:[],bookSig:bookSig()});
       if(acct!==me)return {err:'changed'};
       if(!r.ok){acctState=r.j.err||'오류';if(r.j.err==='bad token'){acct=null;lsSet('acct',null);$('acctMsg').textContent='로그인이 풀렸어요. 다시 로그인해 주세요.'}else acctDirty=true;renderAcct();return {err:r.j.err}}
-      applyAcctKV(r.j.kv,false);applyAcctTrips(r.j.trips);applyAcctSaved(r.j.saved);inboxDelQ=inboxDelQ.filter(c=>!del.includes(c));lsSet('inboxDelQ',inboxDelQ);applyInbox(r.j.inbox);acctState='ok';acctLast=Date.now();renderAcct();return {ok:true};
+      applyAcctKV(r.j.kv,false);applyAcctTrips(r.j.trips);applyAcctSaved(r.j.saved);if(sendBook)bookDirty=false;applyAcctBook(r.j.book);inboxDelQ=inboxDelQ.filter(c=>!del.includes(c));lsSet('inboxDelQ',inboxDelQ);applyInbox(r.j.inbox);acctState='ok';acctLast=Date.now();renderAcct();return {ok:true};
     }catch(_){acctState='offline';acctDirty=true;renderAcct();return {err:'offline'}}
     finally{acctBusy=false}
   });
@@ -4005,7 +4343,7 @@ $('acctSignup').onclick=async()=>{
   const v=acctInputs();if(!v)return;acctBusyBtns(true);$('acctMsg').textContent='가입하는 중…';
   try{
     const m=setMeta();SET_KEYS.forEach(k=>{if(localStorage.getItem('pinb_'+k)!==null&&!m[k])m[k]=1});try{localStorage.setItem('pinb_setMeta',JSON.stringify(m))}catch(_){}
-    const r=await acctCall({action:'signup',email:v.email,pin:v.pin,kv:acctKV(),trips:acctTrips(),saved});
+    const r=await acctCall({action:'signup',email:v.email,pin:v.pin,kv:acctKV(),trips:acctTrips(),saved,book});
     if(!r.ok){$('acctMsg').textContent=acctErr(r);return}
     acct={email:v.email.toLowerCase(),token:r.j.token};lsSet('acct',acct);acctState='ok';acctLast=Date.now();$('acctPin').value='';
     $('acctMsg').textContent='✅ 가입했어요. 이 기기의 설정과 여행 보관함을 올렸어요. 다른 기기에서 같은 이메일로 로그인하세요.';renderAcct();
@@ -4018,7 +4356,7 @@ $('acctLogin').onclick=async()=>{
     const r=await acctCall({action:'login',email:v.email,pin:v.pin,kv:{},trips:{}});
     if(!r.ok){$('acctMsg').textContent=acctErr(r);return}
     acct={email:v.email.toLowerCase(),token:r.j.token};lsSet('acct',acct);$('acctPin').value='';
-    const ch=applyAcctKV(r.j.kv,true);applyAcctTrips(r.j.trips);applyAcctSaved(r.j.saved);applyInbox(r.j.inbox);
+    const ch=applyAcctKV(r.j.kv,true);applyAcctTrips(r.j.trips);applyAcctSaved(r.j.saved);applyInbox(r.j.inbox);applyAcctBook(r.j.book);bookDirty=true;
     const n=Object.values(r.j.trips||{}).filter(e=>e&&!e.del).length, ns=(r.j.saved||[]).filter(x=>x&&!x.del).length;
     $('acctMsg').textContent=`✅ 로그인했어요. 가져온 것: 설정 ${ch.length}가지${n?` · 여행 ${n}개(🗂 보관함)`:''}${ns?` · 📌 보류 ${ns}곳`:''}`;
     await doAcctSync();
@@ -4147,6 +4485,7 @@ setInterval(updateNextCard,60000);
 })();
 
 function startApp(){
+  setTimeout(()=>{try{handleLaunch()}catch(_){}},500);
   setTimeout(startVisitWatch,2000);
   setTimeout(checkInviteLink,300);
   if(typeof kakao==='undefined'||!kakao.maps){

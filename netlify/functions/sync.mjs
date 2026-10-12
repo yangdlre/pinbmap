@@ -56,6 +56,14 @@ export function cleanSaved(a) {
   return a.filter(x => x && typeof x === 'object' && typeof x.uid === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(x.uid) && (x.del || (x.p && typeof x.p === 'object')))
     .map(x => ({ ...x, upd: Math.min(+x.upd || 0, lim) })).sort((a, b) => b.upd - a.upd).slice(0, 1000);
 }
+// 📒 가계부: 내 기기끼리만 맞추는 개인 지출 기록 (항목별 최신 수정 우선, 최대 5000건)
+export function cleanBook(a) {
+  if (!Array.isArray(a)) return [];
+  const lim = Date.now() + 864e5;
+  return a.filter(x => x && typeof x === 'object' && typeof x.uid === 'string' && /^[A-Za-z0-9_-]{1,40}$/.test(x.uid) && JSON.stringify(x).length < 800)
+    .map(x => ({ ...x, upd: Math.min(+x.upd || 0, lim) })).sort((a, b) => b.upd - a.upd).slice(0, 5000);
+}
+const bookSig = a => `${a.length}:${a.reduce((m, x) => Math.max(m, +x.upd || 0), 0)}`;
 function cleanKV(kv) {
   const o = {};
   if (kv && typeof kv === 'object') for (const [k, x] of Object.entries(kv).slice(0, 40)) if (/^[a-zA-Z]{1,20}$/.test(k) && x && typeof x === 'object') o[k] = { v: x.v, upd: Math.min(+x.upd || 0, Date.now() + 864e5) };
@@ -141,7 +149,7 @@ async function acct(body, st) {
       if (!/^\d{4}$/.test(String(body.pin || ''))) return ok({ err: 'bad pin' }, 400);
       if (cur) return ok({ err: 'exists' }, 409);
       const salt = randomBytes(16).toString('hex'), tok = randomBytes(24).toString('hex');
-      const rec = { salt, hash: pinHash(body.pin, salt), fails: 0, lock: 0, tokens: [{ t: sha(tok), at: now }], kv: cleanKV(body.kv), trips: cleanTrips(body.trips), saved: cleanSaved(body.saved), created: now };
+      const rec = { salt, hash: pinHash(body.pin, salt), fails: 0, lock: 0, tokens: [{ t: sha(tok), at: now }], kv: cleanKV(body.kv), trips: cleanTrips(body.trips), saved: cleanSaved(body.saved), book: cleanBook(body.book), created: now };
       if (Buffer.byteLength(JSON.stringify(rec)) > ACCT_MAX) return ok({ err: 'too big' }, 413);
       const w = await put(st, key, rec, { onlyIfNew: true });
       if (w === 'conflict') continue;
@@ -173,12 +181,14 @@ async function acct(body, st) {
       if (act === 'logout') rec.tokens = rec.tokens.filter(x => x.t !== th);
     } else return ok({ err: 'bad action' }, 400);
     if (act !== 'logout') { rec.kv = mergeKV(rec.kv || {}, cleanKV(body.kv)); rec.trips = mergeTrips(rec.trips || {}, cleanTrips(body.trips)); rec.saved = cleanSaved(mergeArr(rec.saved || [], cleanSaved(body.saved)));
+      if (Array.isArray(body.book) && body.book.length) rec.book = cleanBook(mergeArr(rec.book || [], cleanBook(body.book)));
       if (rec.inbox && Array.isArray(body.inboxDel)) for (const c of body.inboxDel.slice(0, 50)) delete rec.inbox[String(c)]; }
     if (Buffer.byteLength(JSON.stringify(rec)) > ACCT_MAX) return ok({ err: 'too big' }, 413);
     const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
     if (w === 'conflict') continue;
     if (w === 'fail') return ok({ err: 'save failed' }, 503);
-    return ok({ token: newTok || undefined, kv: rec.kv, trips: rec.trips, saved: rec.saved || [], inbox: rec.inbox || {} });
+    const bk = rec.book || [], same = typeof body.bookSig === 'string' && body.bookSig === bookSig(bk);
+    return ok({ token: newTok || undefined, kv: rec.kv, trips: rec.trips, saved: rec.saved || [], inbox: rec.inbox || {}, book: same ? null : bk, bookSig: bookSig(bk) });
   }
   return ok({ err: 'busy' }, 503);
 }
