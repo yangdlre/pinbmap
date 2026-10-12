@@ -1,17 +1,19 @@
 // 핀볼 지도 — 동기화 함수 (Netlify Blobs 저장)
-// ① 여행방  : POST {room, nick, create?, doc:{trip,picks,items,todos,exps}}
+// ① 여행방  : POST {room, nick, create?, doc:{trip,picks,items,todos,exps,photos}}
 //             일행이 함께 보는 일정표·담아둔 곳·할일·경비
 // ② 내 설정  : POST {kind:'set', room:<설정코드>, create?, kv:{키:{v,upd}}}
 //             내 폰·노트북끼리만 맞추는 시작위치·테마 등 개인 설정
-// ③ 계정    : POST {kind:'acct', action:'signup'|'login'|'sync'|'logout'|'delete', email, pin|token, kv, trips, saved}
+// ③ 계정    : POST {kind:'acct', action:'signup'|'login'|'sync'|'logout'|'delete'|'share', email, pin|token, kv, trips, saved, inboxDel}
+//             share: {to:[친구 이메일], trip:{code,name,start,days}, nick} → 친구 계정의 '공유받은 여행(inbox)'에 넣음
 //             이메일 + 숫자 4자리로 내 설정·여행 보관함·📌 보류 맛집을 어느 기기에서나 불러오기 (중요 정보용 아님)
 // 서버에 있는 것과 보낸 것을 "항목별 최신 수정 우선"으로 합쳐 저장하고, 합친 결과를 돌려줍니다.
 import { getStore } from '@netlify/blobs';
 import { createHash, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 
 const ok = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
-const ARR = ['picks', 'items', 'todos', 'exps'];
+const ARR = ['picks', 'items', 'todos', 'exps', 'photos'];   // photos: 여행 사진 목록(사진 자체는 photo 함수에 따로 저장)
 const MAX_BYTES = 450 * 1024;
+const ACCT_MAX = 3 * 1024 * 1024;   // 계정: 보관함 여행이 쌓이고 사진 목록까지 실리므로 넉넉히 (사진 파일 자체는 photo 함수에 따로)
 
 export function mergeArr(a = [], b = []) {
   const m = new Map();
@@ -102,6 +104,32 @@ export function mergeTrips(a = {}, b = {}) {
   }
   return o;
 }
+// 👤 아이디로 공유: 친구 계정의 inbox 에 {방코드: 보낸 사람·여행 이름} 을 넣음 (친구가 열면 그 방으로 들어감)
+const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/;
+async function shareTrip(st, from, body) {
+  const t = body.trip || {};
+  const code = String(t.code || '').toUpperCase();
+  if (!/^[A-Z0-9]{6,12}$/.test(code)) return ok({ err: 'bad room' }, 400);
+  const entry = { from, nick: String(body.nick || '').slice(0, 20), name: String(t.name || '').slice(0, 30), start: /^\d{4}-\d{2}-\d{2}$/.test(t.start) ? t.start : '', days: Math.max(1, Math.min(7, Math.floor(+t.days || 1))), at: Date.now() };
+  const to = [...new Set((Array.isArray(body.to) ? body.to : []).map(e => String(e || '').trim().toLowerCase()))].filter(e => EMAIL.test(e) && e !== from).slice(0, 20);
+  const sent = [], missing = [], failed = [];
+  for (const e of to) {
+    const key = 'acct:' + sha('pinb|' + e).slice(0, 40);
+    let done = false;
+    for (let i = 0; i < 4 && !done; i++) {
+      const cur = await st.getWithMetadata(key, { type: 'json' });
+      if (!cur) { missing.push(e); done = true; break; }
+      const rec = { ...(cur.data || {}) };
+      const inbox = { ...(rec.inbox || {}) };
+      inbox[code] = entry;
+      rec.inbox = Object.fromEntries(Object.entries(inbox).sort((a, b) => (b[1].at || 0) - (a[1].at || 0)).slice(0, 50));
+      const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
+      if (w === 'ok') { sent.push(e); done = true; } else if (w === 'fail') break;
+    }
+    if (!done) failed.push(e);
+  }
+  return ok({ sent, missing, failed });
+}
 async function acct(body, st) {
   const email = String(body.email || '').trim().toLowerCase();
   if (!/^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,}$/.test(email)) return ok({ err: 'bad email' }, 400);
@@ -114,7 +142,7 @@ async function acct(body, st) {
       if (cur) return ok({ err: 'exists' }, 409);
       const salt = randomBytes(16).toString('hex'), tok = randomBytes(24).toString('hex');
       const rec = { salt, hash: pinHash(body.pin, salt), fails: 0, lock: 0, tokens: [{ t: sha(tok), at: now }], kv: cleanKV(body.kv), trips: cleanTrips(body.trips), saved: cleanSaved(body.saved), created: now };
-      if (Buffer.byteLength(JSON.stringify(rec)) > MAX_BYTES) return ok({ err: 'too big' }, 413);
+      if (Buffer.byteLength(JSON.stringify(rec)) > ACCT_MAX) return ok({ err: 'too big' }, 413);
       const w = await put(st, key, rec, { onlyIfNew: true });
       if (w === 'conflict') continue;
       if (w === 'fail') return ok({ err: 'save failed' }, 503);
@@ -137,18 +165,20 @@ async function acct(body, st) {
       rec.fails = 0; rec.lock = 0;
       newTok = randomBytes(24).toString('hex');
       rec.tokens = [...rec.tokens.slice(-9), { t: sha(newTok), at: now }];
-    } else if (act === 'sync' || act === 'logout' || act === 'delete') {
+    } else if (act === 'sync' || act === 'logout' || act === 'delete' || act === 'share') {
       const th = sha(String(body.token || ''));
       if (!rec.tokens.some(x => x && x.t === th)) return ok({ err: 'bad token' }, 401);
+      if (act === 'share') return shareTrip(st, email, body);
       if (act === 'delete') { await st.delete(key); return ok({ deleted: true }); }
       if (act === 'logout') rec.tokens = rec.tokens.filter(x => x.t !== th);
     } else return ok({ err: 'bad action' }, 400);
-    if (act !== 'logout') { rec.kv = mergeKV(rec.kv || {}, cleanKV(body.kv)); rec.trips = mergeTrips(rec.trips || {}, cleanTrips(body.trips)); rec.saved = cleanSaved(mergeArr(rec.saved || [], cleanSaved(body.saved))); }
-    if (Buffer.byteLength(JSON.stringify(rec)) > MAX_BYTES) return ok({ err: 'too big' }, 413);
+    if (act !== 'logout') { rec.kv = mergeKV(rec.kv || {}, cleanKV(body.kv)); rec.trips = mergeTrips(rec.trips || {}, cleanTrips(body.trips)); rec.saved = cleanSaved(mergeArr(rec.saved || [], cleanSaved(body.saved)));
+      if (rec.inbox && Array.isArray(body.inboxDel)) for (const c of body.inboxDel.slice(0, 50)) delete rec.inbox[String(c)]; }
+    if (Buffer.byteLength(JSON.stringify(rec)) > ACCT_MAX) return ok({ err: 'too big' }, 413);
     const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
     if (w === 'conflict') continue;
     if (w === 'fail') return ok({ err: 'save failed' }, 503);
-    return ok({ token: newTok || undefined, kv: rec.kv, trips: rec.trips, saved: rec.saved || [] });
+    return ok({ token: newTok || undefined, kv: rec.kv, trips: rec.trips, saved: rec.saved || [], inbox: rec.inbox || {} });
   }
   return ok({ err: 'busy' }, 503);
 }
