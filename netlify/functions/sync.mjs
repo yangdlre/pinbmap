@@ -3,7 +3,9 @@
 //             일행이 함께 보는 일정표·담아둔 곳·할일·경비
 // ② 내 설정  : POST {kind:'set', room:<설정코드>, create?, kv:{키:{v,upd}}}
 //             내 폰·노트북끼리만 맞추는 시작위치·테마 등 개인 설정
-// ③ 계정    : POST {kind:'acct', action:'signup'|'login'|'sync'|'logout'|'delete'|'share', email, pin|token, kv, trips, saved, inboxDel}
+// ③ 계정    : POST {kind:'acct', action:'signup'|'login'|'sync'|'logout'|'delete'|'share'|'admin', email, pin|token, kv, trips, saved, inboxDel, open}
+//             open:1 = 앱을 새로 연 뒤 첫 맞추기 → 방문 횟수 +1 (stat:… 키에 따로 저장, 계정 자료는 그대로)
+//             admin: 마스터 계정만 — 가입자 수·이메일·방문 횟수·마지막 접속
 //             share: {to:[친구 이메일], trip:{code,name,start,days}, nick} → 친구 계정의 '공유받은 여행(inbox)'에 넣음
 //             이메일 + 숫자 4자리로 내 설정·여행 보관함·📌 보류 맛집을 어느 기기에서나 불러오기 (중요 정보용 아님)
 // 서버에 있는 것과 보낸 것을 "항목별 최신 수정 우선"으로 합쳐 저장하고, 합친 결과를 돌려줍니다.
@@ -83,6 +85,29 @@ function store() {
 }
 
 // ---------- 계정 ----------
+const MASTER = 'yangdlre@gmail.com';
+// 방문 기록: 계정 자료(acct:…)와 따로 stat:… 에 둠 (예전 버전 서버가 계정 자료를 저장해도 지워지지 않게)
+async function bumpStat(st, key, email, created, inc) {
+  try {
+    const sk = 'stat:' + key.slice(5), now = Date.now();
+    const cur = (await st.get(sk, { type: 'json' })) || {};
+    await st.set(sk, JSON.stringify({ email, created: cur.created || created || now, n: (cur.n || 0) + (inc ? 1 : 0), last: inc ? now : (cur.last || now), seen: now }));
+  } catch { /* 방문 기록 실패는 무시 */ }
+}
+async function adminList(st) {
+  const { blobs } = await st.list({ prefix: 'acct:' });
+  const sl = await st.list({ prefix: 'stat:' });
+  const stats = {};
+  await Promise.all(sl.blobs.map(async b => { const v = await st.get(b.key, { type: 'json' }); if (v) stats[b.key.slice(5)] = v; }));
+  const rows = await Promise.all(blobs.map(async b => {
+    const h = b.key.slice(5), s = stats[h];
+    if (s) return { email: s.email || null, n: s.n || 0, last: s.last || 0, created: s.created || 0 };
+    const rec = await st.get(b.key, { type: 'json' }).catch(() => null);
+    return { email: null, n: 0, last: 0, created: (rec && rec.created) || 0 };
+  }));
+  rows.sort((a, b) => (b.last || 0) - (a.last || 0) || (b.created || 0) - (a.created || 0));
+  return ok({ total: blobs.length, known: rows.filter(r => r.email).length, rows });
+}
 const sha = (x) => createHash('sha256').update(String(x)).digest('hex');
 const pinHash = (pin, salt) => scryptSync(String(pin), salt, 32).toString('hex');
 function pinOK(pin, rec) {
@@ -154,6 +179,7 @@ async function acct(body, st) {
       const w = await put(st, key, rec, { onlyIfNew: true });
       if (w === 'conflict') continue;
       if (w === 'fail') return ok({ err: 'save failed' }, 503);
+      await bumpStat(st, key, email, now, true);
       return ok({ token: tok, kv: rec.kv, trips: rec.trips, saved: rec.saved });
     }
     if (!cur) return ok({ err: 'no account' }, 404);
@@ -173,11 +199,12 @@ async function acct(body, st) {
       rec.fails = 0; rec.lock = 0;
       newTok = randomBytes(24).toString('hex');
       rec.tokens = [...rec.tokens.slice(-9), { t: sha(newTok), at: now }];
-    } else if (act === 'sync' || act === 'logout' || act === 'delete' || act === 'share') {
+    } else if (act === 'sync' || act === 'logout' || act === 'delete' || act === 'share' || act === 'admin') {
       const th = sha(String(body.token || ''));
       if (!rec.tokens.some(x => x && x.t === th)) return ok({ err: 'bad token' }, 401);
+      if (act === 'admin') return email === MASTER && String(body.lab || '') === '5555' ? adminList(st) : ok({ err: 'not master' }, 403);
       if (act === 'share') return shareTrip(st, email, body);
-      if (act === 'delete') { await st.delete(key); return ok({ deleted: true }); }
+      if (act === 'delete') { await st.delete(key); await st.delete('stat:' + key.slice(5)).catch(() => {}); return ok({ deleted: true }); }
       if (act === 'logout') rec.tokens = rec.tokens.filter(x => x.t !== th);
     } else return ok({ err: 'bad action' }, 400);
     if (act !== 'logout') { rec.kv = mergeKV(rec.kv || {}, cleanKV(body.kv)); rec.trips = mergeTrips(rec.trips || {}, cleanTrips(body.trips)); rec.saved = cleanSaved(mergeArr(rec.saved || [], cleanSaved(body.saved)));
@@ -187,6 +214,7 @@ async function acct(body, st) {
     const w = await put(st, key, rec, { onlyIfMatch: cur.etag });
     if (w === 'conflict') continue;
     if (w === 'fail') return ok({ err: 'save failed' }, 503);
+    if (act === 'sync' || act === 'login') await bumpStat(st, key, email, rec.created, act === 'sync' && +body.open === 1);
     const bk = rec.book || [], same = typeof body.bookSig === 'string' && body.bookSig === bookSig(bk);
     return ok({ token: newTok || undefined, kv: rec.kv, trips: rec.trips, saved: rec.saved || [], inbox: rec.inbox || {}, book: same ? null : bk, bookSig: bookSig(bk) });
   }
