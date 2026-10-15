@@ -1001,6 +1001,23 @@ body:not(.mode-tour) #catJeju{display:none}
 #vaCmds button{font-size:13.5px;padding:7px 11px;border-radius:16px;border:1px solid var(--line);background:#fff}
 #vaCmds button[data-fill]{border-style:dashed}
 #vaCmds .cn{font-size:12px;color:var(--muted);margin-top:4px}
+/* 사진 읽기·깊게 찾기 */
+.camOnly{display:none!important}
+body.aiPhoto .camOnly{display:inline-flex!important;align-items:center;justify-content:center}
+body.aiPhoto #vaCam.camOnly{display:grid!important}
+#vaCam{flex:none;width:50px;height:48px;border-radius:14px;padding:0;place-items:center}
+.exCam{margin-top:8px;width:100%;height:44px;border-radius:12px;font-weight:700}
+.vaRc img{float:left;width:76px;height:100px;object-fit:cover;border-radius:10px;margin:0 10px 6px 0;border:1px solid var(--line)}
+.vaF{overflow:hidden}
+.vaF label{display:flex;gap:6px;align-items:center;font-size:13.5px;margin:3px 0;white-space:nowrap}
+.vaF input{flex:1;min-width:0;padding:6px 8px!important;font-size:15px!important;border-radius:8px!important}
+.vaF small{display:block;color:var(--muted);font-size:12px;margin-top:4px;white-space:normal}
+.vaSeg{display:flex;gap:6px;margin-top:6px}
+.vaSeg button{flex:1;padding:7px 4px;border-radius:10px;font-size:13px}
+.vaSeg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.vaRc .vaQb{clear:both}
+.vmDeep{display:flex;gap:8px;align-items:flex-start;margin-top:8px;font-size:14px}
+.vmDeep small{display:block;color:var(--muted);font-size:12px}
 /* 말로 찾기: 기록 확인 칸 */
 .vaQ{line-height:1.55}
 .vaQb{display:flex;gap:8px;margin-top:10px}
@@ -1142,7 +1159,7 @@ body:not(.mode-tour) #catJeju{display:none}
       <div class="exPick"><label><span>날짜</span><select id="exDay"></select></label><label><span>낸 사람</span><select id="exPayer"></select></label></div>
       <div class="exLbl">나눌 사람 <button id="exAll" type="button">전체 선택</button></div><div id="exSplit"></div>
       <div class="exAddP"><input type="text" id="exPerson" placeholder="사람 추가 (이름)" maxlength="20"><button id="exPersonAdd">+ 추가</button></div>
-      <button id="exAdd" class="exGo">기록하기</button>
+      <button id="exAdd" class="exGo">기록하기</button><button type="button" class="camOnly exCam" onclick="vaPhoto(exMode()==='me'?'me':'with')">📷 영수증</button>
       <div id="exMsg"></div>
       <div id="exHint"></div>
       <div id="exMine"></div>
@@ -1165,7 +1182,7 @@ body:not(.mode-tour) #catJeju{display:none}
       <div id="bkCats" class="bkCats"></div>
       <div class="exPick"><label><span>날짜</span><input type="date" id="bkDate"></label><label><span>결제</span><select id="bkPay"><option>카드</option><option>현금</option><option>계좌이체</option><option>기타</option></select></label></div>
       <button id="bkAdd" class="exGo">기록하기</button><button id="bkCancel" style="display:none">취소</button>
-      <button id="bkSms" class="bkSmsBtn">📋 카드 문자로 넣기</button>
+      <button id="bkSms" class="bkSmsBtn">📋 카드 문자로 넣기</button><button type="button" class="camOnly bkSmsBtn" onclick="vaPhoto('me')">📷 영수증 사진으로 넣기</button>
       <div id="bkMsg"></div>
     </div>
     <label class="bkTripSw"><input type="checkbox" id="bkTripOn"> ✈️ 여행 N빵 경비 중 <b>내 몫</b>도 포함해서 보기</label>
@@ -5405,12 +5422,13 @@ const AI_PROV={gemini:{name:'Google Gemini',get:'https://aistudio.google.com/api
 const AI_ERR={quota:'AI 무료 한도가 찼어요',cap:'오늘 AI 사용 상한(500회)에 닿았어요',nokey:'연결된 AI 키가 없어요',badkey:'AI 키가 맞지 않거나 막혔어요',timeout:'AI 응답이 늦어요',net:'AI에 연결하지 못했어요',fail:'AI가 답을 못 했어요','bad token':'다시 로그인해 주세요',login:'로그인이 필요해요',changed:'계정이 바뀌었어요',busy:'잠시 뒤 다시 해 주세요',store:'저장 서버가 응답하지 않아요'};
 function vaMode(){const v=lsGet('vaMode','web');return v==='mix'||v==='ai'?v:'web'}
 function vaModelSel(){const v=lsGet('vaModel','auto');return v!=='auto'&&AI_MODELS.some(m=>m.id===v)?v:'auto'}
-function aiModelName(id){const m=AI_MODELS.find(x=>x.id===id);return m?m.name:'자동'}
+function aiModelName(id){const m=AI_MODELS.find(x=>x.id===id);return m?m.name:({'groq-vision':'Groq Qwen 3.8 (사진)','gemini-vision':'Gemini Flash-Lite (사진)'})[id]||'자동'}
+function aiPhotoUI(){try{document.body.classList.toggle('aiPhoto',!!(acct&&(aiK().groq||aiK().gemini)))}catch(_){}}
 // 연결 여부·끝 4자리만, 계정(이메일)별로 (키 자체는 이 기기에 없음)
 let aiCache=lsGet('aiKeys2',null)||{};try{localStorage.removeItem('pinb_aiKeys')}catch(_){}
 function aiK(){return acct&&aiCache.email===acct.email?(aiCache.keys||{}):{}}
-function aiSetKeys(email,k){aiCache={email,keys:Object.fromEntries(Object.entries(k||{}).filter(([,v])=>v))};lsSet('aiKeys2',aiCache)}
-function aiClear(){aiCache={};lsSet('aiKeys2',aiCache)}
+function aiSetKeys(email,k){aiCache={email,keys:Object.fromEntries(Object.entries(k||{}).filter(([,v])=>v))};lsSet('aiKeys2',aiCache);aiPhotoUI()}
+function aiClear(){aiCache={};lsSet('aiKeys2',aiCache);aiPhotoUI()}
 function aiReady(){if(!acct)return false;const K=aiK(),id=vaModelSel();if(id==='auto')return !!(K.gemini||K.groq);const m=AI_MODELS.find(x=>x.id===id);return !!(m&&K[m.p])}
 async function aiCall(action,b={}){
   if(!acct)return {ok:false,j:{err:'login'}};
@@ -5495,6 +5513,14 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   $('vaGo').onclick=()=>run($('vaText').value,{typed:true});
   $('vaText').addEventListener('keydown',e=>{if(e.key==='Enter')run($('vaText').value,{typed:true})});
   $('vaEx').onclick=e=>{const b=e.target.closest('button');if(b){$('vaText').value=b.textContent;run(b.textContent)}};
+  // 📷 사진 읽기 버튼 — AI 키가 연결돼 있을 때만 보임
+  const camBtn=document.createElement('button');camBtn.type='button';camBtn.id='vaCam';camBtn.className='camOnly';camBtn.setAttribute('aria-label','영수증·예약 사진 읽기');
+  camBtn.innerHTML='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-2.5h6L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+  $('vaMic').before(camBtn);
+  const camIn=document.createElement('input');camIn.type='file';camIn.accept='image/*';camIn.hidden=true;$('vaSheet').append(camIn);
+  camBtn.onclick=()=>{va.photoWho='';camIn.value='';camIn.click()};
+  camIn.onchange=()=>{const f=camIn.files&&camIn.files[0];camIn.value='';if(f)readPhoto(f)};   // 같은 사진을 다시 골라도 되게
+  window.vaPhoto=who=>{va.photoWho=who||'';open();camIn.value='';camIn.click()};   // 경비·가계부 화면의 📷 버튼
   // 📖 명령어 모음: 누르면 바로 실행, ○○가 있는 예문은 입력칸에 넣기만. AI가 켜져 있을 때만 '자유롭게 말하기'
   const CMDS=[
     ['📍 장소',['성산식당 가자','근처 흑돼지 찾아줘','제육볶음 먹고 싶어','배고파','두 번째 거','거기로 가자','숙소 가자','다음 일정 뭐야','오늘 일정','아까 본 곳','저장한 곳']],
@@ -5512,6 +5538,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   function paintCmds(){
     cmdBox.innerHTML=CMDS.map(([h,L])=>`<h4>${h}</h4><div class="cg">${L.map(chip).join('')}</div>`).join('')
       +(aiOn()?`<h4>🤖 자유롭게 말하기 <small>AI 켜짐 · 다른 말투도 알아들어요</small></h4><div class="cg">${CMDS_AI.map(chip).join('')}</div><div class="cn">이름을 대충 말해도 화면 목록에서 맞춰 줘요. 후보 비교는 점수·거리·영업·주차 안내·내 메모로만 판단해요.</div>`:'')
+      +(document.body.classList.contains('aiPhoto')?'<h4>📷 사진 읽기</h4><div class="cn">입력칸 옆 📷로 영수증을 찍으면 금액·가게·날짜를 읽어 공동 경비나 가계부에, 예약 화면(캡처)은 일정에 넣어요. 확인 칸에서 고친 뒤 저장해요.</div>':'')
+      +(deepOn()?'<h4>🔎 깊게 찾기 켜짐</h4><div class="cg">'+['성산 근처 흑돼지집 중에 주차 되고 지금 문 연 데','숙소 근처 아침 일찍 여는 해장국집','비 오면 갈 만한 실내 중에 평점 좋은 데'].map(chip).join('')+'</div><div class="cn">AI가 검색·상세 조회를 직접 여러 번 해서 답해요. 무료 한도를 더 써요.</div>':'')
       +'<div class="cn">점선 예문은 눌러서 ○○를 바꿔 말하거나 입력하세요.</div>';
   }
   cmdBtn.onclick=()=>{const on=!cmdBox.classList.contains('on');if(on)paintCmds();cmdBox.classList.toggle('on',on);cmdBtn.classList.toggle('on',on);cmdBtn.setAttribute('aria-expanded',on);$('vaEx').style.display=on?'none':(va.cands.length?'none':'')};
@@ -5565,6 +5593,10 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
 
   // ----- AI -----
   async function aiAsk(t){
+    if(deepOn()&&!va.deepOff)return agentAsk(t);
+    return aiAskPlain(t);
+  }
+  async function aiAskPlain(t){
     const my=va.seq;state('AI가 생각하는 중…');
     const a=await aiCall('ask',{text:t,ctx:aiCtx()});
     if(my!==va.seq||!isOpen())return;   // 닫았거나 새 요청이 있으면 늦게 온 답은 버림
@@ -5965,6 +5997,157 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     run('다음 일정',{noAI:true,keep:true});
   }
 
+  // ----- 📷 영수증·예약 사진 읽기 (사진 1장 = AI 1회) -----
+  function dateToDay(d){for(let i=0;i<trip.days;i++)if(dayDate(i)===d)return i;return -1}
+  async function shrink(f){
+    const url=URL.createObjectURL(f);
+    try{const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});
+      const k=Math.min(1,1600/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);return c.toDataURL('image/jpeg',0.85)}finally{URL.revokeObjectURL(url)}
+  }
+  async function readPhoto(f){
+    stop();const my=va.seq;if(!isOpen())open();
+    if(!acct||!(aiK().groq||aiK().gemini)){say('사진 읽기는 설정에서 AI 키를 연결해야 돼요.');return}
+    say('사진을 읽는 중… (10초쯤 걸려요)',{voice:''});state('AI가 사진을 읽는 중…');
+    let du;try{du=await shrink(f)}catch(_){say('사진을 열지 못했어요.');return}
+    const a=await aiCall('vision',{image:du.split(',')[1],mime:'image/jpeg',today:nowKST().d});
+    if(my!==va.seq||!isOpen())return;
+    aiTag(a.j);state('마이크를 누르고 말해 보세요');
+    if(!a.ok){say(a.j.err==='quota'?'무료 한도(분당)에 걸렸어요. 30초쯤 뒤 다시 찍어 주세요.':aiErrTxt(a.j)+'. 잠시 뒤 다시 해 주세요.');return}
+    const doc=a.j.doc||{};
+    if(doc.kind==='receipt')return receiptForm(doc,du);
+    if(doc.kind==='reservation')return reserveForm(doc,du);
+    say(`영수증이나 예약 화면을 못 찾았어요.${doc.say?' ('+doc.say+')':''}`);
+  }
+  function receiptForm(doc,du){
+    const inTrip=todayIdx()>=0;let who=va.photoWho||(inTrip?exMode():'me');if(who!=='me')who='with';va.rcWho=who;
+    const cat=bookCats().some(c=>c.id===doc.cat)?doc.cat:guessCat((doc.store||'')+' '+(doc.items||[]).map(x=>x.name).join(' '));
+    const html=`<div class="vaQ vaRc"><img src="${du}" alt="영수증"><div class="vaF">
+      <label>가게 <input id="rcT" value="${escapeHtml(doc.store||'')}"></label>
+      <label>금액 <input id="rcA" inputmode="numeric" value="${doc.total?doc.total.toLocaleString('ko-KR'):''}">원</label>
+      <label>날짜 <input id="rcD" type="date" value="${doc.date||nowKST().d}"></label>
+      <div class="vaSeg"><button type="button" data-w="with" class="${who==='with'?'on':''}">👥 공동 경비</button><button type="button" data-w="me" class="${who==='me'?'on':''}">👤 내 지출</button></div>
+      ${doc.items&&doc.items.length?`<small>${doc.items.map(x=>escapeHtml(x.name)+(x.amt?' '+x.amt.toLocaleString('ko-KR'):'')).join(' · ')}</small>`:''}</div>
+      <div class="vaQb"><button type="button" data-y>네, 적어요</button><button type="button" data-n>취소</button></div></div>`;
+    va.pending={fn:()=>saveReceipt(cat)};
+    say(html,{html:true,voice:`${doc.store||'영수증'}, ${doc.total?won(doc.total):'금액은 확인이 필요해요'}. 고칠 게 없으면 적을까요?`,ask:true});
+    $('vaSay').querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{va.rcWho=b.dataset.w;$('vaSay').querySelectorAll('[data-w]').forEach(x=>x.classList.toggle('on',x===b))});
+  }
+  function saveReceipt(cat){
+    const title=($('rcT')&&$('rcT').value||'').trim(),amt=Math.round(+String($('rcA')&&$('rcA').value||'').replace(/[^\d]/g,''))||0,date=($('rcD')&&$('rcD').value)||nowKST().d;
+    if(!amt){va.pending={fn:()=>saveReceipt(cat)};say('금액을 넣은 뒤 ‘네, 적어요’를 눌러 주세요.',{ask:false});return}
+    let who=va.rcWho||'with';const day=dateToDay(date);
+    if(who==='with'&&day<0){who='me';say('여행 기간 밖 날짜라 내 가계부로 적을게요.',{voice:''})}
+    if(who==='with'){const ps=people(),me=myNick()||ps[0]||'나',tt=title||'영수증';
+      exps.push(stamp({uid:uid(),title:tt,amt,payer:me,split:ps,day,item:null}));saveExp();try{if($('expEd').classList.contains('on'))renderExp()}catch(_){}
+      say(`✅ ${tt} ${won(amt)}, 공동 경비(${dayLabel(day).split(' ')[0]})에 적었어요.`);return}
+    addBook({d:date,tm:-1,amt,cat,title,pay:'',src:'receipt',trip:day>=0?(trip.name||`${trip.start} 여행`):undefined});try{if($('bookEd').classList.contains('on'))renderBook()}catch(_){}
+    say(`✅ ${title||catById(cat).n} ${won(amt)}, 가계부에 적었어요.`);
+  }
+  function reserveForm(doc,du){
+    const html=`<div class="vaQ vaRc"><img src="${du}" alt="예약"><div class="vaF">
+      <label>장소 <input id="rvP" value="${escapeHtml(doc.place||'')}"></label>
+      <label>날짜 <input id="rvD" type="date" value="${doc.date||''}"></label>
+      <label>시간 <input id="rvT" type="time" value="${doc.time||''}"></label>
+      <label>메모 <input id="rvN" value="${escapeHtml([doc.people?doc.people+'명':'',doc.note].filter(Boolean).join(' · '))}"></label></div>
+      <div class="vaQb"><button type="button" data-y>일정에 넣기</button><button type="button" data-n>취소</button></div></div>`;
+    va.pending={fn:saveReserve};
+    const dd=doc.date?`${+doc.date.slice(5,7)}월 ${+doc.date.slice(8,10)}일`:'';
+    say(html,{html:true,voice:`${doc.place||'예약'}${dd?' '+dd:''}${doc.time?' '+spokenTime(doc.time):''} 예약이에요. 일정에 넣을까요?`,ask:true});
+  }
+  function saveReserve(){
+    const place=($('rvP')&&$('rvP').value||'').trim(),date=$('rvD')&&$('rvD').value||'',time=$('rvT')&&$('rvT').value||'',note=($('rvN')&&$('rvN').value||'').trim();
+    if(!place){va.pending={fn:saveReserve};say('장소 이름을 넣은 뒤 ‘일정에 넣기’를 눌러 주세요.',{ask:false});return}
+    const day=dateToDay(date),memo='예약'+(time?' '+time:'')+(note?' · '+note:'');
+    if(day<0||!time){const text=`예약: ${place}${date?' '+date.slice(5).replace('-','/'):''}${time?' '+time:''}${note?' · '+note:''}`;
+      todos.push(stamp({uid:uid(),t:text,done:false}));saveTodo();try{renderTodo()}catch(_){}
+      say(`${day<0?'여행 기간 밖이라':'시간이 없어서'} 할 일에 적었어요. ${text}`);return}
+    const start=Math.max(trip.from*60,Math.min((+time.slice(0,2))*60+(+time.slice(3,5)),trip.to*60-60));
+    withTarget(place,p=>{const k=live(picks).find(x=>x.p&&x.p.id===p.id);if(k)stamp(k).del=true;
+      items.push(stamp({uid:'i'+(k?k.uid:uid()),day,start,dur:90,memo,p:slimPlace(p)}));savePlan();try{if($('sched').classList.contains('on'))renderPlan()}catch(_){}
+      say(`✅ ${dayLabel(day)} ${hm(start)} ${p.place_name}, 예약 일정으로 넣었어요.`)},'예약 장소로 할');
+  }
+
+  // ----- 🔎 깊게 찾기 (설정에서 켬): AI가 도구를 불러 여러 번 확인 — 도구는 폰에서 실행, 다 쓰면 보통 방식 -----
+  function deepOn(){return lsGet('vaDeep',false)===true&&!!aiK().groq&&aiOn()}
+  async function wxReport(when){
+    const pos=await myPos(false);if(!pos)return null;
+    const j=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.lat.toFixed(3)}&longitude=${pos.lng.toFixed(3)}&current=temperature_2m,weather_code&hourly=precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset&timezone=Asia%2FSeoul&forecast_days=2`).then(r=>r.ok?r.json():null).catch(()=>null);
+    if(!j||!j.daily||!j.daily.time)return null;
+    const k=when==='tomorrow'?1:0,D=j.daily,code=D.weather_code[k],p=D.precipitation_probability_max[k],ss=(D.sunset[k]||'').slice(11,16),dn=k?'내일':'오늘';
+    let wet='';try{const H=j.hourly,dd=D.time[k],nowH=+hm(nowKST().m).slice(0,2),hrs=[];
+      H.time.forEach((tt,i)=>{if(tt.slice(0,10)===dd&&(k||+tt.slice(11,13)>=nowH)&&H.precipitation_probability[i]>=50)hrs.push([+tt.slice(11,13),H.precipitation_probability[i]])});
+      if(hrs.length){const rg=[];hrs.forEach(([h,v])=>{const l=rg[rg.length-1];if(l&&l.b===h-1){l.b=h;l.m=Math.max(l.m,v)}else rg.push({a:h,b:h,m:v})});
+        wet=' '+rg.slice(0,3).map(r=>`${spokenTime(r.a+':00')}${r.b>r.a?'부터 '+(r.b+1>=24?'자정':spokenTime((r.b+1)+':00'))+'까지':' 무렵'}`).join(', ')+` 비 확률이 높아요(최고 ${Math.max(...rg.map(r=>r.m))}%).`}}catch(_){}
+    let s=(!k&&j.current?`지금 ${Math.round(j.current.temperature_2m)}도, ${WXT(j.current.weather_code)}. `:'')+`${dn}은 ${WXT(code)}, ${Math.round(D.temperature_2m_min[k])}도에서 ${Math.round(D.temperature_2m_max[k])}도, 비 올 확률 ${p??'-'}%예요.`+wet;
+    return {s,ss,dn,rain:p>=60||(code>=51&&code<=67)||code>=80||!!wet};
+  }
+  const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  async function runTool(name,a,found){
+    a=a||{};
+    try{
+      if(name==='find_places'){
+        const q=String(a.q||'').slice(0,40);if(!q)return {err:'q가 필요해요'};
+        if(typeof ps==='undefined'||!ps)return {err:'지도가 아직 준비 안 됨'};
+        const near=String(a.near||'here');let c=null,p=null;
+        if(near==='selected')p=va.sel||currentPlace;else if(near==='lodging')p=lodging();else if(near!=='here'){const L=findLocal(near);if(L.length)p=L[0].p}
+        if(p&&hasLoc(p))c=[+p.y,+p.x];else if(searchCenter)c=[searchCenter.getLat(),searchCenter.getLng()];else if(lastPos)c=[lastPos.lat,lastPos.lng];
+        const S=kakao.maps.services,opt={size:10};
+        if(c){opt.location=new kakao.maps.LatLng(c[0],c[1]);opt.radius=Math.max(200,Math.min(20000,+a.radius||3000))}
+        const cg={food:'FD6',cafe:'CE7',tour:'AT4',fuel:'OL7'}[a.cat];if(cg)opt.category_group_code=cg;
+        const data=await new Promise(ok=>ps.keywordSearch(q,(d,st)=>ok(st===S.Status.OK?d:[]),opt));
+        return {places:data.slice(0,8).map(x=>{found.set(String(x.id),x);return {id:String(x.id),name:x.place_name,cat:(x.category_name||'').split(' > ').pop(),dist:c?Math.round(distanceM(c[0],c[1],+x.y,+x.x)):null}})};
+      }
+      if(name==='place_info'){
+        const ids=(Array.isArray(a.ids)?a.ids:[]).map(String).filter(id=>/^\d{1,15}$/.test(id)).slice(0,5);
+        const need=ids.filter(id=>!ENRICH[id]||isStale(ENRICH[id]));
+        if(need.length){try{const j=await fetch(API+'?ids='+need.join(','),{credentials:'same-origin'}).then(r=>r.ok?r.json():null);if(j)need.forEach(id=>{const v=j[id];if(v&&!v.err){v._t=Date.now();ENRICH[id]=v}})}catch(_){}}
+        return {info:ids.map(id=>{const e=ENRICH[id]||{},p=found.get(id)||{},it=live(items).find(x=>x.p&&String(x.p.id)===id),sv=(Array.isArray(saved)?saved:[]).find(x=>x&&!x.del&&x.p&&String(x.p.id)===id);
+          return {id,name:p.place_name||'',rating:e.r||null,reviews:e.n||0,blog:e.b||0,open:e.open&&e.open.t?(e.open.t+(e.open.i?' · '+e.open.i:'')):'정보 없음',
+            parking:Array.isArray(e.navi)&&e.navi.some(g=>/주차/.test(g.n||''))?'주차장 안내 있음':'정보 없음',badge:e.badge||'',price:fuelPrice(e)||null,mine:it?'내 일정':sv?'가고 싶은 곳':'',memo:((it&&it.memo)||(sv&&sv.memo)||'').slice(0,60)}})};
+      }
+      if(name==='weather'){const w=await wxReport(a.when==='tomorrow'?'tomorrow':'today');return w?{text:w.s+(w.ss?` 일몰 ${w.ss}`:'')}:{err:'날씨를 못 불러옴'}}
+      if(name==='my_trip'){const d=todayIdx(),day=d<0?curDay:d,lg=lodging();
+        return {today:d<0?'여행 기간 아님':`${trip.days}일 중 ${d+1}일차`,now:hm(nowKST().m),
+          schedule:live(items).filter(it=>it.day===day&&it.p).sort((x,y)=>x.start-y.start).map(it=>{found.set(String(it.p.id),it.p);return {id:String(it.p.id),time:hm(it.start),name:it.p.place_name,visited:!!it.visited,memo:(it.memo||'').slice(0,40)}}),
+          lodging:lg?{id:String(lg.id),name:lg.place_name}:null,saved:(Array.isArray(saved)?saved:[]).filter(x=>x&&!x.del&&x.p).slice(0,15).map(x=>{found.set(String(x.p.id),x.p);return {id:String(x.p.id),name:x.p.place_name}})}}
+      return {err:'모르는 도구'};
+    }catch(_){return {err:'도구 실행 실패'}}
+  }
+  async function agentAsk(t){
+    const my=va.seq,found=new Map();
+    const C=va.cands.length?va.cands.map(c=>c.p):(lastSelected||[]).slice(0,5);C.forEach(p=>found.set(String(p.id),p));
+    const scr={후보:C.map((p,i)=>({n:i+1,id:String(p.id),name:p.place_name})),고른곳:va.sel?{id:String(va.sel.id),name:va.sel.place_name}:null,지금:hm(nowKST().m),여행:todayIdx()<0?'여행 기간 아님':`${todayIdx()+1}일차`};
+    const msgs=[{role:'user',content:`[화면] ${JSON.stringify(scr)}\n[말] ${t}`}];
+    let waits=0;
+    for(let step=0;step<6;step++){
+      state(step?`깊게 찾는 중… (${step}번째 확인)`:'깊게 찾는 중…');
+      const a=await aiCall('agent',{messages:msgs});
+      if(my!==va.seq||!isOpen())return;
+      if(!a.ok){
+        if(a.j.err==='quota'&&waits<2&&(a.j.wait||0)<=25){waits++;const w=Math.max(3,a.j.wait||10);state(`무료 한도(분당) 대기 중… ${w}초`);await sleep(w*1000);if(my!==va.seq||!isOpen())return;step--;continue}
+        va.deepOff=a.j.err==='quota'||a.j.err==='cap';aiTag(a.j);
+        say(`깊게 찾기를 못 했어요(${aiErrTxt(a.j)}). 보통 방식으로 할게요.`,{voice:''});return aiAskPlain(t);
+      }
+      aiTag(a.j);
+      const m=a.j.msg||{};msgs.push({role:'assistant',content:m.content||'',tool_calls:m.tool_calls||[]});
+      const tc=(m.tool_calls||[])[0];
+      if(!tc){state('마이크를 누르고 말해 보세요');say(m.content||'답을 못 찾았어요.');return}
+      let args={};try{args=JSON.parse(tc.function.arguments||'{}')}catch(_){}
+      if(tc.function.name==='answer'){state('마이크를 누르고 말해 보세요');
+        const L=(Array.isArray(args.ids)?args.ids:[]).map(String).map(id=>found.get(id)).filter(Boolean).slice(0,5);
+        if(args.go)va.goIntent=true;
+        if(L.length){showCands(L.map(p=>{const s=scoreOf(p);return {p:withDist(p),tag:s?s.tag:''}}),'',L.length>1?'':'');
+          if(L.length===1){select(0,!!args.go);say(`${String(args.say||'')} ${hasLoc(L[0])?'길안내는 아래 버튼을 눌러 주세요.':''}`,{ask:false});return}
+          say(`${String(args.say||'')}${va.goIntent?' 번호를 누르면 바로 출발해요.':''} 몇 번째로 할까요?`);return}
+        say(String(args.say||'답을 못 찾았어요.'));return}
+      const res=await runTool(tc.function.name,args,found);
+      if(my!==va.seq||!isOpen())return;
+      msgs.push({role:'tool',tool_call_id:tc.id,name:tc.function.name,content:JSON.stringify(res).slice(0,2800)});
+    }
+    state('마이크를 누르고 말해 보세요');say('확인할 게 많아서 멈췄어요. 조금 좁혀서 다시 말해 주세요.');
+  }
+
   // ----- 정해진 명령 (AI 없이도 되는 말) -----
   const AMT=/((?:\d[\d,]*|[일이삼사오육칠팔구십백천만억])(?:[\d,\s]*[일이삼사오육칠팔구십백천만억\d])*)\s*원/;
   function koNum(s){
@@ -6190,6 +6373,7 @@ function applyNavLabels(){document.querySelectorAll('.navNm').forEach(el=>el.tex
     <div id="vmPop" role="listbox" aria-label="AI 모델"></div>
     <div class="vmKey"><span id="vmKeyTxt"></span><button type="button" id="vmKeyBtn" aria-expanded="false">관리</button></div>
     <div id="aiConn"></div>
+    <label class="vmDeep" id="vmDeepRow"><input type="checkbox" id="vmDeep"> <span><b>🔎 깊게 찾기</b> <small>AI가 검색·상세 조회를 직접 여러 번 해서 답해요(함수 호출). Groq 키 · 무료로 하루 약 30번, 다 쓰면 보통 방식으로</small></span></label>
     <details class="vmInfo"><summary>ⓘ 안내</summary><div class="labNote">· ① 폰 브라우저가 받아쓰고 정해진 명령을 앱이 처리(무료, 연결 없음) · ② 정해진 말로 안 되는 말만 AI가 한 번 더 · ③ AI가 받아쓰고 애매한 말을 해석<br>· AI 키는 각자 자기 것(Gemini나 Groq 하나면 돼요). 서버에 암호화해 내 계정에만 묶고, 폰으로 다시 내려오지 않아요.<br>· AI에는 말한 문장(③은 녹음)과 화면 후보의 이름·점수·거리만 보내요. 위치 좌표는 안 보내요.<br>· 무료 모델만 불러요. 한도가 차거나 오류면 ① 방식으로 이어가요. 결제를 켠 키는 요금이 나갈 수 있어요. 하루 500회 상한(말 한 번 = 1회).<br>· Gemini 무료 키로 보낸 내용은 구글이 서비스 개선에 쓸 수 있어요.</div></details>`;
   $('navBox').after(box);
   const msg=t=>{const el=$('aiMsg');if(el)el.textContent=t||''};
@@ -6198,7 +6382,8 @@ function applyNavLabels(){document.querySelectorAll('.navNm').forEach(el=>el.tex
     $('vmModelNm').textContent=vaModelSel()==='auto'?'자동':aiModelName(vaModelSel()).replace(/^(Gemini|Groq) /,'').replace(/ \+ .*$/,'');$('vmModel').classList.toggle('hide',m==='web');if(m==='web')$('vmPop').classList.remove('on')}
   function paintKey(){const K=aiK(),L=Object.entries(K).map(([p,v])=>`${AI_PROV[p].name.replace(/^Google /,'')} ··${escapeHtml(v.tail||'')}`);
     $('vmKeyTxt').innerHTML=!acct?'🔑 AI 연결은 로그인 후에':`🔑 ${L.length?L.join(' · '):'연결된 AI 없음'}${lastJ&&lastJ.cap?` · 오늘 ${lastJ.today}/${lastJ.cap}`:''}`;
-    $('vmKeyBtn').style.display=acct?'':'none';$('vmKeyBtn').textContent=L.length?'관리':'키 넣기'}
+    $('vmKeyBtn').style.display=acct?'':'none';$('vmKeyBtn').textContent=L.length?'관리':'키 넣기';
+    $('vmDeepRow').style.display=acct&&K.groq&&vaMode()!=='web'?'':'none';$('vmDeep').checked=lsGet('vaDeep',false)===true}
   function paintPop(){const cur=vaModelSel();
     $('vmPop').innerHTML=[{id:'auto',name:'자동',note:'연결된 키 중에서 알아서 · 막히면 다음 모델로'},...AI_MODELS].map(m=>{const off=m.id!=='auto'&&!aiK()[m.p];
       return `<button type="button" role="option" data-md="${m.id}" class="${m.id===cur?'on':''}" aria-selected="${m.id===cur}" ${off?'disabled':''}><b>${m.name}</b><small>${m.p?AI_PROV[m.p].name+' · ':''}${m.note}${off?' · 키 연결 필요':''}</small></button>`}).join('')}
@@ -6211,7 +6396,8 @@ function applyNavLabels(){document.querySelectorAll('.navNm').forEach(el=>el.tex
     Object.entries(keep).forEach(([p,v])=>{if(aiK()[p])return;const d=$('aiAdd_'+p);if(d){d.classList.add('on');$('aiKey_'+p).value=v}})}
   const paintAll=j=>{if(j&&j.cap)lastJ=j;paintMode();paintPop();paintConn(j);paintKey()};
   window.paintVm=paintAll;
-  $('vmSel').onchange=()=>{const v=$('vmSel').value;lsSet('vaMode',v);_va.aiOff=false;paintMode();
+  $('vmDeep').onchange=()=>{lsSet('vaDeep',$('vmDeep').checked);_va.deepOff=false;setStatus($('vmDeep').checked?'🔎 깊게 찾기를 켰어요. 애매한 말은 AI가 직접 여러 번 찾아봐요.':'깊게 찾기를 껐어요.')};
+  $('vmSel').onchange=()=>{const v=$('vmSel').value;lsSet('vaMode',v);_va.aiOff=false;paintMode();paintKey();
     if(v!=='web'&&acct&&!aiReady()){$('aiConn').classList.add('on');$('vmKeyBtn').setAttribute('aria-expanded','true')}
     setStatus(v==='web'?'말로 찾기를 ① 브라우저 음성인식으로 바꿨어요.':!acct?'②·③은 로그인하고 내 AI를 연결해야 작동해요. 그 전엔 ① 방식으로 들어요.':!aiReady()?'아래에서 내 AI 키를 연결해야 작동해요. 그 전엔 ① 방식으로 들어요.':`말로 찾기를 ${v==='ai'?'③ AI 우선으로':'② 브라우저 + AI로'} 바꿨어요.`)};
   box.addEventListener('click',e=>{
@@ -6232,11 +6418,11 @@ function applyNavLabels(){document.querySelectorAll('.navNm').forEach(el=>el.tex
   });
   // 설정을 열 때·로그인 상태가 바뀔 때 다시 그림 (연결 상태는 서버에서 확인)
   let lastE=null;
-  const ra=renderAcct;renderAcct=function(){const r=ra.apply(this,arguments);try{paintAll();
+  const ra=renderAcct;renderAcct=function(){const r=ra.apply(this,arguments);try{paintAll();aiPhotoUI();
     if(acct&&acct.email!==lastE){lastE=acct.email;_va.aiOff=false;_va.seq++;aiCall('status').then(x=>{if(x.ok)paintAll(x.j)})}
     else if(!acct&&lastE!==null){lastE=null;aiClear();_va.aiOff=false;_va.seq++;paintAll()}}catch(_){}return r};
   $('setBtn').addEventListener('click',()=>{paintAll();$('vmPop').classList.remove('on');$('aiConn').classList.remove('on');if(acct)aiCall('status').then(r=>{if(r.ok)paintAll(r.j);else if(r.j.err==='bad token'){aiClear();paintAll()}})});
-  paintAll();
+  paintAll();aiPhotoUI();
   // 앱을 열면 한 번 연결 상태 확인 (설정을 안 열어도 ②·③이 바로 작동하게)
   setTimeout(()=>{if(acct&&lastE===null){lastE=acct.email;aiCall('status').then(x=>{if(x.ok)paintAll(x.j)})}},1500);
 })();
