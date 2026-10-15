@@ -976,6 +976,31 @@ body:not(.mode-tour) #catJeju{display:none}
 #labAiOut table{width:100%;border-collapse:collapse;margin-top:6px}
 #labAiOut td,#labAiOut th{border-top:1px solid var(--line);padding:5px 4px;text-align:left;vertical-align:top;font-size:12.5px}
 #labAiOut .n{text-align:right;white-space:nowrap}
+/* v0.45 설정: 말로 찾기 세 줄 */
+.vmTop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vmTop>b{font-size:15px}
+#vmSel{flex:1;min-width:150px;font-size:15px}
+#vmBox #vmModel{flex:none;width:auto;min-height:0;padding:7px 10px;border-radius:10px;line-height:1.2}
+#vmModel.hide{display:none}
+#vmPop{margin-top:6px}
+.vmKey{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13.5px;color:var(--muted)}
+.vmKey span{flex:1;min-width:0}
+.vmKey button{padding:5px 12px;border-radius:10px;font-size:13px}
+#vmBox #aiConn{display:none;margin-top:6px}
+#vmBox #aiConn.on{display:block}
+.vmInfo{margin-top:6px}
+.vmInfo summary{font-size:13px;color:var(--muted);cursor:pointer}
+/* 말로 찾기: 명령어 모음 */
+#vaCmdBtn{font-size:13px;padding:6px 10px;border-radius:10px;margin:0 6px 0 10px;flex:none}
+#vaCmdBtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+#vaCmds{display:none;margin-top:8px;max-height:46vh;overflow:auto;border-top:1px solid var(--line);padding-top:6px}
+#vaCmds.on{display:block}
+#vaCmds h4{margin:10px 0 4px;font-size:13.5px}
+#vaCmds h4 small{font-weight:400;color:var(--muted)}
+#vaCmds .cg{display:flex;flex-wrap:wrap;gap:6px}
+#vaCmds button{font-size:13.5px;padding:7px 11px;border-radius:16px;border:1px solid var(--line);background:#fff}
+#vaCmds button[data-fill]{border-style:dashed}
+#vaCmds .cn{font-size:12px;color:var(--muted);margin-top:4px}
 /* 말로 찾기: 기록 확인 칸 */
 .vaQ{line-height:1.55}
 .vaQb{display:flex;gap:8px;margin-top:10px}
@@ -5377,7 +5402,7 @@ const AI_MODELS=[
   {id:'groq-qwen',p:'groq',name:'Groq Whisper v3 turbo + Qwen 3.8 27B',note:'더 가벼움'}
 ];
 const AI_PROV={gemini:{name:'Google Gemini',get:'https://aistudio.google.com/apikey'},groq:{name:'Groq',get:'https://console.groq.com/keys'}};
-const AI_ERR={quota:'AI 무료 한도가 찼어요',cap:'오늘 AI 사용 상한(200회)에 닿았어요',nokey:'연결된 AI 키가 없어요',badkey:'AI 키가 맞지 않거나 막혔어요',timeout:'AI 응답이 늦어요',net:'AI에 연결하지 못했어요',fail:'AI가 답을 못 했어요','bad token':'다시 로그인해 주세요',login:'로그인이 필요해요',changed:'계정이 바뀌었어요',busy:'잠시 뒤 다시 해 주세요',store:'저장 서버가 응답하지 않아요'};
+const AI_ERR={quota:'AI 무료 한도가 찼어요',cap:'오늘 AI 사용 상한(500회)에 닿았어요',nokey:'연결된 AI 키가 없어요',badkey:'AI 키가 맞지 않거나 막혔어요',timeout:'AI 응답이 늦어요',net:'AI에 연결하지 못했어요',fail:'AI가 답을 못 했어요','bad token':'다시 로그인해 주세요',login:'로그인이 필요해요',changed:'계정이 바뀌었어요',busy:'잠시 뒤 다시 해 주세요',store:'저장 서버가 응답하지 않아요'};
 function vaMode(){const v=lsGet('vaMode','web');return v==='mix'||v==='ai'?v:'web'}
 function vaModelSel(){const v=lsGet('vaModel','auto');return v!=='auto'&&AI_MODELS.some(m=>m.id===v)?v:'auto'}
 function aiModelName(id){const m=AI_MODELS.find(x=>x.id===id);return m?m.name:'자동'}
@@ -5463,13 +5488,36 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   function aiTag(j){if(j&&j.model){aiLine.textContent=`AI · ${aiModelName(j.model)}${j.fb?' (대신 씀)':''} · ${((j.ms||0)/1000).toFixed(1)}초${j.cap?` · 오늘 ${j.today}/${j.cap}회`:''}`;aiLine.classList.add('on')}}
   function modeLine(){const m=vaMode();if(m==='web'){aiLine.classList.remove('on');return}
     aiLine.textContent=(m==='ai'?'③ AI 우선':'② 브라우저 + AI')+' · '+aiModelName(vaModelSel())+(aiOn()?'':acct?' · AI 키 연결 전이라 ① 방식으로 들어요':' · 로그인 전이라 ① 방식으로 들어요');aiLine.classList.add('on')}
-  function open(){$('vaSheet').classList.add('on');$('vaShade').classList.add('on');$('vaEx').style.display=va.cands.length?'none':'';modeLine()}
+  function open(){$('vaSheet').classList.add('on');$('vaShade').classList.add('on');$('vaEx').style.display=va.cands.length||$('vaCmds').classList.contains('on')?'none':'';modeLine();if($('vaCmds').classList.contains('on'))paintCmds()}
   function close(){stop();va.waitRes=false;va.waitScore=false;va.pending=null;va.afterPick=null;va.asking=false;$('vaSheet').classList.remove('on');$('vaShade').classList.remove('on');try{speechSynthesis.cancel()}catch(_){}}
   btn.onclick=()=>{if(va.cands.length&&va.src==='map'&&va.resSig!==resSig()){va.cands=[];va.sel=null;$('vaList').innerHTML='';$('vaAct').classList.remove('on')}open();va.asking=false;listen()};$('vaClose').onclick=close;$('vaShade').onclick=close;
   $('vaMic').onclick=()=>{if(va.listening){va.aiH?va.aiH.finish():stop()}else{va.asking=false;listen()}};   // ③ 녹음 중에 누르면 바로 보내기
   $('vaGo').onclick=()=>run($('vaText').value,{typed:true});
   $('vaText').addEventListener('keydown',e=>{if(e.key==='Enter')run($('vaText').value,{typed:true})});
   $('vaEx').onclick=e=>{const b=e.target.closest('button');if(b){$('vaText').value=b.textContent;run(b.textContent)}};
+  // 📖 명령어 모음: 누르면 바로 실행, ○○가 있는 예문은 입력칸에 넣기만. AI가 켜져 있을 때만 '자유롭게 말하기'
+  const CMDS=[
+    ['📍 장소',['성산식당 가자','근처 흑돼지 찾아줘','제육볶음 먹고 싶어','배고파','두 번째 거','거기로 가자','숙소 가자','다음 일정 뭐야','오늘 일정','아까 본 곳','저장한 곳']],
+    ['🎚 조건 바꾸기',['3km로 넓혀 줘','반경 넓혀 줘','TOP 10으로','프차 빼고 흑돼지 찾아줘','영업 중인 곳만','가까운 순으로','종합 점수로','카페로 바꿔','LPG 제일 싼 데']],
+    ['✍️ 기록 <small>확인한 뒤 저장</small>',['점심 3만 원 공동 경비로','택시비 만 원 내 지출','할 일에 ○○ 추가','내일 오후 2시에 ○○ 넣어 줘','여기 다녀왔어','기록, ○○','저장해 줘','일정에 넣어 줘']],
+    ['❓ 물어보기',['오늘 날씨 어때','오후에 비 와?','일몰 몇 시야','거기 지금 영업해?','거기까지 얼마나 걸려?','오늘 몇 곳 다녔어','오늘 얼마 썼어','정산 얼마야','할 일 남은 거 뭐야']],
+    ['🔗 이어서 하기',['흑돼지 먹고 근처 카페','기름 넣고 숙소 가자','비 오는데 갈 만한 데']],
+    ['🗺 화면',['위성 지도로','일반 지도로','일정 열어','경비 열어','가계부','다녀온 곳 보여줘']]
+  ];
+  const CMDS_AI=['애들이랑 갈 만한 조용한 데 없을까','1번이랑 2번 중에 어디가 나아?','주차 편한 쪽으로 골라 줘','평점 높은 데로 골라 줘'];
+  const cmdBtn=document.createElement('button');cmdBtn.type='button';cmdBtn.id='vaCmdBtn';cmdBtn.textContent='📖 명령어';cmdBtn.setAttribute('aria-expanded','false');
+  $('vaSheet').querySelector('.vaHead label').before(cmdBtn);
+  const cmdBox=document.createElement('div');cmdBox.id='vaCmds';$('vaEx').after(cmdBox);
+  const chip=t=>/○○/.test(t)?`<button type="button" data-fill="${escapeHtml(t)}">${escapeHtml(t)}</button>`:`<button type="button" data-run="${escapeHtml(t)}">${escapeHtml(t)}</button>`;
+  function paintCmds(){
+    cmdBox.innerHTML=CMDS.map(([h,L])=>`<h4>${h}</h4><div class="cg">${L.map(chip).join('')}</div>`).join('')
+      +(aiOn()?`<h4>🤖 자유롭게 말하기 <small>AI 켜짐 · 다른 말투도 알아들어요</small></h4><div class="cg">${CMDS_AI.map(chip).join('')}</div><div class="cn">이름을 대충 말해도 화면 목록에서 맞춰 줘요. 후보 비교는 점수·거리·영업·주차 안내·내 메모로만 판단해요.</div>`:'')
+      +'<div class="cn">점선 예문은 눌러서 ○○를 바꿔 말하거나 입력하세요.</div>';
+  }
+  cmdBtn.onclick=()=>{const on=!cmdBox.classList.contains('on');if(on)paintCmds();cmdBox.classList.toggle('on',on);cmdBtn.classList.toggle('on',on);cmdBtn.setAttribute('aria-expanded',on);$('vaEx').style.display=on?'none':(va.cands.length?'none':'')};
+  cmdBox.onclick=e=>{const r=e.target.closest('[data-run]'),f=e.target.closest('[data-fill]');
+    if(f){const v=f.dataset.fill;$('vaText').value=v;$('vaText').focus();const k=v.indexOf('○○');try{$('vaText').setSelectionRange(k,k+2)}catch(_){}return}
+    if(r){cmdBox.classList.remove('on');cmdBtn.classList.remove('on');cmdBtn.setAttribute('aria-expanded','false');$('vaText').value=r.dataset.run;run(r.dataset.run)}};
   // 확인 칸의 [네]·[취소] 버튼
   $('vaSay').addEventListener('click',e=>{const y=e.target.closest('[data-y]'),n=e.target.closest('[data-n]');if(!y&&!n)return;const p=va.pending;va.pending=null;stop();if(!p)return;if(y)p.fn();else if(p.noFn)p.noFn();else say('취소했어요.')});
 
@@ -5535,7 +5583,11 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   function aiCtx(){
     const d=todayIdx(),day=d<0?curDay:d;
     const C=va.cands.length?va.cands.map(c=>c.p):(lastSelected||[]).slice(0,5);
-    return {cands:C.map(p=>({name:p.place_name,cat:((p.category_name||'').split(' > ').pop())||''})),
+    const memoOf=p=>{const it=live(items).find(x=>x.p&&x.p.id===p.id&&x.memo);const sv=(Array.isArray(saved)?saved:[]).find(x=>x&&!x.del&&x.p&&x.p.id===p.id&&x.memo);return ((it&&it.memo)||(sv&&sv.memo)||'').slice(0,40)};
+    const info=p=>{const e=ENRICH[p.id]||{},s2=SCORE2[p.id];return {dist:distTxt(p),r:e.r||0,n:e.n||0,s2:s2&&s2.s!=null?Math.round(s2.s):0,
+      open:e.open&&e.open.c?(e.open.c==='OPEN'?'영업 중':(e.open.t||'영업 전·마감')):'',park:!!(Array.isArray(e.navi)&&e.navi.some(g=>/주차/.test(g.n||g.t||'')))||e.park==='Y',
+      price:appMode()==='fuel'?(fuelPrice(e)||0):0,memo:memoOf(p),mine:isPicked(p)?'일정':((Array.isArray(saved)?saved:[]).some(x=>x&&!x.del&&x.p&&x.p.id===p.id)?'가고 싶은 곳':'')}};
+    return {cands:C.map(p=>({name:p.place_name,cat:((p.category_name||'').split(' > ').pop())||'',...info(p)})),
       sel:va.sel?va.sel.place_name:(currentPlace&&currentPlace.place_name)||'',
       plan:live(items).filter(it=>it.day===day&&it.p).sort((a,b)=>a.start-b.start).map(it=>it.p.place_name),
       saved:(Array.isArray(saved)?saved:[]).filter(x=>x&&!x.del&&x.p).slice(0,30).map(x=>x.p.place_name),
@@ -5556,7 +5608,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       case 'cond':doCond(c.cond||{});return;
       case 'choose':{const n=c.n||1;if(!va.cands.length&&(lastSelected||[]).length)showCands(lastSelected.map(p=>({p,tag:''})),'','map');
         if(!va.cands.length){say('고를 후보가 아직 없어요. 먼저 장소를 찾아 주세요.');return}
-        if(!select(n<0?va.cands.length-1:n-1,!!c.go))say(`${n}번째 후보가 없어요.`);return}
+        if(!select(n<0?va.cands.length-1:n-1,!!c.go)){say(`${n}번째 후보가 없어요.`);return}
+        if(c.say&&va.sel)say(`${c.say} ${hasLoc(va.sel)?'길안내는 아래 버튼을 눌러 주세요.':''}`,{ask:false});return}
       case 'navi':{const p=va.sel||currentPlace;if(p){showCands([{p,tag:''}]);select(0,true)}else say('먼저 장소를 골라 주세요.');return}
       case 'fuel':{if(c.q&&!/^(거기|여기|그곳|고른\s*곳)$/.test(c.q)){withTarget(c.q,p=>fuelStop(p),'목적지로 할');return}
         const d=va.viaDest||va.sel||currentPlace;if(d){fuelStop(d);return}say('먼저 목적지를 골라 주세요.');return}
@@ -5870,14 +5923,19 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       say('날씨를 확인하는 중…',{voice:''});
       const pos=await myPos(false);if(my!==va.seq)return;
       if(!pos){say('위치를 몰라 날씨를 못 불러왔어요.');return}
-      let j=null;try{j=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.lat.toFixed(3)}&longitude=${pos.lng.toFixed(3)}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset&timezone=Asia%2FSeoul&forecast_days=2`).then(r=>r.ok?r.json():null)}catch(_){}
+      let j=null;try{j=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${pos.lat.toFixed(3)}&longitude=${pos.lng.toFixed(3)}&current=temperature_2m,weather_code&hourly=precipitation_probability&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunset&timezone=Asia%2FSeoul&forecast_days=2`).then(r=>r.ok?r.json():null)}catch(_){}
       if(my!==va.seq)return;
       if(!j||!j.daily||!j.daily.time){say('날씨를 불러오지 못했어요.');return}
       const k=c.when==='tomorrow'?1:0,D=j.daily,code=D.weather_code[k],p=D.precipitation_probability_max[k],hi=Math.round(D.temperature_2m_max[k]),lo=Math.round(D.temperature_2m_min[k]),ss=(D.sunset[k]||'').slice(11,16),dn=k?'내일':'오늘';
       if(w==='sunset'){say(`${dn} 해는 ${spokenTime(ss)}에 져요.`);return}
-      const rain=p>=60||(code>=51&&code<=67)||code>=80;
+      // 시간별: 비 확률 50% 넘는 시간대 (오늘은 지금부터)
+      let wet='';try{const H=j.hourly,dd=D.time[k],nowH=+hm(nowKST().m).slice(0,2),hrs=[];
+        H.time.forEach((tt,i)=>{if(tt.slice(0,10)===dd&&(k||+tt.slice(11,13)>=nowH)&&H.precipitation_probability[i]>=50)hrs.push([+tt.slice(11,13),H.precipitation_probability[i]])});
+        if(hrs.length){const rg=[];hrs.forEach(([h,v])=>{const l=rg[rg.length-1];if(l&&l.b===h-1){l.b=h;l.m=Math.max(l.m,v)}else rg.push({a:h,b:h,m:v})});
+          wet=' '+rg.slice(0,3).map(r=>`${spokenTime(r.a+':00').replace(/ 0분/,'')}${r.b>r.a?'부터 '+(r.b+1>=24?'자정':spokenTime((r.b+1)+':00'))+'까지':' 무렵'}`).join(', ')+` 비 확률이 높아요(최고 ${Math.max(...rg.map(r=>r.m))}%).`}}catch(_){}
+      const rain=p>=60||(code>=51&&code<=67)||code>=80||!!wet;
       let s=(!k&&j.current?`지금 ${Math.round(j.current.temperature_2m)}도, ${WXT(j.current.weather_code)}. `:'')+`${dn}은 ${WXT(code)}, ${lo}도에서 ${hi}도, 비 올 확률 ${p??'-'}%예요.`;
-      if(!k&&ss)s+=` 해는 ${spokenTime(ss)}에 져요.`;
+      s+=wet;if(!k&&ss)s+=` 해는 ${spokenTime(ss)}에 져요.`;
       if(rain){va.pending={fn:doIndoor};say(s+' 비 소식이 있어요. 실내 관광지를 찾아 줄까요?');return}
       say(s+(w==='rain'?' 비 걱정은 없어요.':''));return;
     }
@@ -5934,7 +5992,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(m=t.match(/^(.+?)(?:\s*이?라고|(?<=다)고)\s*(?:메모|기록)/))return {act:'memo',text:m[1]};
     if((m=t.match(/할\s*일(?:에|로)\s*(\S.*?)\s*(?:을|를)?\s*(?:추가|넣어|적어|등록)/))||(m=t.match(/^(.+?)\s*(?:을|를)?\s*할\s*일(?:에|로)\s*(?:추가|넣어|적어|등록)/)))return {act:'todo',text:m[1]};
     // 물어보기
-    if(/날씨|비\s*(?:와|오|올|소식)|우산|기온|몇\s*도|추워|더워/.test(t)&&!/찾아|검색/.test(t))return {act:'info',what:/비|우산/.test(t)?'rain':'weather',when};
+    if(/날씨|비\s*(?:와|오|올|소식)|우산|기온|몇\s*도|추워|더워/.test(t)&&!/찾아|검색|할\s*일/.test(t))return {act:'info',what:/비|우산/.test(t)?'rain':'weather',when};
     if(/일몰|해\s*(?:지는|질|져|떨어)/.test(t))return {act:'info',what:'sunset',when};
     if(/영업\s*(?:해|하나|중이야|중이에요|시간)|문\s*(?:열었|닫았|열어|닫아|여는|닫는)|몇\s*시까지|오픈\s*(?:했|해|시간)/.test(t))return {act:'info',what:'hours',q:qOf(t,/\s*(?:지금\s*)?(?:영업|문\s*(?:열|닫|여는|닫는)|몇\s*시까지|오픈).*$/)};
     if(/얼마나\s*(?:멀|걸)|거리가\s*얼마|몇\s*(?:km|키로|킬로)\s*(?:야|예요|남)/i.test(t))return {act:'info',what:'dist',q:qOf(t,/\s*(?:까지|에서)?\s*(?:얼마나|거리가|몇\s*(?:km|키로|킬로)).*$/i)};
@@ -5978,7 +6036,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   }
 
   const GO=/\s*(으로|로|에|까지)?\s*(가자|가 ?줘|가요|갈래|가고 ?싶어|안내해 ?줘|안내 ?해|길 ?안내|안내|가는 ?길|데려다 ?줘|티맵|내비|네비)\s*$/;
-  const CHATTY=/뭐|뭘|어디|어때|할까|있을까|좋을|먹지|먹을|배고|심심|어떻게|언제|괜찮/;
+  const CHATTY=/뭐|뭘|어디|어때|할까|있을까|좋을|먹지|먹을|배고|심심|어떻게|언제|괜찮|골라|나아|낫|비교|어느|어떤/;
   const SAVE=/저장해|저장\s*좀|일정에\s*(넣|담)|담아\s*줘|넣어\s*줘/;
   const YES=/^(응|어|엉|웅|네|넵|예|그래|좋아|오케이|ok|맞아|부탁해|그렇게|콜|고고|적어|저장해|넣어|넓혀|찾아|가자|해\s*줘)(?:[\s,]|$)/i,NO=/^(아니|아냐|아니요|아뇨|노|취소|됐어|그만|싫어|안\s*해|하지\s*마|괜찮아)/;
   function run(raw,opt={}){
@@ -6037,6 +6095,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       if(ai&&(w.split(/\s+/).length>=3||CHATTY.test(w))){aiAsk(t);return}
       doNearby({q:w});return;
     }
+    // 후보 비교·고르기는 AI가 있을 때만 (① 방식은 정렬 순서 안내)
+    if(!ai&&va.cands.length&&/골라|나아|낫지|비교|어디가\s*(좋|나)|어느\s*(쪽|곳|게)/.test(t)){say('후보 비교는 ②·③ AI 방식에서 돼요. 지금 목록은 정렬 순서라 1번이 맨 위예요. 몇 번째로 할까요?');return}
     // 8) ○○ 가자 / 그냥 이름
     const name=t.replace(GO,'').trim();
     // 문장 같은 말(“애들이랑 갈 만한 데 없나”)은 바로 AI에게
@@ -6126,35 +6186,36 @@ function applyNavLabels(){document.querySelectorAll('.navNm').forEach(el=>el.tex
 /* ===== v0.45 🎤 말로 찾기 방식 (설정): ① 브라우저 · ② 브라우저 + AI · ③ AI 우선 [모델 ▾] + 내 AI 연결 ===== */
 (()=>{
   const box=document.createElement('div');box.className='rbox';box.id='vmBox';
-  box.innerHTML=`<b>🎤 말로 찾기 방식</b>
-    <div class="vmList" role="radiogroup" aria-label="말로 찾기 방식">
-      <button type="button" data-vm="web" role="radio"><b>① 웹 브라우저 음성인식</b><small>기본 · 무료 · 연결 없이 바로</small></button>
-      <button type="button" data-vm="mix" role="radio"><b>② 웹 브라우저 음성인식 + AI</b><small>정해진 말로 안 될 때만 AI가 한 번 더 · 내 AI 연결 필요</small></button>
-      <div class="vmRow"><button type="button" data-vm="ai" role="radio"><b>③ AI 우선</b><small>AI가 녹음을 직접 듣고 해석 · 내 AI 연결 필요</small></button><button type="button" id="vmModel" aria-haspopup="listbox" aria-expanded="false"><small>모델</small><b id="vmModelNm">자동</b> ▾</button></div>
-      <div id="vmPop" role="listbox" aria-label="AI 모델"></div>
-    </div>
+  box.innerHTML=`<div class="vmTop"><b>🎤 말로 찾기</b><select id="vmSel" aria-label="말로 찾기 방식"><option value="web">① 브라우저 음성인식</option><option value="mix">② 브라우저 + AI</option><option value="ai">③ AI 우선</option></select><button type="button" id="vmModel" aria-haspopup="listbox" aria-expanded="false" aria-label="AI 모델"><b id="vmModelNm">자동</b> ▾</button></div>
+    <div id="vmPop" role="listbox" aria-label="AI 모델"></div>
+    <div class="vmKey"><span id="vmKeyTxt"></span><button type="button" id="vmKeyBtn" aria-expanded="false">관리</button></div>
     <div id="aiConn"></div>
-    <div class="labNote" style="margin-top:8px">· AI 키는 각자 자기 것만 써요(친구와 섞이지 않음). 서버에 암호화해서 내 계정에만 묶어 두고, 폰·화면으로 다시 내려오지 않아요.<br>· AI에는 말한 문장(③은 녹음)과 지금 화면의 장소 이름만 보내요. 위치 좌표는 안 보내요.<br>· 무료 모델만 불러요. 무료 한도가 차거나 오류가 나면 ① 방식으로 이어가요. 결제를 켠 키는 요금이 나갈 수 있으니 결제를 안 켠 키를 쓰세요. 하루 200회 상한(말 한 번 = 1회, 그 안의 받아쓰기·해석 포함).<br>· Gemini 무료 키로 보낸 내용은 구글이 서비스 개선에 쓸 수 있어요.<br>· 모델 칸은 ②·③ 모두에 쓰여요.</div>`;
+    <details class="vmInfo"><summary>ⓘ 안내</summary><div class="labNote">· ① 폰 브라우저가 받아쓰고 정해진 명령을 앱이 처리(무료, 연결 없음) · ② 정해진 말로 안 되는 말만 AI가 한 번 더 · ③ AI가 받아쓰고 애매한 말을 해석<br>· AI 키는 각자 자기 것(Gemini나 Groq 하나면 돼요). 서버에 암호화해 내 계정에만 묶고, 폰으로 다시 내려오지 않아요.<br>· AI에는 말한 문장(③은 녹음)과 화면 후보의 이름·점수·거리만 보내요. 위치 좌표는 안 보내요.<br>· 무료 모델만 불러요. 한도가 차거나 오류면 ① 방식으로 이어가요. 결제를 켠 키는 요금이 나갈 수 있어요. 하루 500회 상한(말 한 번 = 1회).<br>· Gemini 무료 키로 보낸 내용은 구글이 서비스 개선에 쓸 수 있어요.</div></details>`;
   $('navBox').after(box);
   const msg=t=>{const el=$('aiMsg');if(el)el.textContent=t||''};
-  function paintMode(){const m=vaMode();box.querySelectorAll('[data-vm]').forEach(b=>{b.classList.toggle('on',b.dataset.vm===m);b.setAttribute('aria-checked',b.dataset.vm===m)});
-    $('vmModelNm').textContent=vaModelSel()==='auto'?'자동':aiModelName(vaModelSel()).replace(/^(Gemini|Groq) /,'');$('vmModel').classList.toggle('dim',m==='web')}
+  let lastJ=null;
+  function paintMode(){const m=vaMode();$('vmSel').value=m;
+    $('vmModelNm').textContent=vaModelSel()==='auto'?'자동':aiModelName(vaModelSel()).replace(/^(Gemini|Groq) /,'').replace(/ \+ .*$/,'');$('vmModel').classList.toggle('hide',m==='web');if(m==='web')$('vmPop').classList.remove('on')}
+  function paintKey(){const K=aiK(),L=Object.entries(K).map(([p,v])=>`${AI_PROV[p].name.replace(/^Google /,'')} ··${escapeHtml(v.tail||'')}`);
+    $('vmKeyTxt').innerHTML=!acct?'🔑 AI 연결은 로그인 후에':`🔑 ${L.length?L.join(' · '):'연결된 AI 없음'}${lastJ&&lastJ.cap?` · 오늘 ${lastJ.today}/${lastJ.cap}`:''}`;
+    $('vmKeyBtn').style.display=acct?'':'none';$('vmKeyBtn').textContent=L.length?'관리':'키 넣기'}
   function paintPop(){const cur=vaModelSel();
     $('vmPop').innerHTML=[{id:'auto',name:'자동',note:'연결된 키 중에서 알아서 · 막히면 다음 모델로'},...AI_MODELS].map(m=>{const off=m.id!=='auto'&&!aiK()[m.p];
       return `<button type="button" role="option" data-md="${m.id}" class="${m.id===cur?'on':''}" aria-selected="${m.id===cur}" ${off?'disabled':''}><b>${m.name}</b><small>${m.p?AI_PROV[m.p].name+' · ':''}${m.note}${off?' · 키 연결 필요':''}</small></button>`}).join('')}
   function paintConn(j){const el=$('aiConn');
     const keep={};el.querySelectorAll('.aiAdd').forEach(d=>{const i=d.querySelector('input');if(i&&(d.classList.contains('on')||i.value))keep[d.id.slice(6)]=i.value});   // 다시 그려도 넣던 키는 그대로
     if(!acct){el.innerHTML='<div class="aiNo">🔑 AI 연결은 위 👤 내 계정에 로그인한 뒤에 할 수 있어요. 키가 내 계정에만 묶여요.</div>';return}
-    el.innerHTML=`<div class="aiHd">🔑 내 AI 연결 <small id="aiUse">${j&&j.cap?`오늘 ${j.today}/${j.cap}회`:''}</small></div><div class="labNote" style="margin-bottom:4px">Gemini나 Groq 중 하나만 연결해도 돼요.</div>`+Object.entries(AI_PROV).map(([p,v])=>{const k=aiK()[p];
+    el.innerHTML=`<div class="labNote" style="margin-bottom:4px">Gemini나 Groq 중 하나만 연결해도 돼요.</div>`+Object.entries(AI_PROV).map(([p,v])=>{const k=aiK()[p];
       return `<div class="aiP"><div class="aiPr"><b>${v.name}</b>${k?`<span class="aiOk">연결됨 ··${escapeHtml(k.tail||'')}</span><button type="button" data-del="${p}">끊기</button>`:`<button type="button" data-add="${p}">키 넣기</button>`}</div>
         <div class="aiAdd" id="aiAdd_${p}"><input type="password" id="aiKey_${p}" placeholder="${v.name} API 키 붙여넣기" autocomplete="off" spellcheck="false" autocapitalize="off"><button type="button" data-save="${p}">연결</button><a href="${v.get}" target="_blank" rel="noopener">키 받는 곳 ↗</a></div></div>`}).join('')+'<div class="labNote" id="aiMsg" role="status"></div>';
     Object.entries(keep).forEach(([p,v])=>{if(aiK()[p])return;const d=$('aiAdd_'+p);if(d){d.classList.add('on');$('aiKey_'+p).value=v}})}
-  const paintAll=j=>{paintMode();paintPop();paintConn(j)};
+  const paintAll=j=>{if(j&&j.cap)lastJ=j;paintMode();paintPop();paintConn(j);paintKey()};
   window.paintVm=paintAll;
-  box.querySelector('.vmList').addEventListener('click',e=>{
-    const b=e.target.closest('[data-vm]');
-    if(b){lsSet('vaMode',b.dataset.vm);_va.aiOff=false;paintMode();
-      setStatus(b.dataset.vm==='web'?'말로 찾기를 ① 웹 브라우저 음성인식으로 바꿨어요.':!acct?'②·③은 로그인하고 내 AI를 연결해야 작동해요. 그 전엔 ① 방식으로 들어요.':!aiReady()?'아래에서 내 AI 키를 연결해야 작동해요. 그 전엔 ① 방식으로 들어요.':`말로 찾기를 ${b.dataset.vm==='ai'?'③ AI 우선으로':'② 브라우저 + AI로'} 바꿨어요.`);return}
+  $('vmSel').onchange=()=>{const v=$('vmSel').value;lsSet('vaMode',v);_va.aiOff=false;paintMode();
+    if(v!=='web'&&acct&&!aiReady()){$('aiConn').classList.add('on');$('vmKeyBtn').setAttribute('aria-expanded','true')}
+    setStatus(v==='web'?'말로 찾기를 ① 브라우저 음성인식으로 바꿨어요.':!acct?'②·③은 로그인하고 내 AI를 연결해야 작동해요. 그 전엔 ① 방식으로 들어요.':!aiReady()?'아래에서 내 AI 키를 연결해야 작동해요. 그 전엔 ① 방식으로 들어요.':`말로 찾기를 ${v==='ai'?'③ AI 우선으로':'② 브라우저 + AI로'} 바꿨어요.`)};
+  box.addEventListener('click',e=>{
+    if(e.target.closest('#vmKeyBtn')){const on=!$('aiConn').classList.contains('on');$('aiConn').classList.toggle('on',on);$('vmKeyBtn').setAttribute('aria-expanded',on);return}
     if(e.target.closest('#vmModel')){const on=!$('vmPop').classList.contains('on');paintPop();$('vmPop').classList.toggle('on',on);$('vmModel').setAttribute('aria-expanded',on);return}
     const o=e.target.closest('[data-md]');
     if(o&&!o.disabled){lsSet('vaModel',o.dataset.md);_va.aiOff=false;$('vmPop').classList.remove('on');$('vmModel').setAttribute('aria-expanded','false');paintMode();paintPop();setStatus('말로 찾기 AI 모델: '+aiModelName(o.dataset.md))}
@@ -6174,7 +6235,7 @@ function applyNavLabels(){document.querySelectorAll('.navNm').forEach(el=>el.tex
   const ra=renderAcct;renderAcct=function(){const r=ra.apply(this,arguments);try{paintAll();
     if(acct&&acct.email!==lastE){lastE=acct.email;_va.aiOff=false;_va.seq++;aiCall('status').then(x=>{if(x.ok)paintAll(x.j)})}
     else if(!acct&&lastE!==null){lastE=null;aiClear();_va.aiOff=false;_va.seq++;paintAll()}}catch(_){}return r};
-  $('setBtn').addEventListener('click',()=>{paintAll();$('vmPop').classList.remove('on');if(acct)aiCall('status').then(r=>{if(r.ok)paintAll(r.j);else if(r.j.err==='bad token'){aiClear();paintAll()}})});
+  $('setBtn').addEventListener('click',()=>{paintAll();$('vmPop').classList.remove('on');$('aiConn').classList.remove('on');if(acct)aiCall('status').then(r=>{if(r.ok)paintAll(r.j);else if(r.j.err==='bad token'){aiClear();paintAll()}})});
   paintAll();
   // 앱을 열면 한 번 연결 상태 확인 (설정을 안 열어도 ②·③이 바로 작동하게)
   setTimeout(()=>{if(acct&&lastE===null){lastE=acct.email;aiCall('status').then(x=>{if(x.ok)paintAll(x.j)})}},1500);

@@ -15,7 +15,7 @@ import { createHash, randomBytes, createCipheriv, createDecipheriv, timingSafeEq
 
 const ok = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 const sha = (x) => createHash('sha256').update(String(x)).digest('hex');
-const CAP = 200;                       // 계정당 하루 AI 요청 상한(앱 요청 1번 = 1회, 그 안의 받아쓰기·해석·대체 호출 포함) — 결제를 켠 키라도 과하게 쓰지 않게
+const CAP = 500;                       // 계정당 하루 AI 요청 상한(앱 요청 1번 = 1회, 그 안의 받아쓰기·해석·대체 호출 포함) — 결제를 켠 키라도 과하게 쓰지 않게
 const day = () => new Date(Date.now() + 9 * 36e5).toISOString().slice(0, 10);   // 한국 날짜
 
 // 모델 묶음: hear = 듣는 모델, think = 말뜻 해석 모델 (같으면 한 번에 처리)
@@ -51,6 +51,7 @@ memo: 일정에 메모. q(장소, 없으면 ""), text
 [물어보기] info: what(weather|rain|sunset|hours|dist|visited|spent|settle|todos), when(today|tomorrow), q(hours·dist 장소, 고른 곳이면 "")
 indoor: 비 올 때 실내 관광지 / open: 화면 열기 what(sat 위성|map 일반 지도|visited|sched|exp|todo|book|saved|photo|hub)
 두 가지를 이어서 하라는 말(흑돼지 먹고 근처 카페)은 첫 명령에 "then":{두 번째 명령}.
+후보 고르기·비교(어디가 나아, 주차 편한 쪽, 평점 높은 데로)는 [화면] 후보에 적힌 점수·후기·거리·영업·주차 안내·내 메모만 근거로 choose(n)+say(한 줄 이유). 적혀 있지 않은 조건은 "정보 없음"이라고 말한다. 고르라는 말이 없는 비교 질문은 none+say.
 none: 위에 없음(인사·잡담). say=짧은 한국어 답. 날씨·영업시간·지출처럼 앱이 아는 것은 none이 아니라 info로.`;
 
 // ---------- 키 보관 (서버 안에서만 풀 수 있게 암호화) ----------
@@ -159,12 +160,17 @@ const arr = (a, m) => Array.isArray(a) ? a.slice(0, m).map(x => s(x)).filter(Boo
 function cleanCtx(c) {
   c = c && typeof c === 'object' ? c : {};
   return {
-    후보: Array.isArray(c.cands) ? c.cands.slice(0, 8).map((x, i) => `${i + 1}. ${s(x && x.name)}${x && x.cat ? ' (' + s(x.cat, 20) + ')' : ''}`) : [],
+    후보: Array.isArray(c.cands) ? c.cands.slice(0, 8).map((x, i) => { x = x || {};
+      const f = [x.cat ? '(' + s(x.cat, 20) + ')' : '', s(x.dist, 10), +x.r > 0 ? `★${(+x.r).toFixed(1)}${+x.n > 0 ? `(후기 ${Math.round(+x.n)})` : ''}` : '', +x.s2 > 0 ? `종합 ${Math.round(+x.s2)}점` : '',
+        +x.price > 0 ? `${Math.round(+x.price)}원` : '', s(x.open, 12), x.park === true ? '주차 안내 있음' : '', x.mine ? '내 ' + s(x.mine, 8) : '', x.memo ? '내 메모: ' + s(x.memo, 40) : ''].filter(Boolean);
+      return `${i + 1}. ${s(x.name)} ${f.join(' · ')}`.trim(); }) : [],
     고른곳: s(c.sel), 오늘일정: arr(c.plan, 15), 가고싶은곳: arr(c.saved, 30), 최근본곳: arr(c.recent, 10), 지금: s(c.time, 10), 여행: s(c.trip, 20),
   };
 }
 function vocabOf(c) {
-  const v = [...(c.cands || []).map(x => x && x.name), c.sel, ...(c.plan || []), ...(c.saved || []), ...(c.recent || [])].map(x => s(x)).filter(x => x.length > 1);
+  c = c && typeof c === 'object' ? c : {};
+  const A = a => Array.isArray(a) ? a.slice(0, 40) : [];
+  const v = [...A(c.cands).map(x => x && x.name), c.sel, ...A(c.plan), ...A(c.saved), ...A(c.recent)].map(x => s(x)).filter(x => x.length > 1);
   return [...new Set(v)].slice(0, 100);
 }
 const ACTS = new Set(['find', 'nearby', 'choose', 'navi', 'fuel', 'next', 'today', 'saved', 'recent', 'save', 'plan', 'cond', 'exp', 'todo', 'sched', 'visit', 'memo', 'info', 'indoor', 'open', 'none']);
@@ -215,8 +221,8 @@ async function thinkWith(id, key, text, ctx) {
   if (!cmd.heard) cmd.heard = s(text, 200);
   return cmd;
 }
-async function hearWith(id, key, b64, mime, ctx, sttOnly, strict) {
-  const m = MODELS[id], vocab = vocabOf({ cands: (ctx.후보 || []).map(x => ({ name: x.replace(/^\d+\.\s*/, '').replace(/\s*\(.*\)$/, '') })), sel: ctx.고른곳, plan: ctx.오늘일정, saved: ctx.가고싶은곳, recent: ctx.최근본곳 });
+async function hearWith(id, key, b64, mime, ctx, sttOnly, strict, vocab) {
+  const m = MODELS[id];
   const used = { stt: m.hear, think: sttOnly ? null : m.think };
   let heard = '', fb = false;
   if (m.p === 'groq') {
@@ -323,7 +329,7 @@ async function handle(body) {
     try {
       const key = plain[MODELS[id].p], fbAuto = tried.length > 0;
       if (act === 'ask') return ok({ cmd: await thinkWith(id, key, s(body.text, 200), ctx), model: id, want, used: { stt: null, think: MODELS[id].think }, fb: fbAuto, tried, ms: Date.now() - t0, today: n, cap: CAP });
-      const r = await hearWith(id, key, audio, mime, ctx, !!body.stt, strict);
+      const r = await hearWith(id, key, audio, mime, ctx, !!body.stt, strict, vocabOf(body.ctx));
       return ok({ ...r, fb: r.fb || fbAuto, model: id, want, tried, ms: Date.now() - t0, today: n, cap: CAP });
     } catch (e) {
       last = e; tried.push({ id, err: e.code || 'fail' });
