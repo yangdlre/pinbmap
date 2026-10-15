@@ -6,6 +6,8 @@
 //   delkey {prov}
 //   ask  {text, ctx}               → {cmd, model, ms}            ② 브라우저 받아쓰기 + AI 해석
 //   hear {audio(base64), mime, ctx, stt?} → {heard, cmd, model, ms}   ③ AI가 녹음을 직접 듣고 해석 (stt:1 = 받아쓰기만, 실험실 비교용)
+//   vision {image(base64 jpeg), today} → {doc}   📷 영수증·예약 사진 읽기 (Groq Qwen 3.8 / Gemini Flash-Lite)
+//   agent {messages} → {msg}   🔎 깊게 찾기: AI가 앱의 도구(장소 검색·상세·날씨·내 여행)를 직접 불러 여러 번 확인 — 도구 실행은 앱(폰)이, 키는 서버가
 // AI에는 문장(또는 녹음)과 화면의 장소 "이름"만 보냄 — 좌표·주소·개인 일정 세부는 안 보냄.
 // 무료 모델만 부름. 하루 상한(CAP, 앱 요청 기준)을 넘거나 공급자가 한도(429)를 알리면 멈추고, 앱은 기본 방식으로 돌아감.
 // 키는 공급자별 칸(k:계정:공급자)에 '가입 세대'(계정 created)와 같이 저장 → 탈퇴 후 같은 이메일로 새로 가입해도 예전 키는 못 씀.
@@ -53,6 +55,77 @@ indoor: 비 올 때 실내 관광지 / open: 화면 열기 what(sat 위성|map �
 두 가지를 이어서 하라는 말(흑돼지 먹고 근처 카페)은 첫 명령에 "then":{두 번째 명령}.
 후보 고르기·비교(어디가 나아, 주차 편한 쪽, 평점 높은 데로)는 [화면] 후보에 적힌 점수·후기·거리·영업·주차 안내·내 메모만 근거로 choose(n)+say(한 줄 이유). 적혀 있지 않은 조건은 "정보 없음"이라고 말한다. 고르라는 말이 없는 비교 질문은 none+say.
 none: 위에 없음(인사·잡담). say=짧은 한국어 답. 날씨·영업시간·지출처럼 앱이 아는 것은 none이 아니라 info로.`;
+
+const VISION = (today) => `사진을 보고 JSON 객체 하나만 출력한다. 오늘은 ${today}이다(연도가 없으면 오늘 기준으로 가까운 날).
+kind: receipt(영수증·카드 전표·계산서) | reservation(예약 확인 화면·예약 문자·티켓) | other
+receipt: store(가게 이름), date("YYYY-MM-DD" 또는 ""), time("HH:MM" 또는 ""), total(최종 결제 금액, 원 단위 숫자), items([{name, amt}] 최대 8개), pay("카드"|"현금"|""), cat(food|cafe|drink|move|stay|shop|gift|souv|tour|life|etc)
+reservation: place(가게·장소 이름), date, time, people(인원 숫자, 모르면 0), note(예약번호·주차·준비물 등 60자 이내)
+other: say(무슨 사진인지 한 줄)
+글자가 흐리거나 없으면 그 칸은 비운다. 카드번호·전화번호 전체는 적지 않는다. 지어내지 않는다.`;
+const SYS_AGENT = `너는 한국 여행 지도 앱 '핀볼'의 검색 비서다. 도구로 사실을 확인한 뒤 답한다.
+장소는 find_places, 점수·영업·주차는 place_info, 날씨는 weather, 내 일정·숙소·가고 싶은 곳은 my_trip. [화면] 후보 id도 쓸 수 있다.
+도구는 필요한 만큼만(보통 1~3번). 끝낼 때는 반드시 answer: say=한두 문장 한국어(근거 포함, 확인 못 한 건 "정보 없음"), ids=보여 줄 장소 id(도구 결과·[화면]에 나온 것만, 최대 5), go=가자·안내해 같은 말이면 true.
+장소·점수·영업시간을 지어내지 않는다.`;
+const fn = (name, description, properties, required = []) => ({ type: 'function', function: { name, description, parameters: { type: 'object', properties, required } } });
+const TOOLS = [
+  fn('find_places', '카카오 장소 검색. 결과: id·이름·분류·거리(m)', { q: { type: 'string' }, near: { type: 'string', description: 'here(지도 가운데)|selected(고른 곳)|lodging(숙소)|장소 이름' }, radius: { type: 'integer', description: '미터, 기본 3000' }, cat: { type: 'string', enum: ['food', 'cafe', 'tour', 'fuel', 'any'] } }, ['q']),
+  fn('place_info', '장소 상세: 평점·후기 수·영업 상태·주차장 안내·내 메모', { ids: { type: 'array', items: { type: 'string' } } }, ['ids']),
+  fn('weather', '지금 위치 날씨(시간별 비 포함)', { when: { type: 'string', enum: ['today', 'tomorrow'] } }),
+  fn('my_trip', '오늘 일정·숙소·가고 싶은 곳', {}),
+  fn('answer', '최종 답', { say: { type: 'string' }, ids: { type: 'array', items: { type: 'string' } }, go: { type: 'boolean' } }, ['say']),
+];
+const s2 = (x, n) => String(x == null ? '' : x).slice(0, n);
+function cleanMsgs(a) {
+  if (!Array.isArray(a) || !a.length || a.length > 20) return null;
+  const out = [];
+  for (const m of a) {
+    if (!m || typeof m !== 'object') return null;
+    if (m.role === 'user') out.push({ role: 'user', content: s2(m.content, 3000) });
+    else if (m.role === 'assistant') {
+      const tc = Array.isArray(m.tool_calls) ? m.tool_calls.slice(0, 1).map(t => ({ id: s2(t && t.id, 64), type: 'function', function: { name: s2(t && t.function && t.function.name, 32), arguments: s2(t && t.function && t.function.arguments || '{}', 1000) } })) : [];
+      out.push(tc.length ? { role: 'assistant', content: s2(m.content, 1500) || null, tool_calls: tc } : { role: 'assistant', content: s2(m.content, 1500) });
+    } else if (m.role === 'tool') out.push({ role: 'tool', tool_call_id: s2(m.tool_call_id, 64), name: s2(m.name, 32), content: s2(m.content, 3000) });
+    else return null;
+  }
+  return JSON.stringify(out).length > 40000 ? null : out;
+}
+async function groqAgent(key, msgs) {
+  let r;
+  try {
+    r = await fetch('https://api.groq.com/openai/v1/chat/completions', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + key },
+      body: JSON.stringify({ model: 'openai/gpt-oss-120b', messages: [{ role: 'system', content: SYS_AGENT }, ...msgs], tools: TOOLS, tool_choice: 'auto', temperature: 0.2, max_tokens: 900, reasoning_effort: 'low' }),
+      signal: AbortSignal.timeout(15000) });
+  } catch (e) { throw new AiErr(e && e.name === 'TimeoutError' ? 'timeout' : 'net'); }
+  if (r.status === 429) { const e = new AiErr('quota'); e.wait = Math.ceil(+r.headers.get('retry-after') || 0); throw e; }
+  if (r.status === 401 || r.status === 403) throw new AiErr('badkey');
+  if (!r.ok) throw new AiErr('fail', r.status + ' ' + (await r.text().catch(() => '')).slice(0, 200));
+  const j = await r.json(), m = (j.choices && j.choices[0] && j.choices[0].message) || {};
+  const tc = (m.tool_calls || []).slice(0, 1).map(t => ({ id: t.id, type: 'function', function: { name: t.function && t.function.name, arguments: (t.function && t.function.arguments) || '{}' } }));
+  return { role: 'assistant', content: String(m.content || ''), tool_calls: tc, tokens: j.usage && j.usage.total_tokens };
+}
+async function readPhoto(prov, key, img, mime, today) {
+  const prompt = VISION(today);
+  let out;
+  if (prov === 'groq') {
+    const body = { model: 'qwen/qwen3.8-27b', messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${mime};base64,${img}` } }] }], temperature: 0.1, max_tokens: 1500, response_format: { type: 'json_object' } };
+    const go = b => call('https://api.groq.com/openai/v1/chat/completions', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + key }, body: JSON.stringify(b) }, 25000);
+    let j; try { j = await go(body); } catch (e) { if (e.code !== 'fail') throw e; delete body.response_format; j = await go(body); }
+    out = String((j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '');
+  } else out = await geminiGen(key, 'gemini-3.5-flash-lite', [{ inline_data: { mime_type: mime, data: img } }, { text: prompt }], { sys: null, ms: 25000 });
+  out = out.replace(/<think>[\s\S]*?<\/think>/g, '');
+  const m = out.match(/\{[\s\S]*\}/);
+  let o; try { o = JSON.parse(m ? m[0] : out); } catch { throw new AiErr('fail', 'bad json'); }
+  return cleanPhoto(o);
+}
+const num = v => Math.round(+String(v == null ? '' : v).replace(/[^\d.]/g, '') || 0);
+function cleanPhoto(o) {
+  if (!o || typeof o !== 'object') return { kind: 'other', say: '' };
+  const kind = ['receipt', 'reservation', 'other'].includes(o.kind) ? o.kind : 'other';
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(o.date || '') ? o.date : '', tm = String(o.time || '').match(/^(\d{1,2}):(\d{2})/), time = tm && +tm[1] < 24 ? `${tm[1].padStart(2, '0')}:${tm[2]}` : '';
+  if (kind === 'receipt') { const total = num(o.total); return { kind, store: s(o.store, 40), date, time, total: total > 0 && total <= 1e8 ? total : 0, items: Array.isArray(o.items) ? o.items.slice(0, 8).map(x => ({ name: s(x && x.name, 30), amt: num(x && x.amt) })).filter(x => x.name) : [], pay: s(o.pay, 10), cat: s(o.cat, 10) }; }
+  if (kind === 'reservation') return { kind, place: s(o.place, 40), date, time, people: Math.max(0, Math.min(99, Math.round(+o.people || 0))), note: s(o.note, 80) };
+  return { kind, say: s(o.say, 120) };
+}
 
 // ---------- 키 보관 (서버 안에서만 풀 수 있게 암호화) ----------
 const store = (name) => (globalThis.__pinbStores && globalThis.__pinbStores[name]) || getStore({ name, consistency: 'strong' });   // 시험할 땐 가짜 저장소
@@ -296,13 +369,19 @@ async function handle(body) {
     }
     return ok({ keys: pub(), today: await used(), cap: CAP });
   }
-  if (act !== 'ask' && act !== 'hear') return ok({ err: 'bad action' }, 400);
+  if (!['ask', 'hear', 'vision', 'agent'].includes(act)) return ok({ err: 'bad action' }, 400);
 
   const sk = await secretKey(st), plain = {};
   for (const p of PROVS) if (keys[p]) { const k = dec(sk, keys[p]); if (k) plain[p] = k; }
   const want = String(body.model || 'auto'), strict = !!body.strict;
-  const list = (want === 'auto' && !strict ? AUTO[act] : [want]).filter(id => MODELS[id] && plain[MODELS[id].p]);
-  if (!list.length) return ok({ err: 'nokey' }, 400);
+  const list = act === 'ask' || act === 'hear' ? (want === 'auto' && !strict ? AUTO[act] : [want]).filter(id => MODELS[id] && plain[MODELS[id].p]) : [];
+  let msgs = null, img = '', imgMime = 'image/jpeg';
+  if (act === 'agent') { if (!plain.groq) return ok({ err: 'nokey' }, 400); msgs = cleanMsgs(body.messages); if (!msgs) return ok({ err: 'bad msgs' }, 400); }
+  else if (act === 'vision') {
+    if (!plain.groq && !plain.gemini) return ok({ err: 'nokey' }, 400);
+    img = String(body.image || ''); imgMime = /^image\/(jpeg|png|webp)$/.test(body.mime) ? body.mime : 'image/jpeg';
+    if (!/^[A-Za-z0-9+/=]{1000,5600000}$/.test(img)) return ok({ err: 'bad image' }, 400);
+  } else if (!list.length) return ok({ err: 'nokey' }, 400);
   const ctx = cleanCtx(body.ctx);
   let audio = '', mime = '';
   if (act === 'hear') {
@@ -310,7 +389,7 @@ async function handle(body) {
     mime = String(body.mime || 'audio/webm').split(';')[0].toLowerCase();
     if (mime === 'audio/mp4' || mime === 'audio/x-m4a') mime = 'audio/m4a';
     if (!/^[A-Za-z0-9+/=]{100,2800000}$/.test(audio)) return ok({ err: 'bad audio' }, 400);
-  } else if (!s(body.text, 200)) return ok({ err: 'no text' }, 400);
+  } else if (act === 'ask' && !s(body.text, 200)) return ok({ err: 'no text' }, 400);
 
   // 사용 1회를 먼저 확보 (동시에 여러 요청이 와도 상한을 넘지 않게, 저장 실패면 부르지 않음)
   let n = 0, got = false;
@@ -325,6 +404,21 @@ async function handle(body) {
 
   const t0 = Date.now(), tried = [];
   let last = null;
+  if (act === 'agent') {
+    try { const msg = await groqAgent(plain.groq, msgs); return ok({ msg, model: 'groq-oss', used: { think: 'openai/gpt-oss-120b' }, ms: Date.now() - t0, today: n, cap: CAP }); }
+    catch (e) { return ok({ err: e.code || 'fail', wait: e.wait || 0, detail: e.detail, today: n, cap: CAP }, e.code === 'quota' ? 429 : 502); }
+  }
+  if (act === 'vision') {
+    const today = /^\d{4}-\d{2}-\d{2}$/.test(body.today || '') ? body.today : day();
+    const order = plain.groq ? ['groq', 'gemini'] : ['gemini'];
+    for (const pv of order) {
+      if (!plain[pv]) continue;
+      try { const doc = await readPhoto(pv, plain[pv], img, imgMime, today); return ok({ doc, model: pv === 'groq' ? 'groq-vision' : 'gemini-vision', ms: Date.now() - t0, today: n, cap: CAP }); }
+      catch (e) { last = e; }
+    }
+    const code = (last && last.code) || 'fail';
+    return ok({ err: code, detail: last && last.detail, today: n, cap: CAP }, code === 'quota' ? 429 : 502);
+  }
   for (const id of list) {
     try {
       const key = plain[MODELS[id].p], fbAuto = tried.length > 0;
