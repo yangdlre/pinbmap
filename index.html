@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#111111">
 <link rel="icon" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<title>핀볼 맛집 검색 v0.43</title>
+<title>핀볼 맛집 검색 v0.44</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;font-family:system-ui,-apple-system,"Noto Sans KR",sans-serif;background:#fff;color:#15171b}
@@ -4192,22 +4192,30 @@ const CARD_RE=/(KB국민|국민|신한|삼성|현대|롯데|하나|우리|NH농�
 const CAT_KW=[['cafe',/스타벅스|커피|카페|이디야|투썸|메가|빽다방|컴포즈|폴바셋|할리스|베이커리|제과|빵|파리바게|뚜레쥬르|던킨|배스킨|디저트|아이스크림|설빙/],
   ['drink',/포차|호프|주점|이자카야|와인|맥주|술집|bar\b|펍/i],['move',/주유|칼텍스|SK에너지|S-?OIL|에쓰오일|현대오일|알뜰|충전|택시|카카오T|티머니|버스|코레일|KTX|SRT|항공|에어|대한항공|아시아나|주차|하이패스|렌터카|렌트/],
   ['stay',/호텔|모텔|펜션|리조트|게스트하우스|에어비앤비|야놀자|여기어때|스테이|민박/],['life',/보험|통신|관리비|편의점|GS25|CU\b|씨유|세븐일레븐|이마트24|미니스톱|다이소|마트|이마트|홈플러스|롯데마트|하나로|생활/],
-  ['med',/약국|병원|의원|치과|한의원|안과|내과/],['souv',/기념품|감귤|한라봉|천혜향|오메기|기프트|소품|굿즈|농장/],['tour',/입장|매표|박물관|미술관|아쿠아|랜드|테마파크|체험|관광|투어/],['shop',/쿠팡|11번가|G마켓|옥션|무신사|올리브영|백화점|아울렛|면세/],
-  ['food',/식당|국수|고기|흑돼지|횟집|회|치킨|피자|버거|맥도날드|롯데리아|김밥|분식|해장국|국밥|돈까스|초밥|라멘|중국|짜장|한식|식육|갈비|순대|밥|찌개|탕|면/]];
+  ['med',/약국|병원|의원|치과|한의원|안과|내과/],['souv',/기념품|감귤|한라봉|천혜향|오메기|기프트|소품|굿즈|농장/],['tour',/입장|매표|박물관|미술관|아쿠아|랜드|테마파크|체험|관광|투어/],['shop',/쿠팡(?!이츠)|11번가|G마켓|옥션|무신사|올리브영|백화점|아울렛|면세/],
+  ['food',/우아한형제들|배달의민족|배민|요기요|쿠팡이츠|땡겨요|식당|국수|고기|흑돼지|횟집|회|치킨|피자|버거|맥도날드|롯데리아|김밥|분식|해장국|국밥|돈까스|초밥|라멘|중국|짜장|한식|식육|갈비|순대|밥|찌개|탕|면/]];
 function guessCat(t){for(const [c,re] of CAT_KW)if(re.test(t))return bookCats().some(x=>x.id===c)?c:'etc';return 'etc'}
 function parseSms(text){
   const T=String(text||'').replace(/\r/g,''),HEAD=/(?=\[Web발신\])|(?=\[[^\]\n]{1,12}카드\][^\n]{0,20}(?:승인|취소|결제|안내))/;
-  // 카드사 머리글([하나카드] 승인 안내 등)이 있으면 그걸로만 나눔 — 알림톡은 한 건 안에도 빈 줄이 있어서
-  const parts=(HEAD.test(T)?T.split(HEAD):T.split(/\n\s*\n/)).map(s=>s.trim()).filter(s=>/\d[\d,]*\s*원/.test(s));
-  const now=nowKST(),cy=+now.d.slice(0,4),cm=+now.d.slice(5,7);
+  // ① 카톡 '대화 내용 내보내기': "2026년 10월 13일 오후 6:23, KB국민카드 : …" 한 줄마다 한 건 (연도도 여기서 얻음)
+  // ② 카드사 머리글([하나카드] 승인 안내 등) ③ 빈 줄  — 알림톡은 한 건 안에도 빈 줄이 있어서 ①②를 먼저 씀
+  const KT=/^(\d{4})년 (\d{1,2})월 (\d{1,2})일 (?:오전|오후) \d{1,2}:\d{2}, [^:\n]{1,30} : /m;
+  // 카톡 내보내기는 안내문(스미싱 예시 속 [Web발신] 등)이 섞여 있어서 '날짜 머리 줄'과 '줄 맨 앞 [○○카드]'로만 나누고, 승인·사용 문자만 남김
+  const kt=KT.test(T);let parts;
+  if(kt)parts=T.split(/(?=^\d{4}년 \d{1,2}월 \d{1,2}일 (?:오전|오후) \d{1,2}:\d{2}, [^:\n]{1,30} : )|(?=^\[[^\]\n]{1,12}카드\][^\n]{0,20}(?:승인|취소|결제|안내))/m);
+  else parts=HEAD.test(T)?T.split(HEAD):T.split(/\n\s*\n/);
+  parts=parts.map(s=>s.trim()).filter(s=>/\d[\d,]*\s*원/.test(s)&&(!kt||/승인|사용금액|이용금액|결제금액|출금/.test(s)));
+  const now=nowKST(),cy=+now.d.slice(0,4),cm=+now.d.slice(5,7),seen=new Set();
   return parts.map(raw=>{
-    const s=raw.replace(/\[Web발신\]/g,' ');
+    const km=KT.exec(raw),s=raw.replace(KT,'').replace(/\[Web발신\]/g,' ');   // 카톡 날짜 머리 줄은 떼어 냄(연도만 씀)
     let amt=0;const re=/([\d,]{1,12})\s*원/g;let m;
     while((m=re.exec(s))){const pre=s.slice(Math.max(0,m.index-6),m.index);if(/누적|잔액|한도|총|합계|이용가능/.test(pre))continue;amt=+m[1].replace(/,/g,'');break}
-    const cancel=/취소/.test(s);if(cancel)amt=-amt;
+    // '취소할 수 없습니다' 같은 안내 문구는 빼고, 승인취소·취소승인·(1234)취소 같은 것만 환불로
+    const cancel=/승인\s*취소|취소\s*(승인|완료|안내)|결제\s*취소|매출\s*취소|\[취소\]/.test(s)||(/취소/.test(s)&&!/취소\s*(할|하|가능|를|는|시|요청|불가|방법|수수료|규정)/.test(s));if(cancel)amt=-amt;
     const lab=/(거래시간|거래일시|승인일시|이용일시|사용일시)\s*[:：]\s*(\d{1,2})[\/.](\d{1,2})\s+(\d{1,2}):(\d{2})/.exec(s);
     const dm=lab?[lab[0],lab[2],lab[3]]:/(\d{1,2})[\/.](\d{1,2})(?![\d.]*원)/.exec(s),tmm=lab?Object.assign([lab[4]+':'+lab[5],lab[4],lab[5]],{index:lab.index+lab[0].length-5}):/(\d{1,2}):(\d{2})/.exec(s);
-    let d=now.d;if(dm){const mo=+dm[1],da=+dm[2];if(mo>=1&&mo<=12&&da>=1&&da<=31){const y=mo>cm+1?cy-1:cy;d=`${y}-${String(mo).padStart(2,'0')}-${String(da).padStart(2,'0')}`}}
+    let d=km?`${km[1]}-${String(km[2]).padStart(2,'0')}-${String(km[3]).padStart(2,'0')}`:now.d;
+    if(dm){const mo=+dm[1],da=+dm[2];if(mo>=1&&mo<=12&&da>=1&&da<=31){const ky=km?+km[1]:0,y=ky?(mo>+km[2]+1?ky-1:ky):(mo>cm+1?cy-1:cy);d=`${y}-${String(mo).padStart(2,'0')}-${String(da).padStart(2,'0')}`}}
     const tm=tmm?Math.min(1439,+tmm[1]*60+ +tmm[2]):-1;
     const cm2=CARD_RE.exec(s);const card=cm2?(cm2[1]+(cm2[2]||'')+'카드').replace('카드카드','카드'):'';
     // 가게 이름: 대부분 '시각 다음'에 옴 → 그 뒤에서 금액·누적·일시불 등을 빼고 첫 줄
@@ -4219,7 +4227,7 @@ function parseSms(text){
     if(!title){const toks=clean(s.replace(CARD_RE,' ').replace(/\d{1,2}[\/.]\d{1,2}/g,' ').replace(/\d{1,2}:\d{2}/g,' ')).split(/\n|\s+/).map(x=>x.trim()).filter(x=>x.length>=2&&!/^[\d\s*()\-:.,/]+$/.test(x)&&!/님$/.test(x));title=toks.sort((a,b)=>b.length-a.length)[0]||''}
     title=title.slice(0,40);
     return {raw,amt,d,tm,title,pay:card,cat:guessCat(title),cancel,ok:amt!==0};
-  }).filter(x=>x.ok);
+  }).filter(x=>{if(!x.ok)return false;const k=x.d+'|'+x.tm+'|'+x.amt+'|'+x.title;if(seen.has(k))return false;seen.add(k);return true});   // 카톡 내보내기 파일 끝에 같은 내용이 한 번 더 붙는 경우가 있어 한 번만
 }
 let smsRows=[];
 function openSms(text){
