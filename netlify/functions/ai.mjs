@@ -30,21 +30,28 @@ const MODELS = {
 const AUTO = { hear: ['gemini-flash', 'gemini-lite', 'groq-oss'], ask: ['gemini-lite', 'groq-oss', 'gemini-flash'] };
 const PROVS = ['gemini', 'groq'];
 
-const SYS = `너는 한국 여행 지도 앱 '핀볼'의 음성 명령 해석기다. 사용자의 말을 앱이 실행할 명령 하나로 바꿔 JSON 객체 하나만 출력한다. 설명은 쓰지 않는다.
-받아쓰기 오류가 있을 수 있다. 장소 이름은 [화면]의 후보·고른곳·오늘일정·가고싶은곳·최근본곳에 비슷한 이름(발음·띄어쓰기·받침이 조금 달라도)이 있으면 그 이름을 그대로 쓴다. 없으면 한국에서 쓰는 올바른 가게·장소 이름으로 고친다. 좌표·주소·영업 정보는 지어내지 않는다.
-형식: {"heard":"사용자가 한 말(받아쓰기 오류를 고친 문장)","act":"…", 그 밖의 칸}
-act 종류:
-- "find": 특정 장소를 찾거나 가려 함. "q":장소 이름, "go":가자·안내해·데려다줘 같은 말이면 true
-- "nearby": 근처에서 음식·종류로 찾기. "q":찾을 말(예: 흑돼지, 국밥, 카페, 오름), "cat":"food"|"cafe"|"tour"|"fuel"
-- "choose": 보이는 후보 중 고르기. "n":번호(1부터, 마지막은 -1), "go"
-- "navi": 지금 고른 곳(거기·그 집)으로 길안내
-- "fuel": 가는 길에 주유·충전하고 가기
-- "next": 다음 일정 / "today": 오늘 일정
-- "saved": 가고 싶은 곳(저장한 곳) 보기, "q":걸러볼 말 또는 ""
-- "recent": 아까·최근 본 곳, "q":걸러볼 말 또는 ""
-- "save": 가고 싶은 곳에 저장 / "plan": 일정에 담기. "q":대상 장소 이름(고른곳·거기·아까 선택한 곳이면 "")
-- "none": 위에 없음(인사·잡담·일반 질문). "say":한두 문장의 짧은 한국어 답
-"배고파", "뭐 먹지"는 nearby(cat food, q "맛집")로 본다. "거기", "그 집", "아까 고른 곳"은 고른곳을 뜻한다.`;
+const SYS = `너는 한국 여행 지도 앱 '핀볼'의 음성 명령 해석기다. 사용자의 말을 앱 명령 하나로 바꿔 JSON 객체 하나만 출력한다(설명 없이).
+받아쓰기 오류가 있을 수 있다. 장소 이름은 [화면]의 후보·고른곳·오늘일정·가고싶은곳·최근본곳에 비슷한 이름이 있으면 그 이름을 그대로 쓴다. 좌표·주소·영업·날씨는 지어내지 않는다(앱이 확인한다).
+형식: {"heard":"받아쓰기를 고친 문장","act":"…", 그 밖의 칸}
+[장소]
+find: 가게·장소 고유 이름 찾기/가기. q, go(가자·안내해·데려다줘면 true). 음식·메뉴·종류는 find가 아니다.
+nearby: 음식·메뉴·종류로 근처 찾기(제육볶음·국밥·흑돼지·카페·오름·주유소, 배고파, 뭐 먹지, ○○ 먹고 싶어). q, cat(food|cafe|tour|fuel). 조건이 같이 오면 cond 칸도 넣는다.
+choose: 보이는 후보 고르기. n(1부터, 마지막 -1), go
+navi: 고른 곳(거기·그 집)으로 길안내
+fuel: 가는 길에 주유·충전. q=목적지(숙소·장소, 없으면 "")
+next / today: 다음 일정 / 오늘 일정
+saved / recent: 가고 싶은 곳 / 아까 본 곳 목록. q=걸러볼 말
+save / plan: 가고 싶은 곳에 저장 / 일정 후보에 담기. q=대상(고른 곳이면 "")
+[검색 조건] cond: 바꿀 칸만: radius(미터, 넓혀=up, 좁혀=down), cnt(5|10|20), fran(true=프랜차이즈 빼기), open(true=영업 중인 곳만), rank(recommend 평판|score2 종합점수|rating 평점|near 가까운|local 현지인|cheap 최저가), mode(food|cafe|tour|fuel), fuel(gas|lpg|ev)
+[기록] exp: 지출. amt(원, 3만 2천=32000), title, who(with 공동·같이·N빵 | me 내 지출·가계부 | ""), bcat(food|cafe|drink|move|stay|shop|gift|souv|tour|life|etc)
+todo: 할 일 추가. text
+sched: 일정에 넣기. q(장소, 고른 곳이면 ""), rel(today|tomorrow|dayafter|""), day(N일차면 N, 아니면 0), time("HH:MM" 24시간, 오전·오후 없이 1~7시면 오후)
+visit: 다녀옴 표시. q(여기면 "")
+memo: 일정에 메모. q(장소, 없으면 ""), text
+[물어보기] info: what(weather|rain|sunset|hours|dist|visited|spent|settle|todos), when(today|tomorrow), q(hours·dist 장소, 고른 곳이면 "")
+indoor: 비 올 때 실내 관광지 / open: 화면 열기 what(sat 위성|map 일반 지도|visited|sched|exp|todo|book|saved|photo|hub)
+두 가지를 이어서 하라는 말(흑돼지 먹고 근처 카페)은 첫 명령에 "then":{두 번째 명령}.
+none: 위에 없음(인사·잡담). say=짧은 한국어 답. 날씨·영업시간·지출처럼 앱이 아는 것은 none이 아니라 info로.`;
 
 // ---------- 키 보관 (서버 안에서만 풀 수 있게 암호화) ----------
 const store = (name) => (globalThis.__pinbStores && globalThis.__pinbStores[name]) || getStore({ name, consistency: 'strong' });   // 시험할 땐 가짜 저장소
@@ -153,22 +160,47 @@ function cleanCtx(c) {
   c = c && typeof c === 'object' ? c : {};
   return {
     후보: Array.isArray(c.cands) ? c.cands.slice(0, 8).map((x, i) => `${i + 1}. ${s(x && x.name)}${x && x.cat ? ' (' + s(x.cat, 20) + ')' : ''}`) : [],
-    고른곳: s(c.sel), 오늘일정: arr(c.plan, 15), 가고싶은곳: arr(c.saved, 30), 최근본곳: arr(c.recent, 10), 지금: s(c.time, 10),
+    고른곳: s(c.sel), 오늘일정: arr(c.plan, 15), 가고싶은곳: arr(c.saved, 30), 최근본곳: arr(c.recent, 10), 지금: s(c.time, 10), 여행: s(c.trip, 20),
   };
 }
 function vocabOf(c) {
   const v = [...(c.cands || []).map(x => x && x.name), c.sel, ...(c.plan || []), ...(c.saved || []), ...(c.recent || [])].map(x => s(x)).filter(x => x.length > 1);
   return [...new Set(v)].slice(0, 100);
 }
-const ACTS = new Set(['find', 'nearby', 'choose', 'navi', 'fuel', 'next', 'today', 'saved', 'recent', 'save', 'plan', 'none']);
+const ACTS = new Set(['find', 'nearby', 'choose', 'navi', 'fuel', 'next', 'today', 'saved', 'recent', 'save', 'plan', 'cond', 'exp', 'todo', 'sched', 'visit', 'memo', 'info', 'indoor', 'open', 'none']);
+const pickIn = (v, list) => list.includes(v) ? v : '';
+const bool = v => v === true || v === 'true' ? true : v === false || v === 'false' ? false : null;
+function condOf(o) {
+  const c = {};
+  const r = o.radius === 'up' || o.radius === 'down' ? o.radius : Math.round(+o.radius || 0);
+  if (r === 'up' || r === 'down' || (r >= 100 && r <= 20000)) c.radius = r;
+  if ([5, 10, 20].includes(+o.cnt)) c.cnt = +o.cnt;
+  if (bool(o.fran) !== null) c.fran = bool(o.fran);
+  if (bool(o.open) !== null) c.open = bool(o.open);
+  const rk = pickIn(o.rank, ['recommend', 'score2', 'rating', 'near', 'local', 'cheap', 'avail']); if (rk) c.rank = rk;
+  const md = pickIn(o.mode, ['food', 'cafe', 'tour', 'fuel']); if (md) c.mode = md;
+  const fu = pickIn(o.fuel, ['gas', 'lpg', 'ev']); if (fu) c.fuel = fu;
+  const src = o.cond && typeof o.cond === 'object' && o !== o.cond ? condOf(o.cond) : {};
+  return { ...src, ...c };
+}
+function cleanCmd(o, depth = 0) {
+  if (!o || typeof o !== 'object') return null;
+  const act = ACTS.has(o.act) ? o.act : 'none';
+  const c = { act, q: s(o.q, 60), n: Math.max(-1, Math.min(10, Math.round(+o.n || 0))), go: bool(o.go) === true, cat: pickIn(o.cat, ['food', 'cafe', 'tour', 'fuel']) || 'food', say: s(o.say, 200), heard: s(o.heard, 200) };
+  if (act === 'nearby' || act === 'cond') { const cd = condOf(o); if (Object.keys(cd).length) c.cond = cd; }
+  if (act === 'exp') { const a = Math.round(+String(o.amt ?? '').replace(/[^\d.]/g, '') || 0); c.amt = a > 0 && a <= 1e8 ? a : 0; c.title = s(o.title, 40); c.who = pickIn(o.who, ['with', 'me']); c.bcat = s(o.bcat, 12); }
+  if (act === 'todo' || act === 'memo') c.text = s(o.text, 120);
+  if (act === 'sched') { c.rel = pickIn(o.rel, ['today', 'tomorrow', 'dayafter']); const d = Math.round(+o.day || 0); c.day = d >= 1 && d <= 30 ? d : 0; const tm = String(o.time || '').match(/^(\d{1,2}):(\d{2})$/); c.time = tm && +tm[1] < 25 && +tm[2] < 60 ? `${+tm[1]}:${tm[2]}` : ''; }
+  if (act === 'info') { c.what = pickIn(o.what, ['weather', 'rain', 'sunset', 'hours', 'dist', 'visited', 'spent', 'settle', 'todos', 'next']) || 'weather'; c.when = pickIn(o.when, ['today', 'tomorrow']) || 'today'; }
+  if (act === 'open') c.what = pickIn(o.what, ['sat', 'map', 'visited', 'sched', 'exp', 'todo', 'book', 'saved', 'photo', 'hub']);
+  if (depth === 0 && o.then && typeof o.then === 'object') { const t = cleanCmd(o.then, 1); if (t && t.act !== 'none') c.then = t; }
+  return c;
+}
 function parseCmd(t) {
   t = String(t || '').replace(/<think>[\s\S]*?<\/think>/g, '');
   const m = t.match(/\{[\s\S]*\}/);
   let o; try { o = JSON.parse(m ? m[0] : t); } catch { return null; }
-  if (!o || typeof o !== 'object') return null;
-  const act = ACTS.has(o.act) ? o.act : 'none';
-  const n = Math.max(-1, Math.min(10, Math.round(+o.n || 0)));
-  return { act, q: s(o.q, 60), n, go: o.go === true || o.go === 'true', cat: ['food', 'cafe', 'tour', 'fuel'].includes(o.cat) ? o.cat : 'food', say: s(o.say, 200), heard: s(o.heard, 200) };
+  return cleanCmd(o);
 }
 // 받아쓰기만 시켰는데 JSON으로 답하면 heard만 꺼냄
 function plainHeard(t) { const c = /^\s*[{`]/.test(t) ? parseCmd(t.replace(/```(json)?/g, '')) : null; const h = s(c && c.heard ? c.heard : t.replace(/^["'“]|["'”]$/g, ''), 200); return GHOST.test(h) ? '' : h; }
