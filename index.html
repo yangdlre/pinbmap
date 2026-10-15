@@ -896,6 +896,41 @@ body:not(.mode-tour) #catJeju{display:none}
 #labBody td.n{text-align:right;white-space:nowrap}
 .labBig{font-size:22px;font-weight:800}
 .labNote{font-size:12.5px;color:var(--muted);line-height:1.55}
+
+/* ===== v0.45 🎤 말로 찾기 (무료: 폰 음성 인식 + 정해진 명령 + 읽어 주기) ===== */
+#vaBtn{position:absolute;right:12px;bottom:78px;z-index:46;width:58px;height:58px;border-radius:50%;border:0;background:var(--accent);color:#fff;box-shadow:0 6px 16px #0004;display:grid;place-items:center;padding:0}
+#vaBtn .ic{width:26px;height:26px}
+#hint{right:80px}
+#vaShade{position:fixed;inset:0;bottom:var(--tabH);z-index:96;background:#25272033;display:none}
+#vaShade.on{display:block}
+#vaSheet{position:fixed;left:0;right:0;bottom:var(--tabH);z-index:97;background:#fff;border-radius:22px 22px 0 0;box-shadow:0 -10px 30px #0003;padding:12px 16px 16px;display:none;max-height:calc(100% - var(--tabH) - 30px);overflow:auto}
+#vaSheet.on{display:block}
+.vaHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.vaHead b{font-size:18px}
+.vaHead label{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:5px;margin-left:auto;margin-right:10px}
+#vaState{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted);min-height:24px}
+#vaState i{width:10px;height:10px;border-radius:50%;background:#c9c9c0;flex:none}
+#vaState.listen i{background:#e0442b;animation:vaPulse 1s ease-in-out infinite}
+@keyframes vaPulse{50%{transform:scale(1.6);opacity:.5}}
+.vaIn{display:flex;gap:8px;margin:8px 0}
+.vaIn input{flex:1;min-width:0;font-size:16px!important;padding:12px!important;border-radius:14px!important;border:1px solid var(--line)!important}
+.vaIn button{flex:none;width:50px;height:48px;border-radius:14px;padding:0;display:grid;place-items:center}
+#vaMic{background:var(--accent);border-color:var(--accent);color:#fff}
+#vaSay{font-size:16px;line-height:1.5;background:#f3f6f4;border-radius:14px;padding:10px 12px;margin:6px 0;display:none}
+#vaSay.on{display:block}
+#vaList button.vaC{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:6px;font-size:15px}
+#vaList button.vaC.sel{border-color:var(--accent);background:#eef5f1}
+#vaList .vaN{flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+#vaList .vaT{flex:1;min-width:0}
+#vaList .vaT b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#vaList .vaT small{display:block;font-size:12.5px;color:var(--muted)}
+#vaList .vaTag{flex:none;font-size:11.5px;font-weight:700;color:var(--accent);background:#e3efe9;border-radius:8px;padding:2px 6px}
+#vaAct{display:none;flex-wrap:wrap;gap:8px;margin-top:6px}
+#vaAct.on{display:flex}
+#vaAct button{flex:1 1 40%;height:48px;border-radius:14px;font-size:15px;font-weight:700}
+#vaAct #vaTmap{flex:1 1 100%;height:56px;background:var(--accent);border-color:var(--accent);color:#fff;font-size:17px;font-weight:800}
+#vaEx{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+#vaEx button{font-size:13.5px;padding:7px 11px;border-radius:16px;border:1px dashed #b9b9ae;background:none;color:var(--muted)}
 </style>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=47e6f1005ee8102053deac6824764b3a&libraries=services"></script>
 </head>
@@ -950,6 +985,7 @@ body:not(.mode-tour) #catJeju{display:none}
 <div id="tripHub" class="sheet"><div class="sheetHead"><b>한눈에</b><button type="button" data-hubclose="tripHub">닫기</button></div><div class="sheetBody" id="hubBody"></div></div>
 <div id="visList" class="sheet"><div class="sheetHead"><b>👣 다녀온 곳</b><button type="button" data-hubclose="visList">닫기</button></div><div class="sheetBody" id="vlBody"></div></div>
 <div id="labEd" class="sheet"><div class="sheetHead"><b>🧪 실험실</b><button type="button" id="labClose">닫기</button></div><div class="sheetBody" id="labBody"></div></div>
+<div id="vaShade"></div><div id="vaSheet" role="dialog" aria-label="말로 찾기"><div class="vaHead"><b>🎤 말로 찾기</b><label><input type="checkbox" id="vaTts"> 읽어 주기</label><button type="button" id="vaClose">닫기</button></div><div id="vaState" role="status"><i></i><span>마이크를 누르고 말해 보세요</span></div><div class="vaIn"><input type="text" id="vaText" placeholder="예: 성산식당 가자" enterkeyhint="go" autocomplete="off"><button type="button" id="vaMic" aria-label="말하기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button><button type="button" id="vaGo" aria-label="보내기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div><div id="vaSay" aria-live="polite"></div><div id="vaList"></div><div id="vaAct"><button type="button" id="vaTmap">🚗 티맵으로 안내</button><button type="button" id="vaInfo">상세 보기</button><button type="button" id="vaPick">📅 일정에 담기</button><button type="button" id="vaKeep">📌 가고 싶은 곳</button><button type="button" id="vaAsk" style="display:none">ChatGPT에 물어보기</button></div><div id="vaEx"><button type="button">성산식당 가자</button><button type="button">근처 카페 찾아줘</button><button type="button">다음 일정 뭐야</button><button type="button">두 번째 거</button><button type="button">아까 본 곳</button><button type="button">저장한 곳</button></div></div>
 <div id="themeEd" class="sheet"><div class="sheetHead"><b>✏️ 맛집 테마 편집</b><button data-close="themeEd">닫기</button></div>
   <div class="sheetBody">
     <div class="rbox"><b>＋ 테마 추가</b>
@@ -2647,7 +2683,7 @@ function addPick(p,again){
   if(again){const it=live(items).find(k=>k.p.id===p.id);picks.push(stamp({uid:uid(),p:slimPlace(p),memo:'재방문'}));savePlan();
     setStatus(`🔁 “${p.place_name}” 재방문으로 하나 더 담았어요${it?` (이미 ${dayLabel(it.day)} ${hm(it.start)}에 있어요)`:''} · 📅 일정에서 다른 날·시간에 넣으세요`);return true}
   picks.push(stamp({uid:uid(),p:slimPlace(p),memo:''}));savePlan();
-  setStatus(`📅 “${p.place_name}” 담음 · 담아둔 곳 ${live(picks).length}개 (왼쪽 위 📅 일정에서 시간 배치)`);return true;
+  setStatus(`📅 “${p.place_name}” 담음 · 담아둔 곳 ${live(picks).length}개 (아래 '내 여행 → 일정'에서 시간 배치)`);return true;
 }
 function dayLabel(i){
   const d=new Date(trip.start+'T00:00:00');d.setDate(d.getDate()+i);
@@ -5012,7 +5048,7 @@ setTimeout(()=>{paintNav();refreshTop()},0);
   btn.innerHTML='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span id="condTxt"></span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 6l6 6-6 6"/></svg>';
   head.prepend(btn);
   $('map').append($('again'));
-  const txt=id=>{const el=$(id);const o=el&&el.options[el.selectedIndex];return o?o.textContent.replace(/^[^\w가-힣]+/,'').trim():''};
+  const txt=id=>{const el=$(id);const o=el&&el.options[el.selectedIndex];return o?o.textContent.replace(/^[^\w가-힣]+/,'').replace(/\s*[①②]\s*$/,'').trim():''};
   window.condSum=function(){
     const m=appMode(),a=[txt('mode')];
     a.push(m==='food'?txt('theme'):m==='tour'?txt('tourTheme'):txt('fuel'));
@@ -5240,6 +5276,148 @@ function openLab(){
   // 친구가 고친 내용이 들어오면 열린 한눈에·다녀온 곳을 다시 그림 + 1분마다 다음 일정 새로
   const ar=applyRemote;applyRemote=function(){const r=ar.apply(this,arguments);try{if($('tripHub').classList.contains('on'))renderHub();if($('visList').classList.contains('on'))renderVisList()}catch(_){}return r};
   setInterval(()=>{if($('tripHub').classList.contains('on')&&document.visibilityState==='visible')renderHub()},60000);
+})();
+
+/* ===== v0.45 🎤 말로 찾기: 폰 음성 인식(무료) → 정해진 명령 → 앱 기능 실행, 결과는 읽어 주기 ===== */
+(()=>{
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  const va={cands:[],sel:null,rec:null,listening:false,waitRes:false,recent:(lsGet('vaRecent',[])||[]).filter(p=>p&&p.id)};
+  window._va=va;
+  const btn=document.createElement('button');btn.type='button';btn.id='vaBtn';btn.setAttribute('aria-label','말로 찾기');
+  btn.innerHTML='<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg>';
+  $('map').append(btn);
+  $('vaTts').checked=lsGet('vaTts',true)!==false;$('vaTts').onchange=()=>lsSet('vaTts',$('vaTts').checked);
+  const nm=x=>String(x||'').replace(/\s+/g,'').toLowerCase();
+  const state=(t,listen)=>{$('vaState').classList.toggle('on',!!listen);$('vaState').classList.toggle('listen',!!listen);$('vaState').querySelector('span').textContent=t};
+  function speak(t){try{if(!$('vaTts').checked||!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/[⭐🚗📅📌🎤]/g,''));u.lang='ko-KR';u.rate=1.05;speechSynthesis.speak(u)}catch(_){}}
+  function say(t,{voice=t,html=false}={}){const el=$('vaSay');el.classList.add('on');if(html)el.innerHTML=t;else el.textContent=t;speak(voice)}
+  function open(){$('vaSheet').classList.add('on');$('vaShade').classList.add('on');$('vaEx').style.display=va.cands.length?'none':''}
+  function close(){stop();$('vaSheet').classList.remove('on');$('vaShade').classList.remove('on');try{speechSynthesis.cancel()}catch(_){}}
+  btn.onclick=()=>{open();listen()};$('vaClose').onclick=close;$('vaShade').onclick=close;
+  $('vaMic').onclick=()=>va.listening?stop():listen();
+  $('vaGo').onclick=()=>run($('vaText').value);
+  $('vaText').addEventListener('keydown',e=>{if(e.key==='Enter')run($('vaText').value)});
+  $('vaEx').onclick=e=>{const b=e.target.closest('button');if(b){$('vaText').value=b.textContent;run(b.textContent)}};
+
+  function listen(){
+    if(!SR){state('이 브라우저는 음성 인식을 지원하지 않아요. 입력칸을 누르고 키보드의 🎤로 말해 보세요.');$('vaText').focus();return}
+    stop();try{speechSynthesis.cancel()}catch(_){}
+    const r=new SR();va.rec=r;r.lang='ko-KR';r.interimResults=true;r.maxAlternatives=1;r.continuous=false;
+    let fin='';
+    r.onresult=e=>{let t='';for(const x of e.results){t+=x[0].transcript;if(x.isFinal)fin=t}$('vaText').value=t};
+    r.onerror=e=>{va.listening=false;state(e.error==='not-allowed'||e.error==='service-not-allowed'?'마이크 권한이 꺼져 있어요. 브라우저 주소창의 자물쇠 → 권한에서 마이크를 허용해 주세요.':e.error==='no-speech'?'말소리가 안 들렸어요. 다시 눌러 주세요.':'음성 인식이 멈췄어요 ('+e.error+')')};
+    r.onend=()=>{va.listening=false;if($('vaState').classList.contains('listen'))state('마이크를 누르고 말해 보세요');const t=(fin||$('vaText').value).trim();if(t&&fin)run(t)};
+    try{r.start();va.listening=true;state('듣는 중… 말이 끝나면 바로 찾아요',true)}catch(_){state('음성 인식을 시작하지 못했어요.')}
+  }
+  function stop(){try{va.rec&&va.rec.abort()}catch(_){}va.listening=false;va.rec=null}
+
+  // ----- 후보 목록 -----
+  const distTxt=p=>{try{const q=p._dist!=null?p:withDist(p);return q._dist?fmtDist(q._dist):''}catch(_){return ''}};
+  function showCands(list,msg){
+    va.cands=list.slice(0,5);va.sel=null;$('vaAct').classList.remove('on');$('vaEx').style.display='none';
+    $('vaList').innerHTML=va.cands.map((c,i)=>`<button type="button" class="vaC" data-i="${i}"><span class="vaN">${i+1}</span><span class="vaT"><b>${escapeHtml(c.p.place_name||'')}</b><small>${[distTxt(c.p),escapeHtml(((c.p.category_name||'').split(' > ').pop())||''),escapeHtml(c.p.road_address_name||c.p.address_name||'')].filter(Boolean).join(' · ')}</small></span>${c.tag?`<span class="vaTag">${c.tag}</span>`:''}</button>`).join('');
+    if(msg)say(msg);
+  }
+  $('vaList').onclick=e=>{const b=e.target.closest('[data-i]');if(b)select(+b.dataset.i,false)};
+  function select(i,go){
+    const c=va.cands[i];if(!c)return false;va.sel=c.p;
+    $('vaList').querySelectorAll('.vaC').forEach((b,k)=>b.classList.toggle('sel',k===i));
+    $('vaAct').classList.add('on');$('vaAsk').style.display='none';
+    const d=distTxt(c.p),n=c.p.place_name;
+    say(`${i+1}번 ${n}${d?' · '+d:''}. ${hasLoc(c.p)?'티맵으로 안내할까요? 아래 버튼을 눌러 주세요.':'위치가 없는 장소라 길안내는 못 해요.'}`);
+    $('vaTmap').style.display=hasLoc(c.p)?'':'none';
+    return true;
+  }
+  $('vaTmap').onclick=()=>{if(va.sel)openTmap(va.sel)};
+  $('vaInfo').onclick=()=>{if(!va.sel)return;const p=va.sel;close();openDetail(withDist(p))};
+  $('vaPick').onclick=()=>{if(!va.sel)return;if(addPick(va.sel,isPicked(va.sel)))say(`${va.sel.place_name}을(를) 일정의 담아둔 곳에 넣었어요.`)};
+  $('vaKeep').onclick=()=>{if(!va.sel)return;say(keepPlace(va.sel)?`${va.sel.place_name}을(를) 가고 싶은 곳에 저장했어요.`:'이미 저장돼 있거나 저장할 수 없는 장소예요.')};
+  $('vaAsk').onclick=()=>{const t=$('vaText').value.trim();try{navigator.clipboard.writeText(t)}catch(_){}window.open('https://chatgpt.com/','_blank');say('질문을 복사해 두었어요. ChatGPT에 붙여 넣으세요.')};
+
+  // ----- 장소 찾기: 일정 → 담아둔 곳 → 가고 싶은 곳 → 최근 본 곳 → 지금 검색 결과 → 카카오 검색 -----
+  const ORD={'첫':1,'한':1,'하나':1,'일':1,'두':2,'둘':2,'이':2,'세':3,'셋':3,'삼':3,'네':4,'넷':4,'사':4,'다섯':5,'오':5};
+  function ordinal(t){
+    if(/마지막/.test(t))return -1;
+    let m=t.match(/(\d)\s*(번째|번)/);if(m)return +m[1];
+    m=t.match(/(첫|한|하나|두|둘|세|셋|네|넷|다섯)\s*(번째|번)/);if(m)return ORD[m[1]];
+    m=t.match(/^(일|이|삼|사|오)\s*번/);if(m)return ORD[m[1]];
+    return 0;
+  }
+  const keyOf=n=>{const t=String(n||'').trim().split(/\s+/);return nm(t.length>1&&/점$/.test(t[t.length-1])?t.slice(0,-1).join(''):t.join(''))};
+  function pools(){
+    const L=[];
+    live(items).filter(it=>it.p&&!it.p.custom).sort((a,b)=>a.day-b.day||a.start-b.start).forEach(it=>L.push({p:it.p,tag:'일정'}));
+    live(picks).filter(k=>k.p).forEach(k=>L.push({p:k.p,tag:'담아둔 곳'}));
+    (Array.isArray(saved)?saved:[]).filter(x=>x&&!x.del&&x.p).forEach(x=>L.push({p:x.p,tag:'가고 싶은 곳'}));
+    va.recent.forEach(p=>L.push({p,tag:'최근 본 곳'}));
+    (lastSelected||[]).forEach(p=>L.push({p,tag:'검색 결과'}));
+    return L;
+  }
+  function uniq(L){const s=new Set();return L.filter(c=>{const k=String(c.p.id||c.p.place_name);if(s.has(k))return false;s.add(k);return true})}
+  function findLocal(name){const k=nm(name);if(!k)return [];return uniq(pools().filter(c=>{const a=nm(c.p.place_name);return a.includes(k)||(keyOf(c.p.place_name).length>1&&k.includes(keyOf(c.p.place_name)))}))}
+  function resolve(name,wantGo){
+    const loc=findLocal(name);
+    if(loc.length===1){showCands(loc);select(0,wantGo);return}
+    if(loc.length>1){showCands(loc,`“${name}” 후보가 ${loc.length}곳 있어요. 몇 번째로 할까요?`);return}
+    if(typeof ps==='undefined'||!ps){say('지도가 아직 준비되지 않았어요. 잠시 뒤 다시 해 주세요.');return}
+    say(`“${name}” 찾는 중…`,{voice:''});
+    placeSearch(name,data=>{
+      const L=(data||[]).slice(0,5).map(p=>({p:withDist(p),tag:''}));
+      if(!L.length){say(`“${name}”을(를) 찾지 못했어요. 이름을 다르게 말해 보거나, 아래에서 ChatGPT에 물어볼 수 있어요.`);$('vaAct').classList.add('on');['vaTmap','vaInfo','vaPick','vaKeep'].forEach(id=>$(id).style.display='none');$('vaAsk').style.display='';return}
+      ['vaInfo','vaPick','vaKeep'].forEach(id=>$(id).style.display='');
+      if(L.length===1){showCands(L);select(0,wantGo);return}
+      showCands(L,`“${name}” 검색 결과 ${L.length}곳이에요. 1번 ${L[0].p.place_name}${L[0].p._dist?' '+fmtDist(L[0].p._dist):''}. 몇 번째로 할까요?`);
+    });
+  }
+  // 검색 결과가 그려지면 후보로 받아 읽어 줌
+  const rfl=renderFromLast;renderFromLast=function(){const r=rfl.apply(this,arguments);try{if(va.waitRes&&lastSelected&&lastSelected.length){va.waitRes=false;const L=lastSelected.slice(0,5).map(p=>({p,tag:''}));showCands(L,`${L.length}곳 찾았어요. 1번 ${L[0].p.place_name}${L[1]?', 2번 '+L[1].p.place_name:''}. 몇 번째로 할까요?`)}}catch(_){}return r};
+  // 상세창을 연 장소는 '최근 본 곳'으로 기억 (20곳)
+  const od=openDetail;openDetail=function(p){const r=od.apply(this,arguments);try{if(p&&p.id&&!p.custom){va.recent=[slimPlace(p),...va.recent.filter(x=>x.id!==p.id)].slice(0,20);lsSet('vaRecent',va.recent)}}catch(_){}return r};
+
+  // ----- 정해진 명령 -----
+  const GO=/\s*(으로|로|에|까지)?\s*(가자|가 ?줘|가요|갈래|가고 ?싶어|안내해 ?줘|안내 ?해|길 ?안내|안내|가는 ?길|데려다 ?줘|티맵)\s*$/;
+  function run(raw){
+    stop();const t=String(raw||'').trim().replace(/[.?!~]+$/,'').trim();if(!t)return;
+    $('vaText').value=t;['vaInfo','vaPick','vaKeep'].forEach(id=>$(id).style.display='');$('vaAsk').style.display='none';
+    const wantGo=GO.test(t)||/티맵|길안내/.test(t);
+    // 1) 몇 번째
+    const o=ordinal(t);
+    if(o&&(va.cands.length||(lastSelected||[]).length)){
+      if(!va.cands.length)showCands((lastSelected||[]).map(p=>({p,tag:''})));
+      const i=o<0?va.cands.length-1:o-1;if(!select(i,wantGo))say(`${o}번째 후보가 없어요.`);return;
+    }
+    if(o&&/^(첫|한|하나|두|둘|세|셋|네|넷|다섯|\d|마지막)/.test(t)){say('고를 후보가 아직 없어요. 먼저 장소를 찾아 주세요.');return}
+    // 2) 거기로 가자 / 여기로 길안내 (이미 고른 곳 또는 열려 있는 상세창)
+    if(/^(거기|여기|그곳|이곳|그리로|그 ?집)/.test(t)&&wantGo){const p=va.sel||currentPlace;if(p){showCands([{p,tag:''}]);select(0,true)}else say('먼저 장소를 골라 주세요.');return}
+    // 3) 다음 일정 / 오늘 일정
+    if(/다음\s*일정|다음엔|다음에\s*어디|이제\s*어디/.test(t)){const it=nextItem();if(!it){say(todayIdx()<0?'오늘은 여행 기간이 아니에요.':'오늘 남은 일정이 없어요.');return}
+      showCands([{p:it.p,tag:'다음 일정'}]);say(`다음 일정은 ${hm(it.start)} ${it.p.place_name}이에요. ${hasLoc(it.p)?'티맵으로 안내할까요?':''}`);va.sel=it.p;$('vaList').querySelector('.vaC').classList.add('sel');$('vaAct').classList.add('on');$('vaTmap').style.display=hasLoc(it.p)?'':'none';return}
+    if(/오늘\s*일정/.test(t)){const d=todayIdx();const L=live(items).filter(it=>it.day===(d<0?curDay:d)&&it.p).sort((a,b)=>a.start-b.start).map(it=>({p:it.p,tag:hm(it.start)}));L.length?showCands(L,`오늘 일정 ${L.length}곳이에요.`):say('오늘 일정이 없어요.');return}
+    // 4) 저장한 곳 / 아까 본 곳
+    if(/저장한|가고\s*싶은/.test(t)&&!/저장해/.test(t)){const k=t.replace(/저장한|가고\s*싶은|곳|중에|에서|거|보여 ?줘|목록|알려 ?줘/g,'').replace(GO,'').trim();let L=(Array.isArray(saved)?saved:[]).filter(x=>x&&!x.del&&x.p).map(x=>({p:withDist(x.p),tag:'가고 싶은 곳'}));if(k)L=L.filter(c=>nm(c.p.place_name+c.p.category_name).includes(nm(k)));L.sort((a,b)=>(a.p._dist||0)-(b.p._dist||0));L.length?showCands(L,`가고 싶은 곳 ${L.length}곳 중 가까운 순이에요.`):say('가고 싶은 곳이 아직 없어요.');return}
+    if(/아까|방금|최근|봤던|본\s*(곳|거|데|집|카페|식당)/.test(t)){const k=t.replace(/아까|방금|최근에?|봤던|본|곳|거|데|집|보여 ?줘/g,'').replace(GO,'').trim();let L=va.recent.map(p=>({p,tag:'최근 본 곳'}));if(k)L=L.filter(c=>nm(c.p.place_name+c.p.category_name).includes(nm(k)));if(!L.length){say('최근에 본 장소가 없어요.');return}if(L.length===1||wantGo){showCands(L);select(0,wantGo);return}showCands(L,`최근 본 곳 ${L.length}곳이에요. 몇 번째로 할까요?`);return}
+    // 5) 저장해 줘 / 일정에 넣어 줘 (고른 곳 또는 열린 상세창 — 버튼으로 확인)
+    if(/저장해|일정에\s*(넣|담)|담아\s*줘|넣어\s*줘/.test(t)){const p=va.sel||currentPlace;if(!p){say('먼저 장소를 골라 주세요.');return}showCands([{p,tag:''}]);va.sel=p;$('vaList').querySelector('.vaC').classList.add('sel');$('vaAct').classList.add('on');say(/저장/.test(t)?`${p.place_name}, 아래 ‘가고 싶은 곳’을 누르면 저장해요.`:`${p.place_name}, 아래 ‘일정에 담기’를 누르면 담아요.`);return}
+    // 6) 근처 ○○ 찾아줘 / 카페 / 맛집
+    const near=t.match(/^(?:이\s*)?(?:근처|주변|가까운|여기)?\s*(?:에\s*)?(.*?)\s*(?:좀\s*)?(찾아 ?줘|찾아|검색해 ?줘|검색|추천해 ?줘|추천|어디\s*있어|알려 ?줘|보여 ?줘)$/);
+    if(near||/^(근처|주변)/.test(t)){
+      let w=(near?near[1]:t.replace(/^(근처|주변)\s*/,'')).replace(/(근처|주변|가까운)\s*/g,'').replace(/(맛집|식당|밥집|곳|집)\s*$/,m=>m==='맛집'||m==='식당'||m==='밥집'?'':'').trim();
+      const cafe=/카페|커피|디저트|빵/.test(t), tour=/관광|볼거리|명소|오름|해변|바다|폭포|숲|박물관/.test(t), fuel=/주유|기름|충전/.test(t);
+      const chip=fuel?'fuel':tour?'tour':cafe?'food:CE7':'food:FD6';
+      va.waitRes=true;state(`“${t}” 찾는 중…`);
+      const [m,c]=chip.split(':'),real=searchPlaces;searchPlaces=function(){};   // 종류 바꾸는 동안은 검색 안 하고, 키워드 넣은 뒤 한 번만
+      try{if(appMode()!==m){$('mode').value=m;$('mode').dispatchEvent(new Event('change',{bubbles:true}))}
+        if(c){const th=themeList.find(x=>x.cat===c);if(th&&$('theme').value!==th.id){$('theme').value=th.id;$('theme').dispatchEvent(new Event('change',{bubbles:true}))}}}finally{searchPlaces=real}
+      if(!fuel&&!tour&&!cafe&&w&&!/^(맛집|식당|밥|밥집)$/.test(w))$('kw').value='+'+w.replace(/\s+/g,' +');else if(!fuel)$('kw').value='';
+      try{condSum()}catch(_){}$('again').click();
+      setTimeout(()=>{if(va.waitRes){va.waitRes=false;say('검색 결과가 아직 없어요. 지도를 옮겨 다시 해 보세요.')}},12000);return;
+    }
+    // 7) ○○ 가자 / 그냥 이름
+    const name=t.replace(GO,'').trim();
+    if(name){resolve(name,wantGo);return}
+    say('잘 못 알아들었어요. 예: “성산식당 가자”, “근처 카페 찾아줘”, “두 번째 거”');
+  }
+  window.vaRun=run;
 })();
 /* ---------- 비밀번호 (한 번 맞히면 이 폰에서 30일 유지) ----------
    화면만 가리는 간단한 잠금입니다. 비밀번호 자체는 코드에 그대로 두지 않고 해시값만 둠. */
