@@ -1,0 +1,66 @@
+{
+ "name": "핀볼 맛집 지도",
+ "short_name": "핀볼지도",
+ "description": "카카오 지도 맛집 검색 · 여행 일정 · 경비 N빵 · 가계부",
+ "lang": "ko",
+ "start_url": "/",
+ "scope": "/",
+ "display": "standalone",
+ "background_color": "#ffffff",
+ "theme_color": "#111111",
+ "icons": [
+  {
+   "src": "/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "/icon-maskable-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ],
+ "shortcuts": [
+  {
+   "name": "📒 가계부",
+   "short_name": "가계부",
+   "url": "/?book",
+   "icons": [
+    {
+     "src": "/icon-book-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  },
+  {
+   "name": "📅 여행 일정",
+   "short_name": "일정",
+   "url": "/?sched",
+   "icons": [
+    {
+     "src": "/icon-192.png",
+     "sizes": "192x192",
+     "type": "image/png"
+    }
+   ]
+  }
+ ],
+ "share_target": {
+  "action": "/",
+  "method": "GET",
+  "params": {
+   "title": "title",
+   "text": "text",
+   "url": "url"
+  }
+ }
+}
