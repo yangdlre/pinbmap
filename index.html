@@ -931,6 +931,14 @@ body:not(.mode-tour) #catJeju{display:none}
 #vaAct #vaTmap{flex:1 1 100%;height:56px;background:var(--accent);border-color:var(--accent);color:#fff;font-size:17px;font-weight:800}
 #vaEx{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 #vaEx button{font-size:13.5px;padding:7px 11px;border-radius:16px;border:1px dashed #b9b9ae;background:none;color:var(--muted)}
+
+/* ===== v0.45 🚗 길안내 앱 고르기 ===== */
+.navSeg{display:flex;gap:6px;margin-top:8px}
+.navSeg button{flex:1;height:46px;border-radius:12px;font-size:15px;font-weight:700}
+.navSeg button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.navOpt{display:none;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:14px}
+.navOpt.on{display:flex}
+#vaAct #vaFuel{flex:1 1 100%}
 </style>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=47e6f1005ee8102053deac6824764b3a&libraries=services"></script>
 </head>
@@ -985,7 +993,7 @@ body:not(.mode-tour) #catJeju{display:none}
 <div id="tripHub" class="sheet"><div class="sheetHead"><b>한눈에</b><button type="button" data-hubclose="tripHub">닫기</button></div><div class="sheetBody" id="hubBody"></div></div>
 <div id="visList" class="sheet"><div class="sheetHead"><b>👣 다녀온 곳</b><button type="button" data-hubclose="visList">닫기</button></div><div class="sheetBody" id="vlBody"></div></div>
 <div id="labEd" class="sheet"><div class="sheetHead"><b>🧪 실험실</b><button type="button" id="labClose">닫기</button></div><div class="sheetBody" id="labBody"></div></div>
-<div id="vaShade"></div><div id="vaSheet" role="dialog" aria-label="말로 찾기"><div class="vaHead"><b>🎤 말로 찾기</b><label><input type="checkbox" id="vaTts"> 읽어 주기</label><button type="button" id="vaClose">닫기</button></div><div id="vaState" role="status"><i></i><span>마이크를 누르고 말해 보세요</span></div><div class="vaIn"><input type="text" id="vaText" placeholder="예: 성산식당 가자" enterkeyhint="go" autocomplete="off"><button type="button" id="vaMic" aria-label="말하기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button><button type="button" id="vaGo" aria-label="보내기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div><div id="vaSay" aria-live="polite"></div><div id="vaList"></div><div id="vaAct"><button type="button" id="vaTmap">🚗 티맵으로 안내</button><button type="button" id="vaInfo">상세 보기</button><button type="button" id="vaPick">📅 일정에 담기</button><button type="button" id="vaKeep">📌 가고 싶은 곳</button><button type="button" id="vaAsk" style="display:none">ChatGPT에 물어보기</button></div><div id="vaEx"><button type="button">성산식당 가자</button><button type="button">근처 카페 찾아줘</button><button type="button">다음 일정 뭐야</button><button type="button">두 번째 거</button><button type="button">아까 본 곳</button><button type="button">저장한 곳</button></div></div>
+<div id="vaShade"></div><div id="vaSheet" role="dialog" aria-label="말로 찾기"><div class="vaHead"><b>🎤 말로 찾기</b><label><input type="checkbox" id="vaTts"> 읽어 주기</label><button type="button" id="vaClose">닫기</button></div><div id="vaState" role="status"><i></i><span>마이크를 누르고 말해 보세요</span></div><div class="vaIn"><input type="text" id="vaText" placeholder="예: 성산식당 가자" enterkeyhint="go" autocomplete="off"><button type="button" id="vaMic" aria-label="말하기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button><button type="button" id="vaGo" aria-label="보내기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div><div id="vaSay" aria-live="polite"></div><div id="vaList"></div><div id="vaAct"><button type="button" id="vaTmap">🚗 길안내 (<span class="navNm">TMAP</span>)</button><button type="button" id="vaFuel">⛽ 주유하고 가기</button><button type="button" id="vaInfo">상세 보기</button><button type="button" id="vaPick">📅 일정에 담기</button><button type="button" id="vaKeep">📌 가고 싶은 곳</button><button type="button" id="vaAsk" style="display:none">ChatGPT에 물어보기</button></div><div id="vaEx"><button type="button">성산식당 가자</button><button type="button">근처 카페 찾아줘</button><button type="button">다음 일정 뭐야</button><button type="button">두 번째 거</button><button type="button">아까 본 곳</button><button type="button">저장한 곳</button></div></div>
 <div id="themeEd" class="sheet"><div class="sheetHead"><b>✏️ 맛집 테마 편집</b><button data-close="themeEd">닫기</button></div>
   <div class="sheetBody">
     <div class="rbox"><b>＋ 테마 추가</b>
@@ -1024,7 +1032,7 @@ body:not(.mode-tour) #catJeju{display:none}
     <div class="row" style="align-items:center"><span style="font-size:12px;width:42px;white-space:nowrap">머무름</span><button class="tadj" data-adj="d-10">−10</button><input type="number" id="edDur" min="5" max="720" step="5" inputmode="numeric"><span style="font-size:12px">분</span><button class="tadj" data-adj="d10">+10</button><span id="edEnd" style="font-size:12px;color:#a0522d"></span></div>
     <div class="row"><input type="text" id="edMemo" placeholder="메모 (예: 예약 13시, 주차 2시간 무료)"></div>
     <div class="row"><button id="edVisit">⬜ 다녀옴 표시</button><button id="edReplace">🔁 다른 곳 갔어요</button><button id="edExp">💳 쓴 돈</button><button id="edPh">📷 사진</button><button id="edRoute">🛣 다음 일정과 중간 주변</button></div>
-    <div class="row"><button id="edTmap" class="sourceBtn main" style="min-height:0;padding:8px 12px">TMAP 길안내</button><button id="edInfo">상세</button><button id="edBack">담아둔 곳으로</button><button id="edKeep">📌 가고 싶은 곳으로</button><button id="edDel">삭제</button></div></div>
+    <div class="row"><button id="edTmap" class="sourceBtn main" style="min-height:0;padding:8px 12px"><span class="navNm">TMAP</span> 길안내</button><button id="edInfo">상세</button><button id="edBack">담아둔 곳으로</button><button id="edKeep">📌 가고 싶은 곳으로</button><button id="edDel">삭제</button></div></div>
 </div>
 <div id="todo" class="sheet"><div class="sheetHead"><b>✅ 할일</b><span class="hbtns"><button class="roomBtn">👥 같이 쓰기</button><button data-close="todo">닫기</button></span></div>
   <div class="row" style="padding:10px 12px"><input type="text" id="todoIn" placeholder="할일 입력 후 추가" style="flex:1;min-width:0" enterkeyhint="done"><button id="todoAdd">추가</button></div>
@@ -2213,12 +2221,12 @@ function showSug(q,data,addr=[]){
   $('areaSug').innerHTML=`<div class="sugHead">📍 “${escapeHtml(q)}” ${data.length+addr.length}곳 <button id="sugX">닫기</button></div>`+
     addr.map((a,i)=>{const road=a.road_address&&a.road_address.address_name||'',jib=a.address&&a.address.address_name||a.address_name||'',dist=c?fmtDist(distanceM(c.getLat(),c.getLng(),+a.y,+a.x)):'';
       return `<div class="sugRow sugAddr"><div class="sug" data-ai="${i}"><b>📍 ${escapeHtml(road||jib)}</b><small>주소로 찾음${dist?' · '+dist:''}${road&&jib?' · '+escapeHtml(jib):''}</small><input type="text" class="addrName" data-an="${i}" placeholder="이름 붙이기 (예: 홉히)" maxlength="40"></div>`+
-      `<button class="sugAct" data-apick="${i}" title="일정에 담기">📅</button><button class="sugAct" data-atmap="${i}" title="TMAP 길안내">🚗</button></div>`}).join('')+
+      `<button class="sugAct" data-apick="${i}" title="일정에 담기">📅</button><button class="sugAct" data-atmap="${i}" title="${navName()} 길안내">🚗</button></div>`}).join('')+
     data.map((d,i)=>{
     const dist=c?fmtDist(distanceM(c.getLat(),c.getLng(),+d.y,+d.x)):'';
     return `<div class="sugRow"><button class="sug" data-i="${i}"><b>${escapeHtml(d.place_name)}</b><small>${escapeHtml((d.category_name||'').split(' > ').pop()||'장소')}${dist?' · '+dist:''} · ${escapeHtml(d.road_address_name||d.address_name||'')}</small></button>`+
-      `<button class="sugAct" data-pick="${i}" title="일정에 담기">${isPicked(d)?'✓':'📅'}</button><button class="sugAct" data-tmap="${i}" title="TMAP 길안내">🚗</button></div>`}).join('')+
-    `<div class="sugFoot">다른 앱 목록에서 찾기 <button id="sugNaver">네이버 지도</button><button id="sugTmap">TMAP</button></div>`;
+      `<button class="sugAct" data-pick="${i}" title="일정에 담기">${isPicked(d)?'✓':'📅'}</button><button class="sugAct" data-tmap="${i}" title="${navName()} 길안내">🚗</button></div>`}).join('')+
+    `<div class="sugFoot">다른 앱 목록에서 찾기 <button id="sugNaver">네이버 지도</button><button id="sugTmap">${navName()}</button></div>`;
   $('areaSug').classList.add('on');
   $('areaSug').querySelectorAll('.sug').forEach(b=>b.onclick=()=>{hideSug();goPlace(data[+b.dataset.i])});
   $('areaSug').querySelectorAll('[data-pick]').forEach(b=>b.onclick=()=>{const d=data[+b.dataset.pick];if(addPick(d)||isPicked(d))b.textContent='✓'});
@@ -2270,13 +2278,14 @@ function openNaverRoute(p){
 }
 // TMAP: 버전에 따라 받는 이름이 달라 두 가지 형식을 함께 보냄
 function tmapQuery(p){const n=encodeURIComponent(p.place_name);return `rGoName=${n}&rGoX=${p.x}&rGoY=${p.y}&goalname=${n}&goalx=${p.x}&goaly=${p.y}`}
-function openTmap(p){
+function openTmap(p,via){return openNavi(p,via)}
+function openTmapApp(p){
   if(isAndroid()) location.href=`intent://route?${tmapQuery(p)}#Intent;scheme=tmap;package=com.skt.tmap.ku;S.browser_fallback_url=${encodeURIComponent('https://play.google.com/store/apps/details?id=com.skt.tmap.ku')};end`;
   else if(isIOS()) tryApp(`tmap://route?${tmapQuery(p)}`,'https://apps.apple.com/kr/app/id431589174');
   else openUrl('https://www.tmap.co.kr/');
 }
 function kakaoRouteUrl(p){return `https://map.kakao.com/link/to/${encodeURIComponent(String(p.place_name).replace(/,/g,' '))},${p.y},${p.x}`}
-function addSourceButton(label,sub,handler,main){srcDefs.push({k:label,label,sub,fn:handler,main})}
+function addSourceButton(label,sub,handler,main){srcDefs.push({k:label,label:label==='TMAP'?navName():label,sub,fn:handler,main})}   // 버튼 배치 키는 'TMAP' 그대로, 보이는 이름만 고른 내비
 function dongOf(p){
   const toks=String(p.address_name||'').split(/\s+/).filter(t=>!/^\d/.test(t));
   const fine=toks.filter(t=>/(동|리|가)$/.test(t)&&t.length>=2);
@@ -2362,7 +2371,7 @@ function openDetail(p){
   }
   // 주차장·입구 (카카오 상세 데이터에 있을 때만)
   const pk=parkingOf(p);
-  if(pk)addSourceButton(pk.t==='PARKING'?'🅿️ 주차장':'🚪 입구',`TMAP · ${pk.d}m 떨어짐`,()=>openTmap({place_name:p.place_name+(pk.t==='PARKING'?' 주차장':' 입구'),x:pk.x,y:pk.y}));
+  if(pk)addSourceButton(pk.t==='PARKING'?'🅿️ 주차장':'🚪 입구',`${navName()} · ${pk.d}m 떨어짐`,()=>openTmap({place_name:p.place_name+(pk.t==='PARKING'?' 주차장':' 입구'),x:pk.x,y:pk.y}));
   addSourceButton('카카오 로드뷰','앱·웹으로',()=>openUrl(`https://map.kakao.com/link/roadview/${p.y},${p.x}`));
   addSourceButton('스트리트뷰','Google',()=>openUrl(`https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.y},${p.x}`));
   {const ti=srcDefs.findIndex(d=>d.k==='TMAP'),pi=srcDefs.findIndex(d=>/주차장|입구/.test(d.k));if(ti>=0&&pi>ti+1)srcDefs.splice(ti+1,0,srcDefs.splice(pi,1)[0])}
@@ -4904,7 +4913,7 @@ let lastSelected=[];
 function renderList(){
   if(!$('listPanel').classList.contains('on'))return;
   $('listBody').innerHTML=lastSelected.length?lastSelected.map((p,i)=>{const [l1,l2]=cardLines(p);
-    return `<div class="lrow" data-i="${i}"><span class="lno">${i+1}</span><div class="ltxt"><b>${escapeHtml(p.place_name)}</b><small>${l1}</small>${l2?`<small>${l2}</small>`:''}</div><button class="ltmap" data-i="${i}">TMAP</button></div>`}).join('')
+    return `<div class="lrow" data-i="${i}"><span class="lno">${i+1}</span><div class="ltxt"><b>${escapeHtml(p.place_name)}</b><small>${l1}</small>${l2?`<small>${l2}</small>`:''}</div><button class="ltmap" data-i="${i}">${navName()}</button></div>`}).join('')
     :'<div class="binEmpty">표시된 결과가 없어요.</div>';
   $('listBody').querySelectorAll('.lrow').forEach(r=>r.onclick=e=>{if(e.target.closest('.ltmap'))return;$('listPanel').classList.remove('on');openDetail(lastSelected[+r.dataset.i])});
   $('listBody').querySelectorAll('.ltmap').forEach(b=>b.onclick=e=>{e.stopPropagation();openTmap(lastSelected[+b.dataset.i])});
@@ -5089,7 +5098,7 @@ function renderHub(){
   if(phase==='now'){
     const day=its.filter(i=>i.day===ti).sort((a,b)=>a.start-b.start);
     const nx=nextItem();
-    h+=nx?`<div class="hbCard hbNext"><div class="hbL">다음 일정</div><div class="hbTime">${hm(nx.start)}</div><div class="hbPlace">${e(nx.p.place_name||'')}</div>${nx.memo?`<div class="hbMemo">${e(nx.memo)}</div>`:''}<div class="hbBtns">${hasLoc(nx.p)?`<button type="button" data-tmap="${e(nx.uid)}">길안내 (TMAP)</button>`:''}<button type="button" data-item="${e(nx.uid)}">일정 열기</button></div></div>`
+    h+=nx?`<div class="hbCard hbNext"><div class="hbL">다음 일정</div><div class="hbTime">${hm(nx.start)}</div><div class="hbPlace">${e(nx.p.place_name||'')}</div>${nx.memo?`<div class="hbMemo">${e(nx.memo)}</div>`:''}<div class="hbBtns">${hasLoc(nx.p)?`<button type="button" data-tmap="${e(nx.uid)}">길안내 (${navName()})</button>`:''}<button type="button" data-item="${e(nx.uid)}">일정 열기</button></div></div>`
       :`<div class="hbCard"><div class="hbEmpty">오늘 남은 일정이 없어요.</div></div>`;
     h+=`<div class="hbCard"><h3>오늘 일정 ${day.length}곳</h3>${day.length?day.map(row).join(''):'<div class="hbEmpty">아직 정한 일정이 없어요.</div>'}<button type="button" class="hbWide" data-go="sched">일정표 열기</button></div>`;
   }else if(phase==='before'){
@@ -5314,7 +5323,7 @@ function openLab(){
   // ----- 후보 목록 -----
   const distTxt=p=>{try{const q=p._dist!=null?p:withDist(p);return q._dist?fmtDist(q._dist):''}catch(_){return ''}};
   function showCands(list,msg,src){
-    va.cands=list.slice(0,5);va.src=src||'';va.resSig=resSig();va.sel=null;$('vaAct').classList.remove('on');$('vaEx').style.display='none';
+    va.cands=list.slice(0,5);va.src=src||'';va.resSig=resSig();va.sel=null;if(src!=='via')va.viaDest=null;$('vaAct').classList.remove('on');$('vaEx').style.display='none';
     $('vaList').innerHTML=va.cands.map((c,i)=>`<button type="button" class="vaC" data-i="${i}"><span class="vaN">${i+1}</span><span class="vaT"><b>${escapeHtml(c.p.place_name||'')}</b><small>${[distTxt(c.p),escapeHtml(((c.p.category_name||'').split(' > ').pop())||''),escapeHtml(c.p.road_address_name||c.p.address_name||'')].filter(Boolean).join(' · ')}</small></span>${c.tag?`<span class="vaTag">${c.tag}</span>`:''}</button>`).join('');
     if(msg)say(msg);
   }
@@ -5324,11 +5333,37 @@ function openLab(){
     $('vaList').querySelectorAll('.vaC').forEach((b,k)=>b.classList.toggle('sel',k===i));
     $('vaAct').classList.add('on');$('vaAsk').style.display='none';
     const d=distTxt(c.p),n=c.p.place_name;
-    say(`${i+1}번 ${n}${d?' · '+d:''}. ${hasLoc(c.p)?'티맵으로 안내할까요? 아래 버튼을 눌러 주세요.':'위치가 없는 장소라 길안내는 못 해요.'}`);
-    $('vaTmap').style.display=hasLoc(c.p)?'':'none';
+    say(`${i+1}번 ${n}${d?' · '+d:''}. ${hasLoc(c.p)?(va.viaDest?`들렀다 ${va.viaDest.place_name}(으)로 갈까요? 아래 버튼을 눌러 주세요.`:navSpeak()+navRo()+' 안내할까요? 아래 버튼을 눌러 주세요.'):'위치가 없는 장소라 길안내는 못 해요.'}`);
+    $('vaTmap').style.display=hasLoc(c.p)?'':'none';$('vaFuel').style.display=hasLoc(c.p)&&!va.viaDest?'':'none';
+    $('vaTmap').innerHTML=va.viaDest?`🚗 들렀다 가기 (${navName()})`:`🚗 길안내 (${navName()})`;
     return true;
   }
-  $('vaTmap').onclick=()=>{if(va.sel)openTmap(va.sel)};
+  $('vaTmap').onclick=()=>{if(!va.sel)return;if(va.viaDest){openNavi(va.viaDest,va.sel)}else openNavi(va.sel)};
+  $('vaFuel').onclick=()=>{const d=va.viaDest||va.sel;if(d)fuelStop(d)};
+  // ⛽ 주유하고 가기: 지금 위치 → 목적지 사이에서 덜 돌아가는 주유소(LPG·전기 설정 따름) 5곳, 값은 카카오 상세에서
+  async function fuelStop(dest){
+    if(!hasLoc(dest)){say('위치가 없는 장소예요.');return}
+    if(typeof ps==='undefined'||!ps){say('지도가 아직 준비되지 않았어요.');return}
+    say('가는 길에 들를 곳을 찾는 중…',{voice:''});
+    let o=lastPos;
+    if(!o)try{o=await new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(x=>ok({lat:x.coords.latitude,lng:x.coords.longitude}),no,{timeout:5000,maximumAge:60000}))}catch(_){o=null}
+    if(!o&&searchCenter)o={lat:searchCenter.getLat(),lng:searchCenter.getLng()};
+    if(!o){say('지금 위치를 알 수 없어요.');return}
+    const D=distanceM(o.lat,o.lng,+dest.y,+dest.x),kind=fuelKind();
+    const pts=D<4000?[[o.lat,o.lng]]:[.2,.45,.7].map(t=>[o.lat+(+dest.y-o.lat)*t,o.lng+(+dest.x-o.lng)*t]);
+    const S=kakao.maps.services;
+    const one=([la,ln])=>new Promise(ok=>{const opt={location:new kakao.maps.LatLng(la,ln),radius:Math.min(5000,Math.max(1500,D*0.15)),sort:S.SortBy.DISTANCE};
+      const cb=(d,st)=>ok(st===S.Status.OK?d:[]);
+      if(kind==='lpg')ps.keywordSearch('LPG충전소',cb,opt);else if(kind==='ev')ps.keywordSearch('전기차충전소',cb,opt);else ps.categorySearch('OL7',cb,opt)});
+    const all=(await Promise.all(pts.map(one))).flat(),seen=new Set();
+    const L=all.filter(x=>!seen.has(x.id)&&seen.add(x.id)).map(x=>({p:x,det:distanceM(o.lat,o.lng,+x.y,+x.x)+distanceM(+x.y,+x.x,+dest.y,+dest.x)-D}))
+      .sort((a,b)=>a.det-b.det).slice(0,5);
+    if(!L.length){say('가는 길에 들를 곳을 못 찾았어요.');return}
+    if(kind!=='ev'){try{const ids=L.map(c=>c.p.id).filter(id=>!ENRICH[id]);if(ids.length){const j=await fetch(API+'?ids='+ids.join(','),{credentials:'same-origin'}).then(r=>r.ok?r.json():null).catch(()=>null);if(j)ids.forEach(id=>{const v=j[id];if(v&&!v.err){v._t=Date.now();ENRICH[id]=v}})}}catch(_){}}
+    showCands(L.map(c=>{const pr=kind!=='ev'?fuelPrice(ENRICH[c.p.id]||{}):null;return {p:c.p,tag:`+${(Math.max(0,c.det)/1000).toFixed(1)}km${pr?' · '+pr.toLocaleString('ko-KR')+'원':''}`}}),'','via');
+    va.viaDest=dest;
+    say(`${dest.place_name} 가는 길에 들를 곳 ${L.length}곳이에요. 덜 돌아가는 순이에요. 몇 번째로 할까요?`);
+  }
   $('vaInfo').onclick=()=>{if(!va.sel)return;const p=va.sel;close();openDetail(withDist(p))};
   $('vaPick').onclick=()=>{if(!va.sel)return;if(addPick(va.sel,isPicked(va.sel)))say(`${va.sel.place_name}을(를) 일정의 담아둔 곳에 넣었어요.`)};
   $('vaKeep').onclick=()=>{if(!va.sel)return;say(keepPlace(va.sel)?`${va.sel.place_name}을(를) 가고 싶은 곳에 저장했어요.`:'이미 저장돼 있거나 저장할 수 없는 장소예요.')};
@@ -5382,11 +5417,11 @@ function openLab(){
   const od=openDetail;openDetail=function(p){const r=od.apply(this,arguments);try{if(p&&p.id&&!p.custom){va.recent=[slimPlace(p),...va.recent.filter(x=>x.id!==p.id)].slice(0,20);lsSet('vaRecent',va.recent)}}catch(_){}return r};
 
   // ----- 정해진 명령 -----
-  const GO=/\s*(으로|로|에|까지)?\s*(가자|가 ?줘|가요|갈래|가고 ?싶어|안내해 ?줘|안내 ?해|길 ?안내|안내|가는 ?길|데려다 ?줘|티맵)\s*$/;
+  const GO=/\s*(으로|로|에|까지)?\s*(가자|가 ?줘|가요|갈래|가고 ?싶어|안내해 ?줘|안내 ?해|길 ?안내|안내|가는 ?길|데려다 ?줘|티맵|내비|네비)\s*$/;
   function run(raw){
     stop();const t=String(raw||'').trim().replace(/[.?!~]+$/,'').trim();if(!t)return;
     $('vaText').value=t;['vaInfo','vaPick','vaKeep'].forEach(id=>$(id).style.display='');$('vaAsk').style.display='none';
-    const wantGo=GO.test(t)||/티맵|길안내/.test(t);
+    const wantGo=GO.test(t)||/티맵|내비|네비|길안내/.test(t);
     // 1) 몇 번째
     const o=ordinal(t);
     if(o&&(va.cands.length||(lastSelected||[]).length)){
@@ -5398,7 +5433,7 @@ function openLab(){
     if(/^(거기|여기|그곳|이곳|그리로|그 ?집)/.test(t)&&wantGo){const p=va.sel||currentPlace;if(p){showCands([{p,tag:''}]);select(0,true)}else say('먼저 장소를 골라 주세요.');return}
     // 3) 다음 일정 / 오늘 일정
     if(/다음\s*일정|다음엔|다음에\s*어디|이제\s*어디/.test(t)){const it=nextItem();if(!it){say(todayIdx()<0?'오늘은 여행 기간이 아니에요.':'오늘 남은 일정이 없어요.');return}
-      showCands([{p:it.p,tag:'다음 일정'}]);say(`다음 일정은 ${hm(it.start)} ${it.p.place_name}이에요. ${hasLoc(it.p)?'티맵으로 안내할까요?':''}`);va.sel=it.p;$('vaList').querySelector('.vaC').classList.add('sel');$('vaAct').classList.add('on');$('vaTmap').style.display=hasLoc(it.p)?'':'none';return}
+      showCands([{p:it.p,tag:'다음 일정'}]);say(`다음 일정은 ${hm(it.start)} ${it.p.place_name}이에요. ${hasLoc(it.p)?navSpeak()+navRo()+' 안내할까요?':''}`);va.sel=it.p;$('vaList').querySelector('.vaC').classList.add('sel');$('vaAct').classList.add('on');$('vaTmap').style.display=hasLoc(it.p)?'':'none';return}
     if(/오늘\s*일정/.test(t)){const d=todayIdx();const L=live(items).filter(it=>it.day===(d<0?curDay:d)&&it.p).sort((a,b)=>a.start-b.start).map(it=>({p:it.p,tag:hm(it.start)}));L.length?showCands(L,`오늘 일정 ${L.length}곳이에요.`):say('오늘 일정이 없어요.');return}
     // 4) 저장한 곳 / 아까 본 곳
     if(/저장한|가고\s*싶은/.test(t)&&!/저장해/.test(t)){const k=t.replace(/저장한|가고\s*싶은|곳|중에|에서|거|보여 ?줘|목록|알려 ?줘/g,'').replace(GO,'').trim();let L=(Array.isArray(saved)?saved:[]).filter(x=>x&&!x.del&&x.p).map(x=>({p:withDist(x.p),tag:'가고 싶은 곳'}));if(k)L=L.filter(c=>nm(c.p.place_name+c.p.category_name).includes(nm(k)));L.sort((a,b)=>(a.p._dist||0)-(b.p._dist||0));L.length?showCands(L,`가고 싶은 곳 ${L.length}곳 중 가까운 순이에요.`):say('가고 싶은 곳이 아직 없어요.');return}
@@ -5430,12 +5465,76 @@ function openLab(){
     findPlace:name=>resolve(String(name||''),false),        // 일정·담아둔 곳·가고 싶은 곳·최근 본 곳·검색 결과 → 카카오 검색
     choose:n=>select((+n||1)-1,false),                       // 지금 보이는 후보 n번
     candidates:()=>va.cands.map((c,i)=>({n:i+1,name:c.p.place_name,id:c.p.id,tag:c.tag||''})),
-    openTmap:()=>{if(va.sel&&hasLoc(va.sel))openTmap(va.sel)},   // 브라우저 규칙상 버튼 터치에서만 열림
+    openTmap:()=>{if(va.sel&&hasLoc(va.sel))openNavi(va.sel)},   // 브라우저 규칙상 버튼 터치에서만 열림 (고른 내비)
+    fuelStop:()=>{const d=va.viaDest||va.sel;if(d)fuelStop(d)},
     savePlace:()=>va.sel?keepPlace(va.sel):false,
     addToPlan:()=>va.sel?addPick(va.sel,isPicked(va.sel)):false,
     nextSchedule:()=>{const it=nextItem();return it?{time:hm(it.start),name:it.p.place_name}:null},   // 화면 한눈에와 같은 판정(안 감·다녀옴 제외)
     nearby:words=>run(String(words||'')+' 찾아줘')
   };
+})();
+
+/* ===== v0.45 🚗 길안내 앱: TMAP / 카카오내비 / 네이버 지도 (설정에서 고름, 이 기기에 저장) ===== */
+function NAVS_(){return {tmap:{name:'TMAP',speak:'티맵',ro:'으로'},kakao:{name:'카카오내비',speak:'카카오내비',ro:'로'},naver:{name:'네이버 지도',speak:'네이버 지도',ro:'로'}}}   // 함수라 스크립트 어디서 불러도 안전
+function navApp(){const v=lsGet('navApp','tmap');return NAVS_()[v]?v:'tmap'}
+function navName(){return NAVS_()[navApp()].name}
+function navSpeak(){return NAVS_()[navApp()].speak}
+function navRo(){return NAVS_()[navApp()].ro}
+// 카카오내비는 공식 JS SDK(Kakao.Navi.start)로 — 지도와 같은 JavaScript 키, 미리 불러둬야 터치 한 번에 열림
+let kakaoSdkP=null;
+function kakaoSdk(){
+  if(window.Kakao&&Kakao.isInitialized&&Kakao.isInitialized())return Promise.resolve(true);
+  if(kakaoSdkP)return kakaoSdkP;
+  kakaoSdkP=new Promise(ok=>{const sc=document.createElement('script');sc.src='https://t1.kakaocdn.net/kakao_js_sdk/2.8.3/kakao.min.js';sc.crossOrigin='anonymous';
+    sc.onload=()=>{try{const m=document.querySelector('script[src*="dapi.kakao.com/v2/maps/sdk.js"]');const key=m?new URL(m.src).searchParams.get('appkey'):'';if(key&&!Kakao.isInitialized())Kakao.init(key);ok(Kakao.isInitialized())}catch(_){ok(false)}};
+    sc.onerror=()=>{kakaoSdkP=null;ok(false)};document.head.append(sc)});
+  return kakaoSdkP;
+}
+function openNavi(p,via){
+  if(!p||!hasLoc(p))return;
+  const app=navApp();
+  if(app==='kakao'){
+    const ready=window.Kakao&&Kakao.Navi&&Kakao.isInitialized&&Kakao.isInitialized();
+    if(ready&&(isAndroid()||isIOS())){try{
+      const o={name:String(p.place_name||'목적지'),x:+p.x,y:+p.y,coordType:'wgs84',vehicleType:+lsGet('navCar',1)||1,rpOption:+lsGet('navRp',100)||100};
+      if(via&&hasLoc(via))o.viaPoints=[{name:String(via.place_name||'경유지'),x:+via.x,y:+via.y}];
+      Kakao.Navi.start(o);return}catch(_){}}
+    // SDK가 아직 없거나 PC면 카카오맵 자동차 길찾기로
+    kakaoSdk();
+    const q=`ep=${p.y},${p.x}&by=car`;
+    if(isAndroid())location.href=`intent://route?${q}#Intent;scheme=kakaomap;package=net.daum.android.map;end`;
+    else if(isIOS())tryApp(`kakaomap://route?${q}`,'https://apps.apple.com/kr/app/id304608425');
+    else openUrl(kakaoRouteUrl(p));
+    if(via)setStatus('카카오내비가 아직 준비되지 않아 경유지 없이 카카오맵으로 열었어요. 한 번 더 누르면 카카오내비로 열려요.');
+    return;
+  }
+  if(app==='naver'){
+    const q=new URLSearchParams({dlat:p.y,dlng:p.x,dname:String(p.place_name||'목적지'),appname:location.origin});
+    if(via&&hasLoc(via)){q.set('v1lat',via.y);q.set('v1lng',via.x);q.set('v1name',String(via.place_name||'경유지'))}
+    const qs=q.toString().replace(/\+/g,'%20');
+    if(isAndroid())location.href=`intent://route/car?${qs}#Intent;scheme=nmap;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.nmap;end`;
+    else if(isIOS())tryApp(`nmap://route/car?${qs}`,'https://apps.apple.com/kr/app/id311867728');
+    else openUrl('https://map.naver.com/p/search/'+encodeURIComponent(p.place_name||''));
+    return;
+  }
+  // TMAP: 목적지만 넘길 수 있어 경유지가 있으면 들를 곳으로 먼저
+  if(via&&hasLoc(via)){setStatus(`TMAP은 경유지를 넘길 수 없어 ${via.place_name}(으)로 먼저 안내해요. 들른 뒤 다시 목적지 길안내를 눌러 주세요.`);openTmapApp(via);return}
+  openTmapApp(p);
+}
+function applyNavLabels(){document.querySelectorAll('.navNm').forEach(el=>el.textContent=navName())}
+(()=>{
+  const box=document.createElement('div');box.className='rbox';box.id='navBox';
+  box.innerHTML='<b>🚗 길안내 앱</b><div class="navSeg" role="group" aria-label="길안내 앱"><button type="button" data-nav="tmap">TMAP</button><button type="button" data-nav="kakao">카카오내비</button><button type="button" data-nav="naver">네이버 지도</button></div>'
+    +'<div class="navOpt" id="navKakaoOpt">차종 <select id="navCar"><option value="1">승용차</option><option value="6">경차</option><option value="7">이륜차</option></select> 경로 <select id="navRp"><option value="100">추천</option><option value="1">가장 빠른</option><option value="2">무료 도로</option><option value="3">가장 짧은</option><option value="6">고속도로 우선</option></select></div>'
+    +'<div class="labNote" id="navNote" style="margin-top:8px"></div>';
+  $('setEd').querySelector('.sheetBody').prepend(box);
+  const NOTE={tmap:'목적지만 넘겨요. ‘주유하고 가기’는 들를 곳으로 먼저 안내해요.',kakao:'카카오내비 앱으로 바로 안내해요. 경유지(주유하고 가기)·차종·경로 옵션까지 넘겨요. 앱이 없으면 설치 화면으로 가요.',naver:'네이버 지도 앱의 자동차 길찾기로 열어요(안내 시작은 앱에서 한 번 더). 경유지도 같이 넘기지만 앱 버전에 따라 빠질 수 있어요.'};
+  const paint=()=>{const a=navApp();box.querySelectorAll('[data-nav]').forEach(b=>b.classList.toggle('on',b.dataset.nav===a));$('navKakaoOpt').classList.toggle('on',a==='kakao');$('navNote').textContent=NOTE[a];applyNavLabels()};
+  box.querySelector('.navSeg').onclick=e=>{const b=e.target.closest('[data-nav]');if(!b)return;lsSet('navApp',b.dataset.nav);if(b.dataset.nav==='kakao')kakaoSdk();paint();setStatus(`길안내 앱을 ${navName()}${navRo()} 바꿨어요.`)};
+  $('navCar').value=String(lsGet('navCar',1));$('navRp').value=String(lsGet('navRp',100));
+  $('navCar').onchange=()=>lsSet('navCar',+$('navCar').value);$('navRp').onchange=()=>lsSet('navRp',+$('navRp').value);
+  paint();
+  if(navApp()==='kakao')setTimeout(kakaoSdk,1500);
 })();
 /* ---------- 비밀번호 (한 번 맞히면 이 폰에서 30일 유지) ----------
    화면만 가리는 간단한 잠금입니다. 비밀번호 자체는 코드에 그대로 두지 않고 해시값만 둠. */
