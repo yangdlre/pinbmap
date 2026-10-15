@@ -863,13 +863,46 @@ body:not(.mode-tour) #catJeju{display:none}
 #tpBody .arc .phT img{width:100%;height:100%;object-fit:cover}
 #tpBody .arc>span.arcCov{flex:0 0 56px;width:56px}
 #tpBody .arcCov{display:grid;place-items:center;background:#1f6f5c;color:#fff;font-size:13px;font-weight:800}
+
+/* ===== v0.45 GPT 검토 반영 · 실험실 · ② 종합 점수 ===== */
+#map{min-height:240px}
+#viewSeg button{font-size:13px;padding:0 10px}
+#map #mapBottom #again{font-size:15.5px;padding:0 12px}
+#viewSeg{box-shadow:0 2px 8px #0002}
+#mapRight button{box-shadow:0 1px 5px #0002;font-weight:600}
+#catRow button{font-weight:600}
+#catRow button.on{font-weight:700}
+.sheetHead button,.sheetFoot button{font-weight:500}
+#tbRoomN{margin-left:2px}
+.tripTag{font-size:13px;font-weight:600;color:var(--muted)}
+.bhSub{font-size:12px;font-weight:600;color:var(--muted);background:#eef3ef;border-radius:8px;padding:2px 7px;margin-right:4px}
+.savedNote{font-size:13px;color:var(--muted);background:#eef3ef;border-radius:12px;padding:8px 11px;margin-bottom:10px}
+#alsoBox summary{font-size:14px;font-weight:700;padding:6px 0;cursor:pointer;color:var(--muted)}
+.vlPh{flex:none;width:60px;height:60px;border-radius:12px;overflow:hidden;background:#efeee8}
+.vlPh img{width:100%;height:100%;object-fit:cover;display:block}
+#albTop{display:flex;gap:8px;margin-bottom:12px}
+#albTop button{flex:1;height:48px;border-radius:14px;font-size:15px;font-weight:700}
+#albTop #albAdd{background:var(--accent);border-color:var(--accent);color:#fff}
+#s2Box{border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin:0 0 10px;background:#f7faf8}
+#s2Box .s2Head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+#s2Box .s2Head b{font-size:16px;color:var(--accent)}
+#s2Box .s2Head span{font-size:13px;color:var(--muted)}
+#s2Box ul{margin:6px 0 0;padding-left:18px;font-size:13.5px;line-height:1.55}
+#s2Box small{color:var(--muted)}
+#s2Box .s2Miss{font-size:12.5px;color:var(--muted);margin-top:4px}
+#labBody .rbox{margin-bottom:12px;padding:12px}
+#labBody table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+#labBody th,#labBody td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line);vertical-align:top}
+#labBody td.n{text-align:right;white-space:nowrap}
+.labBig{font-size:22px;font-weight:800}
+.labNote{font-size:12.5px;color:var(--muted);line-height:1.55}
 </style>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=47e6f1005ee8102053deac6824764b3a&libraries=services"></script>
 </head>
 <body class="mode-food">
 <div id="gate"><b>🔒 핀볼 지도</b><span style="font-size:13px;color:#aaa">비밀번호를 입력하세요 (한 달에 한 번)</span><input id="gatePin" type="password" inputmode="numeric" autocomplete="off" maxlength="10"><button id="gateBtn">확인</button><div id="gateMsg"></div></div>
 <div id="app">
-<div id="topBar"><button id="tbTrip" type="button" aria-label="여행 선택"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span id="tbTripName"></span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg><span class="badge" id="tbInBadge"></span></button><span class="tbSp"></span><button id="tbRoom" type="button" aria-label="함께 쓰기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M16.5 14.5c2.2 0 3.7 1.4 4.2 4"/></svg><span id="tbRoomN"></span></button><button id="tbSet" type="button" aria-label="설정"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="6.3"/><path d="M12 2.5v3.2M12 18.3v3.2M2.5 12h3.2M18.3 12h3.2M5.3 5.3l2.2 2.2M16.5 16.5l2.2 2.2M5.3 18.7l2.2-2.2M16.5 7.5l2.2-2.2"/></svg></button></div>
+<div id="topBar"><button id="tbTrip" type="button" aria-label="여행 선택"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><span id="tbTripName"></span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg><span class="badge" id="tbInBadge"></span></button><span class="tbSp"></span><button id="tbRoom" type="button" aria-label="함께 쓰기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M16.5 14.5c2.2 0 3.7 1.4 4.2 4"/></svg>함께<span id="tbRoomN"></span></button><button id="tbSet" type="button" aria-label="설정"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="6.3"/><path d="M12 2.5v3.2M12 18.3v3.2M2.5 12h3.2M18.3 12h3.2M5.3 5.3l2.2 2.2M16.5 16.5l2.2 2.2M5.3 18.7l2.2-2.2M16.5 7.5l2.2-2.2"/></svg></button></div>
 <header>
   <div class="row">
     <select id="mode"><option value="food" selected>🍽 맛집</option><option value="tour">🏝 관광지</option><option value="fuel">⛽ 주유·충전</option></select>
@@ -916,6 +949,7 @@ body:not(.mode-tour) #catJeju{display:none}
 <div id="tripPick" class="sheet"><div class="sheetHead"><b>여행 선택</b><button type="button" id="tpClose">닫기</button></div><div class="sheetBody" id="tpBody"><div class="tpNote">지난 여행을 열면 지금 여행은 보관함에 남아요. 🗺 흔적은 바꾸지 않고 지도에서 구경만 해요. 가고 싶은 곳·가계부는 여행을 바꿔도 그대로예요.</div></div></div>
 <div id="tripHub" class="sheet"><div class="sheetHead"><b>한눈에</b><button type="button" data-hubclose="tripHub">닫기</button></div><div class="sheetBody" id="hubBody"></div></div>
 <div id="visList" class="sheet"><div class="sheetHead"><b>👣 다녀온 곳</b><button type="button" data-hubclose="visList">닫기</button></div><div class="sheetBody" id="vlBody"></div></div>
+<div id="labEd" class="sheet"><div class="sheetHead"><b>🧪 실험실</b><button type="button" id="labClose">닫기</button></div><div class="sheetBody" id="labBody"></div></div>
 <div id="themeEd" class="sheet"><div class="sheetHead"><b>✏️ 맛집 테마 편집</b><button data-close="themeEd">닫기</button></div>
   <div class="sheetBody">
     <div class="rbox"><b>＋ 테마 추가</b>
@@ -934,7 +968,7 @@ body:not(.mode-tour) #catJeju{display:none}
   <div id="dayTabs"></div>
   <div id="dayEnds"></div>
   <div id="dayWx"></div>
-  <div class="binHead">담아둔 곳 <small id="binHint"></small><button id="addCustom">+ 직접</button></div>
+  <div class="binHead">담아둔 곳 <span class="bhSub">이번 여행 후보</span> <small id="binHint"></small><button id="addCustom">+ 직접</button></div>
   <div class="customBox" id="customBox"><input type="text" id="customName" placeholder="이름 (예: 홉히, 숙소 체크인)"><input type="text" id="customAddr" placeholder="주소 (선택 · 넣으면 지도·길안내 가능)"><button id="customOk">추가</button><span id="customMsg"></span></div>
   <div id="bin"></div>
   <div id="planSum"></div>
@@ -989,7 +1023,7 @@ body:not(.mode-tour) #catJeju{display:none}
 <div id="expEd" class="sheet"><div class="sheetHead"><b>💳 경비</b><span class="hbtns"><button id="expBook">📒 가계부</button><button class="roomBtn">👥 같이 쓰기</button><button data-close="expEd">닫기</button></span></div>
   <div class="sheetBody">
     <div class="rbox exBox">
-      <div class="exModeSw"><button data-xm="with">👥 같이 (N빵)</button><button data-xm="me">👤 나만 (가계부)</button></div>
+      <div class="exModeSw"><button data-xm="with">👥 공동 경비</button><button data-xm="me">👤 내 지출 (가계부에도)</button></div>
       <input type="text" id="exTitle" placeholder="어디에 썼나요? (예: 흑돼지 저녁)" enterkeyhint="next" maxlength="80">
       <div class="exAmtWrap"><input type="text" id="exAmt" inputmode="numeric" placeholder="금액" enterkeyhint="done" autocomplete="off"><span>원</span></div>
       <div id="exPer"></div>
@@ -1129,7 +1163,8 @@ const API='/.netlify/functions/kplace';
 let map, ps, searchCenter, centerMarker, radiusCircle;
 let overlays=[], angles={}, armLen={}, spinning=null, swallowClickUntil=0, searchToken=0, currentPlace=null, hybridOn=false, roadview=null, roadClient=null;
 let rawItems=[], lastItems=[], excluded=new Set(), excludedHistory=[], filterStats={fran:0,minus:0};
-const ENRICH={};            // place id -> 카카오 상세 요약 (평점·리뷰·블로그·방문자·유가·충전기)
+const ENRICH={};
+const SCORE2={};let SCORE2_SRC=null;   // ② 종합 점수 (score 함수) — place id → {s, N, parts, our, ad}            // place id -> 카카오 상세 요약 (평점·리뷰·블로그·방문자·유가·충전기)
 let enrichState='idle';     // idle | loading | ok | fail
 let foodRadius='1000';
 
@@ -1182,8 +1217,8 @@ const TOUR={
 };
 const JEJU={s:33.10,n:33.58,w:126.14,e:126.98};   // 제주 전체(우도·마라도 포함) 사각형
 const RANKS={
-  tour:[['recommend','⭐ 추천(인기)'],['rating','★ 평점순'],['near','가까운순']],
-  food:[['recommend','⭐ 추천(평판)'],['rating','★ 평점순'],['near','가까운순'],['local','🏠 현지인 맛집']],
+  tour:[['recommend','⭐ 추천(인기) ①'],['score2','🧮 종합 점수 ②'],['rating','★ 평점순'],['near','가까운순']],
+  food:[['recommend','⭐ 추천(평판) ①'],['score2','🧮 종합 점수 ②'],['rating','★ 평점순'],['near','가까운순'],['local','🏠 현지인 맛집']],
   gas:[['cheap','💰 최저가순'],['near','가까운순']],
   ev:[['near','가까운순'],['avail','🔌 빈 충전기 많은']]
 };
@@ -1443,6 +1478,7 @@ function enrichTargets(){
   return pool.length>48?chooseSpread(pool,radius,48):pool;
 }
 async function enrichThenRender(token){
+  score2Fetch(token);
   const need=enrichTargets().map(p=>p.id).filter(id=>!(id in ENRICH)||isStale(ENRICH[id]));
   if(!need.length){ if(enrichTargets().some(hasData))enrichState='ok'; renderFromLast({fit:false}); return; }
   enrichState='loading';
@@ -1518,6 +1554,9 @@ function selectTop(items,radius,wanted,mode){
     const withD=items.filter(hasData), noD=items.filter(p=>!hasData(p)).sort(byDist);
     return [...withD.sort((a,b)=>fn(b)-fn(a)||a._dist-b._dist),...noD].slice(0,wanted);
   };
+  if(mode==='score2'){const has=p=>SCORE2[p.id]&&SCORE2[p.id].s!=null,pen=p=>isFinite(radius)?8*(p._dist/radius):0;
+    if(!items.some(has))return isFinite(radius)?chooseSpread(items,radius,wanted):[...items].sort(byDist).slice(0,wanted);
+    return [...items.filter(has).sort((a,b)=>(SCORE2[b.id].s-pen(b))-(SCORE2[a.id].s-pen(a))||a._dist-b._dist),...items.filter(p=>!has(p)).sort(byDist)].slice(0,wanted)}
   if(mode==='near'||farNote) return [...items].sort(byDist).slice(0,wanted);   // 반경 밖 검색 결과는 가까운 순
   if(!ok){
     if(mode==='cheap'||mode==='avail') return [...items].sort(byDist).slice(0,wanted);
@@ -1636,11 +1675,13 @@ function cardLines(p){
     return [`<span class="sc">${won(pr)}</span>${diff!=null?` <span class="tag${diff>0?' off':''}">평균${diff>0?'+':''}${diff}</span>`:''}`,`${dist} · ${escapeHtml(cat)}`];
   }
   const l1=`${dist} · ${escapeHtml(cat)}${beenTag(p)}`;
-  if(!Object.keys(e).length) return [l1,''];
+  const s2=SCORE2[p.id];
+  if(!Object.keys(e).length&&!(s2&&s2.s!=null)) return [l1,''];
   const parts=[];
   if(e.n) parts.push(`★${(+e.r).toFixed(1)}(${e.n})`);
   if(e.b) parts.push(`블로그 ${e.b>=1000?(e.b/1000).toFixed(1)+'k':e.b}`);
-  const sc=qScore(e); if(sc!=null) parts.push(sc+'점');
+  const sc=qScore(e); if(sc!=null) parts.push('①'+sc+'점');
+  if(s2&&s2.s!=null) parts.push('②'+s2.s+'점');
   let tag='';
   if(e.open&&e.open.c) tag=e.open.c==='OPEN'?'<span class="tag">영업중</span>':`<span class="tag off">${escapeHtml(e.open.t||'마감')}</span>`;
   return [l1,`<span class="sc">${parts.join(' · ')||'리뷰 없음'}</span>${tag}`];
@@ -2479,8 +2520,8 @@ $('startSel').onchange=()=>{
   if(v==='gps')gpsMove();
   else{const s=getStarts()[+v.slice(1)];if(s&&s.lat)moveCenter(s.lat,s.lng)}
 };
-function openSheet(id){document.querySelectorAll('.sheet.on').forEach(x=>x.classList.remove('on'));$(id).classList.add('on');$('detail').classList.remove('open');if(typeof navSync==='function')navSync(id)}
-function closeSheet(id){$(id).classList.remove('on');if(typeof navSync==='function')navSync(null)}
+function openSheet(id){const pv=document.querySelector('.sheet.on');document.querySelectorAll('.sheet.on').forEach(x=>x.classList.remove('on'));$(id).classList.add('on');$('detail').classList.remove('open');if(typeof navSync==='function')navSync(id,pv&&pv.id!==id?pv.id:null)}
+function closeSheet(id){const was=$(id).classList.contains('on');$(id).classList.remove('on');if(was&&typeof navBack==='function'&&navBack(id))return;if(typeof navSync==='function')navSync(null)}
 document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeSheet(b.dataset.close));
 function openStartEd(msg){renderStartEd(msg);openSheet('startEd')}
 function renderStartEd(msg){
@@ -4078,7 +4119,7 @@ function renderAlbum(){
     groups.forEach(g=>{const it=D.items.find(i=>i.uid===g.item);
       h+=`<div class="albGrp"><b>${it?`${hm(it.start)} ${escapeHtml(it.p.place_name)}`:'🚗 이동 중·기타'}</b><div class="albGrid">${g.ps.map(p=>phThumb(p)).join('')}</div></div>`});
   }
-  $('albBody').innerHTML=h||'<div class="pcNone" style="padding:30px 0;text-align:center">아직 사진이 없어요.<br>🗺 흔적 → 📷 사진 넣기로 그 여행 사진을 한꺼번에 넣어보세요.</div>';
+  $('albBody').innerHTML=h||'<div class="pcNone" style="padding:30px 0;text-align:center">아직 사진이 없어요.<br>위의 ‘＋ 사진 추가’로 여러 장을 한 번에 넣으면 찍은 시간대로 일정에 나눠 들어가요.</div>';
   hydrate($('albBody'));
   $('albBody').querySelectorAll('[data-ph]').forEach(b=>b.onclick=()=>openViewer(albK,vis,vis.findIndex(p=>p.uid===b.dataset.ph)));
 }
@@ -4542,7 +4583,7 @@ function applyMapBtns(){   // v0.45: 지도 위는 '레이어 ▾' + '목록'만
     pop.innerHTML='<div class="lpT">지도 모양</div><div id="lpType"></div><div class="lpT">지도에 보이기</div><div id="lpShow"></div><button type="button" id="lpSaved">📌 가고 싶은 곳 지도에</button>';
     $('map').append(r,pop);
     const close=()=>{pop.classList.remove('on');$('layerBtn').setAttribute('aria-expanded','false')};
-    $('layerBtn').onclick=e=>{e.stopPropagation();const on=!pop.classList.contains('on');pop.classList.toggle('on',on);$('layerBtn').setAttribute('aria-expanded',String(on));$('regionPop').style.display='none'};
+    $('layerBtn').onclick=e=>{e.stopPropagation();const on=!pop.classList.contains('on');pop.classList.toggle('on',on);$('layerBtn').setAttribute('aria-expanded',String(on));$('regionPop').classList.remove('on')};
     pop.addEventListener('click',e=>{if(e.target.closest('button'))setTimeout(close,120)});
     document.addEventListener('click',e=>{if(!e.target.closest('#layerPop,#layerBtn'))close()});
     $('lpSaved').onclick=()=>{const L=savedFiltered?savedFiltered():[];if(L.length)showSavedOnMap(L);else setStatus('가고 싶은 곳이 아직 없어요.')};
@@ -4722,7 +4763,7 @@ function doAcctSync(){
   const p=acctQ.then(async()=>{
     const me=acct;acctBusy=true;acctDirty=false;
     try{
-      const del=inboxDelQ.slice(),sendBook=bookDirty;const r=await acctCall({action:'sync',email:me.email,token:me.token,kv:acctKV(),trips:acctTrips(),saved,inboxDel:del,book:sendBook?book:[],bookSig:bookSig()});
+      const del=inboxDelQ.slice(),sendBook=bookDirty;const r=await acctCall({action:'sync',email:me.email,token:me.token,kv:acctKV(),open:acctOpen(),trips:acctTrips(),saved,inboxDel:del,book:sendBook?book:[],bookSig:bookSig()});
       if(acct!==me)return {err:'changed'};
       if(!r.ok){acctState=r.j.err||'오류';if(r.j.err==='bad token'){acct=null;lsSet('acct',null);$('acctMsg').textContent='로그인이 풀렸어요. 다시 로그인해 주세요.'}else acctDirty=true;renderAcct();return {err:r.j.err}}
       applyAcctKV(r.j.kv,false);applyAcctTrips(r.j.trips);applyAcctSaved(r.j.saved);if(sendBook)bookDirty=false;applyAcctBook(r.j.book);inboxDelQ=inboxDelQ.filter(c=>!del.includes(c));lsSet('inboxDelQ',inboxDelQ);applyInbox(r.j.inbox);acctState='ok';acctLast=Date.now();renderAcct();return {ok:true};
@@ -4905,7 +4946,7 @@ function startApp(){
 }
 
 /* ===== v0.45 새 틀: 아래 탭 4개(찾기·내 여행·내 장소·지출) + 작은 탭 + 위 줄 ===== */
-const NAV_SUB={trip:[['hub','한눈에'],['sched','일정'],['todo','준비·할일'],['photo','사진·기록']],place:[['saved','가고 싶은 곳'],['visited','다녀온 곳']],money:[['exp','여행 경비'],['book','가계부']]};
+const NAV_SUB={trip:[['hub','한눈에'],['sched','일정'],['todo','준비·할일'],['photo','사진·기록']],place:[['saved','가고 싶은 곳'],['visited','다녀온 곳']],money:[['exp','이번 여행'],['book','개인 가계부']]};
 const NAV_SHEET={tripHub:['trip','hub'],visList:['place','visited'],sched:['trip','sched'],todo:['trip','todo'],albumEd:['trip','photo'],logEd:['trip','photo'],savedEd:['place','saved'],expEd:['money','exp'],bookEd:['money','book']};
 let navTab='find',navSub='';
 function navDefault(t){if(t==='money')return todayIdx()>=0?'exp':'book';return NAV_SUB[t][0][0]}
@@ -4915,7 +4956,23 @@ function paintNav(){
   document.body.classList.toggle('hasSub',subs.length>1&&!!document.querySelector('.sheet.on'));
   $('subTabs').innerHTML=subs.map(([k,l])=>`<button type="button" data-sub="${k}" class="${k===navSub?'on':''}">${l}</button>`).join('');
 }
-function navSync(id){
+let navStack=[];
+const NAV_REOPEN={setEd:()=>$('setBtn').click(),tripPick:()=>$('tbTrip').click(),roomEd:()=>openRoom(),labEd:()=>openLab()};
+function navBack(id){
+  const i=navStack.map(x=>x[0]).lastIndexOf(id);if(i<0)return false;
+  const pv=navStack[i][1];navStack=navStack.slice(0,i);
+  const ns=NAV_SHEET[pv];if(ns)goSub(ns[1]);else if(NAV_REOPEN[pv])NAV_REOPEN[pv]();else openSheet(pv);
+  return true;
+}
+function navDrop(id){navStack=navStack.filter(x=>x[0]!==id)}
+function tripTagOn(id){
+  if(!['sched','todo','expEd','logEd'].includes(id))return;   // 앨범 제목엔 이미 여행 이름이 있음
+  const b=$(id).querySelector('.sheetHead>b');if(!b)return;
+  let t=b.querySelector('.tripTag');if(!t){t=document.createElement('small');t.className='tripTag';b.append(t)}
+  t.textContent=' · '+(trip.name||((trip.start||'').slice(5).replace('-','/')+' 여행'));
+}
+function navSync(id,pv){
+  if(id){if(NAV_SHEET[id])navStack=[];else if(pv&&!navStack.some(x=>x[0]===id))navStack.push([id,pv]);tripTagOn(id)}
   if(id&&NAV_SHEET[id]){[navTab,navSub]=NAV_SHEET[id]}
   else if(!id&&!document.querySelector('.sheet.on')){navTab='find';navSub=''}
   paintNav();refreshTop();
@@ -4925,7 +4982,7 @@ function goSub(s){
     saved:()=>openSaved(),exp:()=>openExp(),book:()=>openBook(),hub:()=>openHub(),visited:()=>openVisList()})[s]();
 }
 function goTab(t){
-  if(t==='find'){document.querySelectorAll('.sheet.on').forEach(x=>x.classList.remove('on'));$('detail').classList.remove('open');navTab='find';navSub='';paintNav();return}
+  if(t==='find'){navStack=[];document.querySelectorAll('.sheet.on').forEach(x=>x.classList.remove('on'));$('detail').classList.remove('open');navTab='find';navSub='';paintNav();return}
   goSub(navTab===t&&navSub?navSub:navDefault(t));
 }
 $('tabBar').onclick=e=>{const b=e.target.closest('[data-tab]');if(b)goTab(b.dataset.tab)};
@@ -4947,7 +5004,7 @@ setTimeout(()=>{paintNav();refreshTop()},0);
   const head=document.querySelector('#app>header');
   const rows=[...head.children].filter(el=>el.classList.contains('row')).slice(0,3);
   const sheet=document.createElement('div');sheet.id='condSheet';sheet.setAttribute('role','dialog');sheet.setAttribute('aria-label','검색 조건');
-  sheet.innerHTML='<div class="cHead"><b>검색 조건</b><button type="button" id="condClose">닫기</button></div><div id="condBody"></div><button type="button" id="condGo">이 조건으로 이 지역 검색</button>';
+  sheet.innerHTML='<div class="cHead"><b>검색 조건</b><button type="button" id="condClose">닫기</button></div><div id="condBody"></div><button type="button" id="condGo">완료</button>';
   const shade=document.createElement('div');shade.id='condShade';
   document.body.append(shade,sheet);
   rows.forEach(r=>$('condBody').append(r));
@@ -4967,7 +5024,7 @@ setTimeout(()=>{paintNav();refreshTop()},0);
   };
   const open=on=>{sheet.classList.toggle('on',on);shade.classList.toggle('on',on);if(!on)condSum()};
   btn.onclick=()=>open(true);$('condClose').onclick=()=>open(false);shade.onclick=()=>open(false);
-  $('condGo').onclick=()=>{open(false);$('again').click()};
+  $('condGo').onclick=()=>open(false);
   $('condBody').addEventListener('change',()=>setTimeout(condSum));
   $('condBody').addEventListener('input',()=>setTimeout(condSum));
   setTimeout(condSum,0);
@@ -4977,7 +5034,7 @@ setTimeout(()=>{paintNav();refreshTop()},0);
 (()=>{
   const box=$('arcList').closest('.rbox');$('tpBody').append(box);
   $('tpClose').onclick=()=>closeSheet('tripPick');
-  $('tpBody').addEventListener('click',e=>{if(e.target.closest('[data-trace],[data-open],[data-ibo],#arcNew'))setTimeout(()=>{if($('tripPick').classList.contains('on'))closeSheet('tripPick')},60)});
+  $('tpBody').addEventListener('click',e=>{const b=e.target.closest('[data-trace],[data-open],[data-ibo],#arcNew');if(!b)return;if(b.matches('[data-trace],[data-ibo]'))navDrop('tripPick');setTimeout(()=>{if($('tripPick').classList.contains('on'))closeSheet('tripPick')},60)});
   $('tbTrip').onclick=()=>{renderArc();renderInbox();openSheet('tripPick')};
 })();
 
@@ -4992,10 +5049,10 @@ function renderHub(){
   const dd=Math.round((Date.parse(first)-Date.parse(N.day))/864e5);
   const pill=phase==='now'?`${ti+1}일차 · 오늘`:phase==='before'?`D-${dd}`:'여행 끝';
   let h=`<div class="hbTop"><div><div class="hbName">${e(name)}</div><div class="hbSub">${first.slice(5).replace('-','.')} – ${last.slice(5).replace('-','.')} · ${trip.days}일${room?' · 👥 '+Object.keys(members||{}).length+'명':''}</div></div><span class="hbPill">${pill}</span></div>`;
-  const row=it=>`<button type="button" class="hbRow${it.visited?' done':''}" data-item="${e(it.uid)}"><time>${hm(it.start)}</time><span>${e(it.p.place_name||'')}</span>${it.visited?'✓':''}</button>`;
+  const row=it=>`<button type="button" class="hbRow${it.visited||it.visited===false?' done':''}" data-item="${e(it.uid)}"><time>${hm(it.start)}</time><span>${e(it.p.place_name||'')}</span>${it.visited?'✓':it.visited===false?'안 감':''}</button>`;
   if(phase==='now'){
     const day=its.filter(i=>i.day===ti).sort((a,b)=>a.start-b.start);
-    const nx=day.find(i=>!i.visited&&i.start+(i.dur||30)>N.min);
+    const nx=nextItem();
     h+=nx?`<div class="hbCard hbNext"><div class="hbL">다음 일정</div><div class="hbTime">${hm(nx.start)}</div><div class="hbPlace">${e(nx.p.place_name||'')}</div>${nx.memo?`<div class="hbMemo">${e(nx.memo)}</div>`:''}<div class="hbBtns">${hasLoc(nx.p)?`<button type="button" data-tmap="${e(nx.uid)}">길안내 (TMAP)</button>`:''}<button type="button" data-item="${e(nx.uid)}">일정 열기</button></div></div>`
       :`<div class="hbCard"><div class="hbEmpty">오늘 남은 일정이 없어요.</div></div>`;
     h+=`<div class="hbCard"><h3>오늘 일정 ${day.length}곳</h3>${day.length?day.map(row).join(''):'<div class="hbEmpty">아직 정한 일정이 없어요.</div>'}<button type="button" class="hbWide" data-go="sched">일정표 열기</button></div>`;
@@ -5007,7 +5064,9 @@ function renderHub(){
     const vis=its.filter(i=>i.visited).length;
     h+=`<div class="hbCard"><h3>여행 남기기</h3><div class="hbEmpty">다녀옴 ${vis}곳 · 사진 ${ph.length}장</div><div class="hbBtns"><button type="button" class="hbWide" data-go="photo">사진 · 앨범</button><button type="button" class="hbWide" data-go="log">여행 기록</button></div></div>`;
   }
-  h+=`<div class="hbGrid"><button type="button" class="hbTile" data-go="sched">일정<b>${its.length}곳</b></button><button type="button" class="hbTile" data-go="todo">할일 남음<b>${ts.filter(t=>!t.done).length}개</b></button><button type="button" class="hbTile" data-go="photo">사진<b>${ph.length}장</b></button><button type="button" class="hbTile" data-go="exp">여행 경비<b>${won(total)}</b></button></div>`;
+  const T={sched:['일정',its.length+'곳'],todo:['할일 남음',ts.filter(t=>!t.done).length+'개'],photo:['사진',ph.length+'장'],exp:['여행 지출',won(total)]};
+  const show=phase==='now'?['todo','photo','exp']:phase==='before'?['photo','exp']:['sched','exp'];
+  h+=`<div class="hbGrid" style="grid-template-columns:repeat(${show.length},minmax(0,1fr))">${show.map(k=>`<button type="button" class="hbTile" data-go="${k}">${T[k][0]}<b>${T[k][1]}</b></button>`).join('')}</div>`;
   $('hubBody').innerHTML=h;
 }
 $('hubBody').addEventListener('click',ev=>{
@@ -5022,10 +5081,10 @@ function renderVisList(){
   const e=escapeHtml,gs=visitedPlaces();
   gs.sort((a,b)=>(b.visits[0].trip.start+b.visits[0].it.day).localeCompare(a.visits[0].trip.start+a.visits[0].it.day));
   window._vlGs=gs;
-  $('vlBody').innerHTML=(gs.length?`<button type="button" class="hbWide" id="vlMap" style="margin:0 0 12px">👣 지도에서 모두 보기</button>`+gs.map((g,i)=>`<button type="button" class="vlCard" data-vl="${i}"><span class="vlNo">${g.ph.length?'📷':'👣'}</span><span><b>${e(g.p.place_name||'')}${g.visits.length>1?' ×'+g.visits.length:''}</b><small>${e(visWhen(g.visits[0]))} · 사진 ${g.ph.length}장</small></span></button>`).join('')
+  $('vlBody').innerHTML=(gs.length?`<button type="button" class="hbWide" id="vlMap" style="margin:0 0 12px">👣 지도에서 모두 보기</button>`+gs.map((g,i)=>`<button type="button" class="vlCard" data-vl="${i}">${g.cover?(PHM.set(g.cover.uid,g.cover),`<span class="vlPh" data-ph="${e(g.cover.uid)}"><img alt=""></span>`):'<span class="vlNo">👣</span>'}<span><b>${e(g.p.place_name||'')}${g.visits.length>1?' ×'+g.visits.length:''}</b><small>${e(visWhen(g.visits[0]))} · 사진 ${g.ph.length}장</small></span></button>`).join('')
     :'<div class="hbEmpty">아직 다녀온 곳이 없어요.<br>일정에서 ✅ 다녀옴을 표시하거나, 여행을 보관함에 넣으면 여기 모여요.</div>');
   const mb=$('vlMap');if(mb)mb.onclick=()=>{if(!visOn)$('visitedBtn').click();goTab('find')};
-  $('vlBody').querySelectorAll('[data-vl]').forEach(b=>b.onclick=()=>openVisEd(window._vlGs[+b.dataset.vl]));
+  $('vlBody').querySelectorAll('[data-vl]').forEach(b=>b.onclick=()=>openVisEd(window._vlGs[+b.dataset.vl]));hydrate($('vlBody'));
 }
 document.querySelectorAll('[data-hubclose]').forEach(b=>b.onclick=()=>closeSheet(b.dataset.hubclose));
 
@@ -5040,9 +5099,12 @@ document.querySelectorAll('.sheetHead>b').forEach(b=>{if(b.children.length)retur
   $('condBtn').after(row);
   const fire=id=>$(id).dispatchEvent(new Event('change',{bubbles:true}));
   row.onclick=e=>{const b=e.target.closest('[data-cat]');if(!b)return;const [m,c]=b.dataset.cat.split(':');
-    if(m==='jeju'){$('radius').value='jeju';fire('radius')}
-    else{if(appMode()!==m){$('mode').value=m;fire('mode')}
-      if(c){const t=themeList.find(t=>t.cat===c);if(t&&$('theme').value!==t.id){$('theme').value=t.id;fire('theme')}}}
+    const real=searchPlaces;searchPlaces=function(){};   // 종류·테마를 바꾸는 동안의 검색은 막고 마지막에 한 번만
+    try{
+      if(m==='jeju'){$('radius').value='jeju';fire('radius')}
+      else{if(appMode()!==m){$('mode').value=m;fire('mode')}
+        if(c){const t=themeList.find(t=>t.cat===c);if(t&&$('theme').value!==t.id){$('theme').value=t.id;fire('theme')}}}
+    }finally{searchPlaces=real}
     condSum();$('again').click()};
   const oldSum=window.condSum;
   window.condSum=function(){oldSum();const m=appMode(),t=themeList.find(t=>t.id===$('theme').value),cat=m==='food'?(t&&t.cat==='CE7'?'food:CE7':'food:FD6'):m;
@@ -5051,11 +5113,18 @@ document.querySelectorAll('.sheetHead>b').forEach(b=>{if(b.children.length)retur
 
   // 2) 지도 아래: 지도 · 오늘 · 모아보기 + 이 지역 검색
   const bar=document.createElement('div');bar.id='mapBottom';
-  bar.innerHTML='<div id="viewSeg" role="group" aria-label="지도 보기"><button type="button" data-v="map" class="on">지도</button><button type="button" data-v="today">오늘</button><button type="button" data-v="all">모아보기</button></div>';
+  bar.innerHTML='<div id="viewSeg" role="group" aria-label="지도 보기"><button type="button" data-v="map" class="on">검색 결과</button><button type="button" data-v="today">오늘 동선</button><button type="button" data-v="all">내 장소</button></div>';
   $('map').append(bar);bar.append($('again'));
   const seg=v=>bar.querySelectorAll('[data-v]').forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+  window.viewSeg=seg;
+  // 검색 결과로 돌아가기: 오늘 동선 선·핀, 내 장소 표시, 다녀온 곳 레이어를 지우고 검색 결과를 다시 그림
+  function mapToResults(){if(dayLine){dayLine.setMap(null);dayLine=null}try{clearRoute()}catch(_){}if(keepMapOn)hideKeepMap();if(visOn)$('visitedBtn').click();$('detail').classList.remove('open');try{updateRadiusCircle()}catch(_){}renderFromLast({fit:false});seg('map')}
+  // 다른 곳에서 지도를 바꿔도 전환 표시를 맞춤
+  const sd=showDayOnMap;showDayOnMap=function(){const r=sd.apply(this,arguments);if(dayLine)seg('today');return r};
+  const ss=showSavedOnMap;showSavedOnMap=function(){const r=ss.apply(this,arguments);seg('all');return r};
+  const sp=searchPlaces;searchPlaces=function(){if(dayLine){dayLine.setMap(null);dayLine=null}seg('map');return sp.apply(this,arguments)};
   $('viewSeg').onclick=e=>{const b=e.target.closest('[data-v]');if(!b)return;const v=b.dataset.v;
-    if(v==='map'){try{if(typeof keepMapOn!=='undefined'&&keepMapOn)hideKeepMap()}catch(_){}if(visOn)$('visitedBtn').click();try{clearRoute()}catch(_){}seg('map');return}
+    if(v==='map'){mapToResults();return}
     if(v==='today'){const d=todayIdx()>=0?todayIdx():curDay;if(!live(items).some(it=>it.day===d&&!it.p.custom)){setStatus('오늘 일정에 지도로 볼 곳이 없어요.');return}showDayOnMap(d);seg('today');return}
     const L=savedFiltered();if(L.length)showSavedOnMap(L);if(!visOn)$('visitedBtn').click();if(!L.length&&!visitedPlaces().length)setStatus('아직 모아볼 곳이 없어요. 가고 싶은 곳을 저장하거나 다녀옴을 표시해 보세요.');seg('all')};
 
@@ -5065,7 +5134,8 @@ document.querySelectorAll('.sheetHead>b').forEach(b=>{if(b.children.length)retur
   const od=openDetail;
   openDetail=function(p){const r=od.apply(this,arguments);try{
     const inRes=lastSelected.some(x=>x.id===p.id),o=inRes?lastSelected.filter(x=>x.id!==p.id).slice(0,3):[];
-    box.innerHTML=o.length?'<b>이런 곳도 함께</b>'+o.map((x,i)=>`<button type="button" data-also="${i}">${escapeHtml(x.place_name)}<small>${cardLines(x)[0]}</small></button>`).join(''):'';
+    box.innerHTML=o.length?`<details><summary>다른 검색 결과 ${o.length}곳</summary>`+o.map((x,i)=>`<button type="button" data-also="${i}">${escapeHtml(x.place_name)}<small>${cardLines(x)[0]}</small></button>`).join('')+'</details>':'';
+    renderS2(p);
     box.querySelectorAll('[data-also]').forEach(b=>b.onclick=()=>openDetail(o[+b.dataset.also]));
   }catch(_){box.innerHTML=''}return r};
 
@@ -5078,6 +5148,98 @@ document.querySelectorAll('.sheetHead>b').forEach(b=>{if(b.children.length)retur
       el.insertAdjacentHTML('afterbegin',ph?phThumb(ph,' tabindex="-1" aria-hidden="true"'):`<span class="arcCov">${escapeHtml((D.trip.start||'').slice(5,7).replace(/^0/,''))}월</span>`)});
     hydrate($('arcList'));
   }catch(_){}return r};
+})();
+
+/* ===== v0.45 ② 종합 점수 · 실험실 · 그 밖의 연결 ===== */
+const SCORE_API='/.netlify/functions/score';
+const S2_SRC_NAME={naver:'네이버(블로그·카페·검색 추세)',daum:'다음 블로그',yt:'유튜브',tour:'관광공사'};
+async function score2Call(list){
+  const j=await fetch(SCORE_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({places:list.map(p=>({id:p.id,n:p.place_name,a:p.address_name,x:p.x,y:p.y}))})}).then(r=>r.ok?r.json():null).catch(()=>null);
+  if(j&&j.res){for(const [id,v] of Object.entries(j.res)){v._t=Date.now();SCORE2[id]=v}if(j.srcs)SCORE2_SRC=j.srcs}
+  return j;
+}
+async function score2Fetch(token){
+  if(appMode()==='fuel')return;
+  const ps=enrichTargets().filter(p=>/^\d+$/.test(String(p.id))&&!(SCORE2[p.id]&&Date.now()-SCORE2[p.id]._t<12*36e5)).slice(0,40);
+  for(let i=0;i<ps.length;i+=10){
+    await score2Call(ps.slice(i,i+10));
+    if(token!==searchToken)return;
+    renderFromLast({fit:false});
+    if(currentPlace&&$('detail').classList.contains('open'))renderS2(currentPlace);
+  }
+}
+function s2Lines(v){
+  const P=v.parts||{},L=[],k=n=>n>=1000?(n/1000).toFixed(1)+'천':String(n||0);
+  if(P.blog)L.push(`네이버 블로그 약 ${k(P.blog.est)}건 <small>(전체 ${k(P.blog.total)}건 중 광고 ${P.blog.ad}건·무관한 글 뺌)</small>`);
+  if(P.recent)L.push(`최근 3개월 글 ${P.recent.r90}건 · 1년 ${P.recent.r365}건`);
+  if(P.daum)L.push(`다음 블로그 약 ${k(P.daum.est)}건`);
+  if(P.cafe)L.push(`네이버 카페 약 ${k(P.cafe.est)}건`);
+  if(P.trend&&P.trend.t!=null)L.push(`검색 추세 ×${P.trend.t} <small>(최근 4주 ÷ 그 전 12주)</small>`);
+  if(P.yt)L.push(`유튜브 영상 약 ${k(P.yt.n)}개`);
+  if(P.tour)L.push(P.tour.hit?'관광공사 정보에 실림':'관광공사 정보엔 없음');
+  const o=v.our;L.push(o?`우리 기록: ${o.u}명 다녀옴${o.n>o.u?` (모두 ${o.n}번)`:''}${o.s?` · ${o.s}명 가고 싶은 곳에 저장`:''}`:'우리 기록: 아직 없음');
+  if(v.ad)L.push('⚠️ 광고 글이 절반을 넘어 블로그 점수는 0으로 쳤어요');
+  return L;
+}
+function renderS2(p){
+  let box=$('s2Box');if(!box){box=document.createElement('div');box.id='s2Box';$('pickBtn').after(box)}
+  if(!p||appMode()==='fuel'||!/^\d+$/.test(String(p.id))){box.style.display='none';return}
+  box.style.display='';
+  const v=SCORE2[p.id],s1=qScore(ENRICH[p.id]);
+  if(!v){box.innerHTML=`<div class="s2Head"><b>② 종합 점수 계산 중…</b><span>① ${s1!=null?s1+'점':'-'}</span></div>`;
+    if(!renderS2.busy){renderS2.busy=1;score2Call([p]).finally(()=>{renderS2.busy=0;if(currentPlace&&currentPlace.id===p.id&&SCORE2[p.id])renderS2(p)})}return}
+  const miss=SCORE2_SRC?Object.entries(S2_SRC_NAME).filter(([k])=>!SCORE2_SRC[k]).map(([,n])=>n).join(' · '):'';
+  box.innerHTML=`<div class="s2Head"><b>② 종합 ${v.s!=null?v.s+'점':'-'}</b><span>① 평판 ${s1!=null?s1+'점':'-'}</span></div><ul>${s2Lines(v).map(x=>`<li>${x}</li>`).join('')}</ul>${miss?`<div class="s2Miss">아직 연결 안 된 자료: ${miss}</div>`:''}`;
+}
+// 앱을 새로 열고 첫 맞추기에만 방문 1번 (같은 창에서 새로고침은 안 셈)
+function acctOpen(){try{if(sessionStorage.getItem('pinb_opened'))return 0;sessionStorage.setItem('pinb_opened','1');return 1}catch(_){return 0}}
+
+/* ----- 🧪 실험실: 설정 맨 아래 버전 글자를 5번 → 비밀번호 5555 ----- */
+const MASTER_EMAIL='yangdlre@gmail.com';
+(()=>{let n=0,t=0;$('appVer').style.cursor='pointer';
+  $('appVer').addEventListener('click',()=>{const now=Date.now();n=now-t<2500?n+1:1;t=now;
+    if(n>=5){n=0;const v=prompt('실험실 비밀번호');if(v===null)return;if(v.trim()==='5555')openLab();else alert('비밀번호가 맞지 않아요.')}});
+  $('labClose').onclick=()=>closeSheet('labEd');
+})();
+const fmtT=ts=>ts?new Date(ts+9*36e5).toISOString().slice(2,16).replace('T',' ').replace(/-/g,'.'):'-';
+function openLab(){
+  const isM=acct&&acct.email===MASTER_EMAIL;
+  $('labBody').innerHTML=`<div class="rbox"><b>👥 가입자 (마스터 전용)</b>
+    ${!acct?'<div class="labNote" style="margin-top:6px">설정에서 마스터 계정으로 로그인하면 볼 수 있어요.</div>'
+      :!isM?'<div class="labNote" style="margin-top:6px">마스터 계정만 볼 수 있어요.</div>'
+      :'<div id="labAdm" class="labNote" style="margin-top:6px">불러오는 중…</div>'}</div>
+    <div class="rbox"><b>🧮 ② 종합 점수 연결 상태</b><div id="labSrc" class="labNote" style="margin-top:6px">확인 중…</div>
+    <div class="labNote" style="margin-top:8px">② = 블로그 언급 30 · 최근 글 15 · 다음 블로그 15 · 검색 추세 10 · 관광공사 10 · 우리 기록 15 · 카페 5 · 유튜브 5 (연결된 것만으로 100점 환산). 요약글에 협찬·체험단·원고료 등이 보이는 글과 가게 이름이 없는 글은 아예 빼고 셉니다. 정렬할 땐 거리도 조금 반영해요.</div></div>`;
+  openSheet('labEd');
+  if(isM)acctCall({action:'admin',email:acct.email,token:acct.token,lab:'5555'}).then(r=>{
+    const el=$('labAdm');if(!el)return;
+    if(!r.ok){el.textContent='불러오지 못했어요 ('+(r.j.err||r.status)+')';return}
+    const j=r.j;
+    el.innerHTML=`<div class="labBig">총 ${j.total}명</div><div>이메일 확인된 ${j.known}명 · 나머지는 v0.45를 아직 안 연 계정</div>
+      <table><thead><tr><th>아이디(이메일)</th><th class="n">방문</th><th class="n">마지막</th></tr></thead><tbody>${j.rows.map(x=>`<tr><td>${x.email?escapeHtml(x.email):'<small>(아직 모름)</small>'}<br><small>가입 ${fmtT(x.created)}</small></td><td class="n">${x.n}</td><td class="n">${fmtT(x.last)}</td></tr>`).join('')}</tbody></table>
+      <div class="labNote" style="margin-top:6px">방문 = 로그인한 상태로 앱을 새로 연 횟수 (v0.45부터 셈)</div>`;
+  });
+  fetch(SCORE_API,{method:'POST',headers:{'content-type':'application/json'},body:'{"probe":1}'}).then(r=>r.ok?r.json():null).then(j=>{
+    const el=$('labSrc');if(!el)return;
+    if(!j||!j.srcs){el.textContent='점수 서버에 연결하지 못했어요.';return}
+    el.innerHTML=Object.entries(S2_SRC_NAME).map(([k,n])=>`${j.srcs[k]?'✅':'⬜'} ${n}`).join('<br>')+'<br>✅ 우리 앱 기록';
+  }).catch(()=>{const el=$('labSrc');if(el)el.textContent='점수 서버에 연결하지 못했어요.'});
+}
+
+/* ----- 사진·기록: 맨 위에 사진 추가 · 여행 기록 ----- */
+(()=>{
+  const top=document.createElement('div');top.id='albTop';
+  top.innerHTML='<button type="button" id="albAdd">＋ 사진 추가</button><button type="button" id="albLog">📒 여행 기록</button><input type="file" id="albFile" accept="image/*" multiple hidden>';
+  $('albumEd').querySelector('.sheetBody').prepend(top);
+  $('albAdd').onclick=()=>$('albFile').click();
+  $('albFile').onchange=()=>{const f=[...$('albFile').files];$('albFile').value='';if(f.length)startImport(albK||'cur',f)};
+  $('albLog').onclick=()=>openLog();
+  // 가고 싶은 곳 설명
+  const nt=document.createElement('div');nt.className='savedNote';nt.textContent='여행을 바꾸거나 보관해도 남는 내 장소예요. (이번 여행 후보는 일정의 ‘담아둔 곳’)';
+  $('savedTop').before(nt);
+  // 친구가 고친 내용이 들어오면 열린 한눈에·다녀온 곳을 다시 그림 + 1분마다 다음 일정 새로
+  const ar=applyRemote;applyRemote=function(){const r=ar.apply(this,arguments);try{if($('tripHub').classList.contains('on'))renderHub();if($('visList').classList.contains('on'))renderVisList()}catch(_){}return r};
+  setInterval(()=>{if($('tripHub').classList.contains('on')&&document.visibilityState==='visible')renderHub()},60000);
 })();
 /* ---------- 비밀번호 (한 번 맞히면 이 폰에서 30일 유지) ----------
    화면만 가리는 간단한 잠금입니다. 비밀번호 자체는 코드에 그대로 두지 않고 해시값만 둠. */
