@@ -7,13 +7,15 @@
 //   ask  {text, ctx}               → {cmd, model, ms}            ② 브라우저 받아쓰기 + AI 해석
 //   hear {audio(base64), mime, ctx, stt?} → {heard, cmd, model, ms}   ③ AI가 녹음을 직접 듣고 해석 (stt:1 = 받아쓰기만, 실험실 비교용)
 // AI에는 문장(또는 녹음)과 화면의 장소 "이름"만 보냄 — 좌표·주소·개인 일정 세부는 안 보냄.
-// 무료 모델만 부름. 하루 상한(CAP)을 넘거나 공급자가 한도(429)를 알리면 멈추고, 앱은 기본 방식으로 돌아감.
+// 무료 모델만 부름. 하루 상한(CAP, 앱 요청 기준)을 넘거나 공급자가 한도(429)를 알리면 멈추고, 앱은 기본 방식으로 돌아감.
+// 키는 공급자별 칸(k:계정:공급자)에 '가입 세대'(계정 created)와 같이 저장 → 탈퇴 후 같은 이메일로 새로 가입해도 예전 키는 못 씀.
+// 사용 횟수는 조건부 저장으로 먼저 1회를 확보한 뒤에만 공급자를 부름(동시 요청·저장 실패 때 상한 우회 방지).
 import { getStore } from '@netlify/blobs';
 import { createHash, randomBytes, createCipheriv, createDecipheriv, timingSafeEqual } from 'node:crypto';
 
 const ok = (o, s = 200) => new Response(JSON.stringify(o), { status: s, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
 const sha = (x) => createHash('sha256').update(String(x)).digest('hex');
-const CAP = 200;                       // 계정당 하루 AI 요청 상한 (결제를 켠 키라도 과하게 쓰지 않게)
+const CAP = 200;                       // 계정당 하루 AI 요청 상한(앱 요청 1번 = 1회, 그 안의 받아쓰기·해석·대체 호출 포함) — 결제를 켠 키라도 과하게 쓰지 않게
 const day = () => new Date(Date.now() + 9 * 36e5).toISOString().slice(0, 10);   // 한국 날짜
 
 // 모델 묶음: hear = 듣는 모델, think = 말뜻 해석 모델 (같으면 한 번에 처리)
@@ -40,7 +42,7 @@ act 종류:
 - "next": 다음 일정 / "today": 오늘 일정
 - "saved": 가고 싶은 곳(저장한 곳) 보기, "q":걸러볼 말 또는 ""
 - "recent": 아까·최근 본 곳, "q":걸러볼 말 또는 ""
-- "save": 고른 곳을 가고 싶은 곳에 저장 / "plan": 고른 곳을 일정에 담기
+- "save": 가고 싶은 곳에 저장 / "plan": 일정에 담기. "q":대상 장소 이름(고른곳·거기·아까 선택한 곳이면 "")
 - "none": 위에 없음(인사·잡담·일반 질문). "say":한두 문장의 짧은 한국어 답
 "배고파", "뭐 먹지"는 nearby(cat food, q "맛집")로 본다. "거기", "그 집", "아까 고른 곳"은 고른곳을 뜻한다.`;
 
@@ -65,6 +67,14 @@ function dec(k, o) {
   } catch { return null; }
 }
 
+// 저장 결과 확인 (sync 함수와 같은 방식: 조건이 안 맞으면 conflict, etag 없으면 실패)
+async function put(st, key, val, cond) {
+  const w = await st.set(key, JSON.stringify(val), cond);
+  if (w && w.modified === false) return 'conflict';
+  if (!w || !w.etag) return 'fail';
+  return 'ok';
+}
+
 // ---------- 계정 확인 (sync 함수와 같은 계정 자료를 읽기만 함) ----------
 async function auth(body) {
   const email = String(body.email || '').trim().toLowerCase();
@@ -74,7 +84,7 @@ async function auth(body) {
   if (!rec || !Array.isArray(rec.tokens)) return null;
   const th = Buffer.from(sha(String(body.token || '')), 'hex');
   const good = rec.tokens.some(x => { try { const b = Buffer.from(String(x && x.t || ''), 'hex'); return b.length === th.length && timingSafeEqual(b, th); } catch { return false; } });
-  return good ? h : null;
+  return good ? { h, gen: String(rec.created || 0) } : null;   // gen: 가입 세대 (재가입하면 바뀜)
 }
 
 // ---------- 공급자 호출 ----------
@@ -173,43 +183,62 @@ async function thinkWith(id, key, text, ctx) {
   if (!cmd.heard) cmd.heard = s(text, 200);
   return cmd;
 }
-async function hearWith(id, key, b64, mime, ctx, sttOnly) {
+async function hearWith(id, key, b64, mime, ctx, sttOnly, strict) {
   const m = MODELS[id], vocab = vocabOf({ cands: (ctx.후보 || []).map(x => ({ name: x.replace(/^\d+\.\s*/, '').replace(/\s*\(.*\)$/, '') })), sel: ctx.고른곳, plan: ctx.오늘일정, saved: ctx.가고싶은곳, recent: ctx.최근본곳 });
-  let heard = '';
+  const used = { stt: m.hear, think: sttOnly ? null : m.think };
+  let heard = '', fb = false;
   if (m.p === 'groq') {
     heard = await groqSTT(key, m.hear, Buffer.from(b64, 'base64'), mime, vocab.length ? ('장소 이름: ' + vocab.join(', ')).slice(0, 150) : '');
   } else if (m.hear === 'gemini-3.5-transcribe') {
     try { heard = await geminiTranscribe(key, b64, mime, vocab); }
-    catch (e) { if (e.code === 'quota' || e.code === 'badkey') throw e; heard = await geminiGen(key, 'gemini-3.5-flash-lite', [{ inline_data: { mime_type: mime, data: b64 } }, { text: '이 음성을 한국어로 들리는 그대로 받아써라. 받아쓴 문장만 출력한다.' }], { json: false, sys: null }); }
+    catch (e) {
+      if (strict || e.code === 'quota' || e.code === 'badkey') throw e;   // 실험실 비교는 대체하지 않고 실패를 그대로
+      used.stt = 'gemini-3.5-flash-lite'; fb = true;
+      heard = await geminiGen(key, 'gemini-3.5-flash-lite', [{ inline_data: { mime_type: mime, data: b64 } }, { text: '이 음성을 한국어로 들리는 그대로 받아써라. 받아쓴 문장만 출력한다.' }], { json: false, sys: null });
+    }
   } else {
     // Gemini Flash류: 한 번에 듣고 해석 (장소 이름 목록을 같이 줘서 비슷한 소리를 그 이름으로)
     const parts = [{ inline_data: { mime_type: mime, data: b64 } }];
     if (sttOnly) {
       parts.push({ text: `이 음성을 한국어로 들리는 그대로 받아써라. 참고할 장소 이름: ${vocab.join(', ') || '없음'}. 받아쓴 문장만 출력한다(JSON 아님).` });
-      return { heard: plainHeard(await geminiGen(key, m.hear, parts, { json: false, sys: null })) };
+      return { heard: plainHeard(await geminiGen(key, m.hear, parts, { json: false, sys: null })), used, fb };
     }
+    used.think = m.hear;
     parts.push({ text: `[화면] ${JSON.stringify(ctx)}\n위 음성이 사용자의 말이다. 명령 JSON을 출력해라. heard에는 들은 문장을 쓴다.` });
     const cmd = parseCmd(await geminiGen(key, m.hear, parts));
     if (!cmd) throw new AiErr('fail', 'bad json');
-    if (!cmd.heard || GHOST.test(cmd.heard)) return { heard: '', cmd: null };
-    return { heard: cmd.heard, cmd };
+    if (!cmd.heard || GHOST.test(cmd.heard)) return { heard: '', cmd: null, used, fb };
+    return { heard: cmd.heard, cmd, used, fb };
   }
   heard = s(heard, 200);
-  if (!heard || GHOST.test(heard)) return { heard: '', cmd: null };
-  if (sttOnly) return { heard };
-  return { heard, cmd: await thinkWith(id, key, heard, ctx) };
+  if (!heard || GHOST.test(heard)) return { heard: '', cmd: null, used, fb };
+  if (sttOnly) return { heard, used, fb };
+  return { heard, cmd: await thinkWith(id, key, heard, ctx), used, fb };
 }
 
+const PATH = (h, p) => 'k:' + h + ':' + p;
 export default async (req) => {
   if (req.method !== 'POST') return ok({ err: 'POST only' }, 405);
   let body;
   try { body = await req.json(); } catch { return ok({ err: 'bad json' }, 400); }
   if (!body || typeof body !== 'object') return ok({ err: 'bad json' }, 400);
-  const h = await auth(body);
-  if (!h) return ok({ err: 'bad token' }, 401);
-  const st = aiStore(), kKey = 'k:' + h, uKey = 'u:' + h + ':' + day();
-  const keys = (await st.get(kKey, { type: 'json' }).catch(() => null)) || {};
-  const used = async () => ((await st.get(uKey, { type: 'json' }).catch(() => null)) || {}).n || 0;
+  try { return await handle(body); }
+  catch (e) { return ok({ err: 'store', detail: String(e && e.message || e).slice(0, 120) }, 503); }   // 저장소를 못 읽으면 AI를 부르지 않음
+};
+
+async function handle(body) {
+  const a = await auth(body);
+  if (!a) return ok({ err: 'bad token' }, 401);
+  const { h, gen } = a, st = aiStore(), uKey = 'u:' + h + ':' + day();
+  // 키: 공급자별 칸. 세대가 다르면(탈퇴 후 재가입) 지우고 없는 것으로
+  const keys = {};
+  for (const p of PROVS) {
+    const v = await st.get(PATH(h, p), { type: 'json' });
+    if (!v) continue;
+    if (v.gen === gen) keys[p] = v; else await st.delete(PATH(h, p)).catch(() => {});
+  }
+  if (await st.get('k:' + h)) await st.delete('k:' + h).catch(() => {});   // 첫 dev판(한 칸에 같이 저장)의 키는 세대 정보가 없어 지움 → 다시 연결
+  const used = async () => ((await st.get(uKey, { type: 'json' })) || {}).n || 0;
   const pub = () => Object.fromEntries(PROVS.map(p => [p, keys[p] ? { tail: keys[p].tail, at: keys[p].at } : null]));
   const act = body.action;
 
@@ -217,25 +246,24 @@ export default async (req) => {
   if (act === 'setkey' || act === 'delkey') {
     const prov = String(body.prov || '');
     if (!PROVS.includes(prov)) return ok({ err: 'bad prov' }, 400);
-    if (act === 'delkey') delete keys[prov];
+    if (act === 'delkey') { await st.delete(PATH(h, prov)); delete keys[prov]; }
     else {
       const key = String(body.key || '').trim();
       if (!/^[\x21-\x7e]{20,200}$/.test(key)) return ok({ err: 'bad key' }, 400);
       try { await testKey(prov, key); }
       catch (e) { return ok({ err: e.code === 'badkey' ? 'badkey' : e.code === 'quota' ? 'quota' : 'keytest', detail: e.detail }, 400); }
-      keys[prov] = { ...enc(await secretKey(st), key), tail: key.slice(-4), at: Date.now() };
+      const v = { ...enc(await secretKey(st), key), tail: key.slice(-4), at: Date.now(), gen };
+      if (await put(st, PATH(h, prov), v) !== 'ok') return ok({ err: 'save failed' }, 503);
+      keys[prov] = v;
     }
-    await st.set(kKey, JSON.stringify(keys));
     return ok({ keys: pub(), today: await used(), cap: CAP });
   }
   if (act !== 'ask' && act !== 'hear') return ok({ err: 'bad action' }, 400);
 
-  const n = await used();
-  if (n >= CAP) return ok({ err: 'cap', today: n, cap: CAP }, 429);
   const sk = await secretKey(st), plain = {};
-  for (const p of PROVS) if (keys[p]) plain[p] = dec(sk, keys[p]);
-  const want = String(body.model || 'auto');
-  const list = (want === 'auto' ? AUTO[act] : [want]).filter(id => MODELS[id] && plain[MODELS[id].p]);
+  for (const p of PROVS) if (keys[p]) { const k = dec(sk, keys[p]); if (k) plain[p] = k; }
+  const want = String(body.model || 'auto'), strict = !!body.strict;
+  const list = (want === 'auto' && !strict ? AUTO[act] : [want]).filter(id => MODELS[id] && plain[MODELS[id].p]);
   if (!list.length) return ok({ err: 'nokey' }, 400);
   const ctx = cleanCtx(body.ctx);
   let audio = '', mime = '';
@@ -246,20 +274,30 @@ export default async (req) => {
     if (!/^[A-Za-z0-9+/=]{100,2800000}$/.test(audio)) return ok({ err: 'bad audio' }, 400);
   } else if (!s(body.text, 200)) return ok({ err: 'no text' }, 400);
 
-  await st.set(uKey, JSON.stringify({ n: n + 1 })).catch(() => {});
-  const t0 = Date.now();
+  // 사용 1회를 먼저 확보 (동시에 여러 요청이 와도 상한을 넘지 않게, 저장 실패면 부르지 않음)
+  let n = 0, got = false;
+  for (let i = 0; i < 8 && !got; i++) {
+    const cur = await st.getWithMetadata(uKey, { type: 'json' });
+    n = (cur && cur.data && cur.data.n) || 0;
+    if (n >= CAP) return ok({ err: 'cap', today: n, cap: CAP }, 429);
+    const w = await put(st, uKey, { n: n + 1 }, cur ? { onlyIfMatch: cur.etag } : { onlyIfNew: true });
+    if (w === 'ok') { n++; got = true; } else if (w === 'fail') break;
+  }
+  if (!got) return ok({ err: 'busy' }, 503);
+
+  const t0 = Date.now(), tried = [];
   let last = null;
   for (const id of list) {
     try {
-      const key = plain[MODELS[id].p];
-      if (act === 'ask') return ok({ cmd: await thinkWith(id, key, s(body.text, 200), ctx), model: id, ms: Date.now() - t0, today: n + 1, cap: CAP });
-      const r = await hearWith(id, key, audio, mime, ctx, !!body.stt);
-      return ok({ ...r, model: id, ms: Date.now() - t0, today: n + 1, cap: CAP });
+      const key = plain[MODELS[id].p], fbAuto = tried.length > 0;
+      if (act === 'ask') return ok({ cmd: await thinkWith(id, key, s(body.text, 200), ctx), model: id, want, used: { stt: null, think: MODELS[id].think }, fb: fbAuto, tried, ms: Date.now() - t0, today: n, cap: CAP });
+      const r = await hearWith(id, key, audio, mime, ctx, !!body.stt, strict);
+      return ok({ ...r, fb: r.fb || fbAuto, model: id, want, tried, ms: Date.now() - t0, today: n, cap: CAP });
     } catch (e) {
-      last = e;
+      last = e; tried.push({ id, err: e.code || 'fail' });
       if (Date.now() - t0 > 14000) break;   // 함수 시간 안에 끝내기
     }
   }
   const code = last && last.code || 'fail';
-  return ok({ err: code, detail: last && last.detail, today: n + 1, cap: CAP }, code === 'quota' ? 429 : 502);
-};
+  return ok({ err: code, detail: last && last.detail, tried, today: n, cap: CAP }, code === 'quota' ? 429 : 502);
+}
