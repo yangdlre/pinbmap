@@ -83,6 +83,10 @@ async function put(st, key, rec, cond) {
 function store() {
   return globalThis.__pinbStore || getStore({ name: 'pinb-rooms', consistency: 'strong' });
 }
+// 🎤 말로 찾기 AI 키 저장소 (ai 함수) — 탈퇴할 때 같이 지움
+function aiStore() {
+  return (globalThis.__pinbStores && globalThis.__pinbStores['pinb-ai']) || getStore({ name: 'pinb-ai', consistency: 'strong' });
+}
 
 // ---------- 계정 ----------
 const MASTER = 'yangdlre@gmail.com';
@@ -204,7 +208,10 @@ async function acct(body, st) {
       if (!rec.tokens.some(x => x && x.t === th)) return ok({ err: 'bad token' }, 401);
       if (act === 'admin') return email === MASTER && String(body.lab || '') === '5555' ? adminList(st) : ok({ err: 'not master' }, 403);
       if (act === 'share') return shareTrip(st, email, body);
-      if (act === 'delete') { await st.delete(key); await st.delete('stat:' + key.slice(5)).catch(() => {}); return ok({ deleted: true }); }
+      if (act === 'delete') { await st.delete(key); await st.delete('stat:' + key.slice(5)).catch(() => {});
+        try { const h = key.slice(5), ai = aiStore();   // AI 키도 지움 (못 지워도 ai 함수가 가입 세대로 막음)
+          await Promise.all(['k:' + h, 'k:' + h + ':gemini', 'k:' + h + ':groq'].map(k => ai.delete(k).catch(() => {}))); } catch { /* 무시 */ }
+        return ok({ deleted: true }); }
       if (act === 'logout') rec.tokens = rec.tokens.filter(x => x.t !== th);
     } else return ok({ err: 'bad action' }, 400);
     if (act !== 'logout') { rec.kv = mergeKV(rec.kv || {}, cleanKV(body.kv)); rec.trips = mergeTrips(rec.trips || {}, cleanTrips(body.trips)); rec.saved = cleanSaved(mergeArr(rec.saved || [], cleanSaved(body.saved)));
