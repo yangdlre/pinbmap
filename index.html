@@ -5293,7 +5293,7 @@ function openLab(){
   function say(t,{voice=t,html=false}={}){const el=$('vaSay');el.classList.add('on');if(html)el.innerHTML=t;else el.textContent=t;speak(voice)}
   function open(){$('vaSheet').classList.add('on');$('vaShade').classList.add('on');$('vaEx').style.display=va.cands.length?'none':''}
   function close(){stop();$('vaSheet').classList.remove('on');$('vaShade').classList.remove('on');try{speechSynthesis.cancel()}catch(_){}}
-  btn.onclick=()=>{open();listen()};$('vaClose').onclick=close;$('vaShade').onclick=close;
+  btn.onclick=()=>{if(va.cands.length&&va.src==='map'&&va.resSig!==resSig()){va.cands=[];va.sel=null;$('vaList').innerHTML='';$('vaAct').classList.remove('on')}open();listen()};$('vaClose').onclick=close;$('vaShade').onclick=close;
   $('vaMic').onclick=()=>va.listening?stop():listen();
   $('vaGo').onclick=()=>run($('vaText').value);
   $('vaText').addEventListener('keydown',e=>{if(e.key==='Enter')run($('vaText').value)});
@@ -5313,8 +5313,8 @@ function openLab(){
 
   // ----- 후보 목록 -----
   const distTxt=p=>{try{const q=p._dist!=null?p:withDist(p);return q._dist?fmtDist(q._dist):''}catch(_){return ''}};
-  function showCands(list,msg){
-    va.cands=list.slice(0,5);va.sel=null;$('vaAct').classList.remove('on');$('vaEx').style.display='none';
+  function showCands(list,msg,src){
+    va.cands=list.slice(0,5);va.src=src||'';va.resSig=resSig();va.sel=null;$('vaAct').classList.remove('on');$('vaEx').style.display='none';
     $('vaList').innerHTML=va.cands.map((c,i)=>`<button type="button" class="vaC" data-i="${i}"><span class="vaN">${i+1}</span><span class="vaT"><b>${escapeHtml(c.p.place_name||'')}</b><small>${[distTxt(c.p),escapeHtml(((c.p.category_name||'').split(' > ').pop())||''),escapeHtml(c.p.road_address_name||c.p.address_name||'')].filter(Boolean).join(' · ')}</small></span>${c.tag?`<span class="vaTag">${c.tag}</span>`:''}</button>`).join('');
     if(msg)say(msg);
   }
@@ -5370,7 +5370,14 @@ function openLab(){
     });
   }
   // 검색 결과가 그려지면 후보로 받아 읽어 줌
-  const rfl=renderFromLast;renderFromLast=function(){const r=rfl.apply(this,arguments);try{if(va.waitRes&&lastSelected&&lastSelected.length){va.waitRes=false;const L=lastSelected.slice(0,5).map(p=>({p,tag:''}));showCands(L,`${L.length}곳 찾았어요. 1번 ${L[0].p.place_name}${L[1]?', 2번 '+L[1].p.place_name:''}. 몇 번째로 할까요?`)}}catch(_){}return r};
+  function resSig(){return (lastSelected||[]).map(p=>p.id).join(',')}
+  // 지도 검색 결과가 그려질 때: 말로 찾은 검색이면 후보로 받아 읽어 주고, 화면에서 결과가 바뀌었으면 예전 후보는 버림('두 번째 거'는 지금 보이는 목록 기준)
+  const rfl=renderFromLast;renderFromLast=function(){const r=rfl.apply(this,arguments);try{
+    if(va.waitRes&&lastSelected&&lastSelected.length){va.waitRes=false;const L=lastSelected.slice(0,5).map(p=>({p,tag:''}));showCands(L,`${L.length}곳 찾았어요. 1번 ${L[0].p.place_name}${L[1]?', 2번 '+L[1].p.place_name:''}. 몇 번째로 할까요?`,'map')}
+    else if(va.cands.length&&va.resSig!==resSig()){
+      if(va.src==='map'&&$('vaSheet').classList.contains('on')&&lastSelected.length)showCands(lastSelected.slice(0,5).map(p=>({p,tag:''})),'','map');
+      else if(!$('vaSheet').classList.contains('on')){va.cands=[];va.sel=null;$('vaList').innerHTML='';$('vaAct').classList.remove('on')}
+    }}catch(_){}return r};
   // 상세창을 연 장소는 '최근 본 곳'으로 기억 (20곳)
   const od=openDetail;openDetail=function(p){const r=od.apply(this,arguments);try{if(p&&p.id&&!p.custom){va.recent=[slimPlace(p),...va.recent.filter(x=>x.id!==p.id)].slice(0,20);lsSet('vaRecent',va.recent)}}catch(_){}return r};
 
@@ -5383,7 +5390,7 @@ function openLab(){
     // 1) 몇 번째
     const o=ordinal(t);
     if(o&&(va.cands.length||(lastSelected||[]).length)){
-      if(!va.cands.length)showCands((lastSelected||[]).map(p=>({p,tag:''})));
+      if(!va.cands.length)showCands((lastSelected||[]).map(p=>({p,tag:''})),'','map');
       const i=o<0?va.cands.length-1:o-1;if(!select(i,wantGo))say(`${o}번째 후보가 없어요.`);return;
     }
     if(o&&/^(첫|한|하나|두|둘|세|셋|네|넷|다섯|\d|마지막)/.test(t)){say('고를 후보가 아직 없어요. 먼저 장소를 찾아 주세요.');return}
@@ -5418,6 +5425,17 @@ function openLab(){
     say('잘 못 알아들었어요. 예: “성산식당 가자”, “근처 카페 찾아줘”, “두 번째 거”');
   }
   window.vaRun=run;
+  // 나중에 AI(개인 키·구독)를 붙여도 이 기능들만 부르게 함 — 실제 검색·좌표·실행은 앱이 맡음
+  window.PinbAct={
+    findPlace:name=>resolve(String(name||''),false),        // 일정·담아둔 곳·가고 싶은 곳·최근 본 곳·검색 결과 → 카카오 검색
+    choose:n=>select((+n||1)-1,false),                       // 지금 보이는 후보 n번
+    candidates:()=>va.cands.map((c,i)=>({n:i+1,name:c.p.place_name,id:c.p.id,tag:c.tag||''})),
+    openTmap:()=>{if(va.sel&&hasLoc(va.sel))openTmap(va.sel)},   // 브라우저 규칙상 버튼 터치에서만 열림
+    savePlace:()=>va.sel?keepPlace(va.sel):false,
+    addToPlan:()=>va.sel?addPick(va.sel,isPicked(va.sel)):false,
+    nextSchedule:()=>{const it=nextItem();return it?{time:hm(it.start),name:it.p.place_name}:null},   // 화면 한눈에와 같은 판정(안 감·다녀옴 제외)
+    nearby:words=>run(String(words||'')+' 찾아줘')
+  };
 })();
 /* ---------- 비밀번호 (한 번 맞히면 이 폰에서 30일 유지) ----------
    화면만 가리는 간단한 잠금입니다. 비밀번호 자체는 코드에 그대로 두지 않고 해시값만 둠. */
