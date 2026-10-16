@@ -33,7 +33,7 @@ const AUTO = { hear: ['gemini-flash', 'gemini-lite', 'groq-oss'], ask: ['gemini-
 const PROVS = ['gemini', 'groq'];
 
 const SYS = `너는 한국 여행 지도 앱 '핀볼'의 음성 명령 해석기다. 사용자의 말을 앱 명령 하나로 바꿔 JSON 객체 하나만 출력한다(설명 없이).
-받아쓰기 오류가 있을 수 있다. 장소 이름은 [화면]의 후보·고른곳·오늘일정·가고싶은곳·최근본곳에 비슷한 이름이 있으면 그 이름을 그대로 쓴다. 좌표·주소·영업·날씨는 지어내지 않는다(앱이 확인한다).
+받아쓰기 오류가 있을 수 있다. 소리 나는 대로 적혀 받침이 바뀌기도 한다(신평역→심평역, 한강→항강, 종로→종노). 장소 이름은 [화면]의 후보·고른곳·오늘일정·가고싶은곳·최근본곳·근처역에 비슷한 이름이 있으면 그 이름을 그대로 쓴다. 좌표·주소·영업·날씨는 지어내지 않는다(앱이 확인한다).
 형식: {"heard":"받아쓰기를 고친 문장","act":"…", 그 밖의 칸}
 [장소]
 find: 가게·장소 고유 이름 찾기/가기. q, go(가자·안내해·데려다줘면 true). 음식·메뉴·종류는 find가 아니다.
@@ -65,7 +65,8 @@ other: say(무슨 사진인지 한 줄)
 const SYS_AGENT = `너는 한국 여행 지도 앱 '핀볼'의 검색 비서다. 도구로 사실을 확인한 뒤 답한다.
 장소는 find_places, 점수·영업·주차는 place_info, 날씨는 weather, 내 일정·숙소·가고 싶은 곳은 my_trip. [화면] 후보 id도 쓸 수 있다.
 사용자가 지역(동네·역)을 말하면 find_places의 near에 그 지역을 넣고 q에는 넣지 않는다. 지역을 못 찾았다는 결과가 오면 지어내지 말고 answer로 어느 동네인지 묻는다.
-도구는 필요한 만큼만(보통 1~3번). 끝낼 때는 반드시 answer: say=한두 문장 한국어(근거 포함, 확인 못 한 건 "정보 없음"), ids=보여 줄 장소 id(도구 결과·[화면]에 나온 것만, 최대 5), go=가자·안내해 같은 말이면 true.
+[말]은 받아쓴 것이라 소리 나는 대로 틀릴 수 있다(신평역→심평역). 지역 이름이 [화면] 근처역과 비슷하면 그 역 이름으로 찾는다.
+도구는 필요한 만큼만(보통 1~3번). 끝낼 때는 반드시 answer: say=한두 문장 한국어(근거 포함. 도구 결과가 null인 칸은 말하지 않고, 물어본 것을 확인 못 했으면 "확인하지 못했어요"처럼 문장으로 쓴다), ids=보여 줄 장소 id(도구 결과·[화면]에 나온 것만, 최대 5), go=가자·안내해 같은 말이면 true.
 장소·점수·영업시간을 지어내지 않는다.`;
 const fn = (name, description, properties, required = []) => ({ type: 'function', function: { name, description, parameters: { type: 'object', properties, required } } });
 const TOOLS = [
@@ -238,14 +239,21 @@ function cleanCtx(c) {
       const f = [x.cat ? '(' + s(x.cat, 20) + ')' : '', s(x.dist, 10), +x.r > 0 ? `★${(+x.r).toFixed(1)}${+x.n > 0 ? `(후기 ${Math.round(+x.n)})` : ''}` : '', +x.s2 > 0 ? `종합 ${Math.round(+x.s2)}점` : '',
         +x.price > 0 ? `${Math.round(+x.price)}원` : '', s(x.open, 12), x.park === true ? '주차 안내 있음' : '', x.mine ? '내 ' + s(x.mine, 8) : '', x.memo ? '내 메모: ' + s(x.memo, 40) : ''].filter(Boolean);
       return `${i + 1}. ${s(x.name)} ${f.join(' · ')}`.trim(); }) : [],
-    고른곳: s(c.sel), 오늘일정: arr(c.plan, 15), 가고싶은곳: arr(c.saved, 30), 최근본곳: arr(c.recent, 10), 지금: s(c.time, 10), 여행: s(c.trip, 20),
+    고른곳: s(c.sel), 오늘일정: arr(c.plan, 15), 가고싶은곳: arr(c.saved, 30), 최근본곳: arr(c.recent, 10), 근처역: arr(c.near, 12), 지금: s(c.time, 10), 여행: s(c.trip, 20),
   };
 }
 function vocabOf(c) {
   c = c && typeof c === 'object' ? c : {};
   const A = a => Array.isArray(a) ? a.slice(0, 40) : [];
-  const v = [...A(c.cands).map(x => x && x.name), c.sel, ...A(c.plan), ...A(c.saved), ...A(c.recent)].map(x => s(x)).filter(x => x.length > 1);
+  const v = [...A(c.cands).map(x => x && x.name), c.sel, ...A(c.plan), ...A(c.saved), ...A(c.recent), ...A(c.near)].map(x => s(x)).filter(x => x.length > 1);
   return [...new Set(v)].slice(0, 100);
+}
+// 위스퍼 참고 문장: 화면·내 목록 이름 + 근처 역(위스퍼는 참고 문장의 끝부분을 더 보므로 역 이름을 뒤에)
+function hintOf(c, vocab) {
+  const st = arr(c && c.near, 12), a = vocab.filter(x => !st.includes(x));
+  let h = a.length ? ('장소 이름: ' + a.join(', ')).slice(0, 110) : '';
+  if (st.length) h = (h ? h + '. ' : '') + '근처 역: ' + st.join(', ');
+  return h.slice(0, 190);
 }
 const ACTS = new Set(['find', 'nearby', 'choose', 'navi', 'fuel', 'next', 'today', 'saved', 'recent', 'save', 'plan', 'cond', 'exp', 'todo', 'sched', 'visit', 'memo', 'info', 'indoor', 'open', 'none']);
 const pickIn = (v, list) => list.includes(v) ? v : '';
@@ -296,12 +304,12 @@ async function thinkWith(id, key, text, ctx) {
   if (!cmd.heard) cmd.heard = s(text, 200);
   return cmd;
 }
-async function hearWith(id, key, b64, mime, ctx, sttOnly, strict, vocab) {
+async function hearWith(id, key, b64, mime, ctx, sttOnly, strict, vocab, hint = '') {
   const m = MODELS[id];
   const used = { stt: m.hear, think: sttOnly ? null : m.think };
   let heard = '', fb = false;
   if (m.p === 'groq') {
-    heard = await groqSTT(key, m.hear, Buffer.from(b64, 'base64'), mime, vocab.length ? ('장소 이름: ' + vocab.join(', ')).slice(0, 150) : '');
+    heard = await groqSTT(key, m.hear, Buffer.from(b64, 'base64'), mime, hint);
   } else if (m.hear === 'gemini-3.5-transcribe') {
     try { heard = await geminiTranscribe(key, b64, mime, vocab); }
     catch (e) {
@@ -425,7 +433,8 @@ async function handle(body) {
     try {
       const key = plain[MODELS[id].p], fbAuto = tried.length > 0;
       if (act === 'ask') return ok({ cmd: await thinkWith(id, key, s(body.text, 200), ctx), model: id, want, used: { stt: null, think: MODELS[id].think }, fb: fbAuto, tried, ms: Date.now() - t0, today: n, cap: CAP });
-      const r = await hearWith(id, key, audio, mime, ctx, !!body.stt, strict, vocabOf(body.ctx));
+      const vocab = vocabOf(body.ctx);
+      const r = await hearWith(id, key, audio, mime, ctx, !!body.stt, strict, vocab, hintOf(body.ctx, vocab));
       return ok({ ...r, fb: r.fb || fbAuto, model: id, want, tried, ms: Date.now() - t0, today: n, cap: CAP });
     } catch (e) {
       last = e; tried.push({ id, err: e.code || 'fail' });
