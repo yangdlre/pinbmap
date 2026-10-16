@@ -1090,6 +1090,10 @@ body.aiPhoto #vaCam.camOnly{display:grid!important}
 .clIt summary{cursor:pointer;font-size:14.5px}.clIt summary small{color:var(--muted);margin-left:4px}
 .clIt ul{margin:6px 0 2px;padding-left:18px;font-size:14px;line-height:1.55}
 #labManual h5{margin:12px 0 2px;font-size:14.5px}
+/* 지도 아래 떠 있는 줄 정리: 다음 일정·가고 싶은 곳 줄은 '이 지역 검색' 줄 위(마이크 옆), 흔적 보기 땐 흔적 줄만 */
+#map #nextCard,#map #keepBar{bottom:74px;right:80px}
+body.barOn #hint{display:none}
+body.trOn #mapBottom,body.trOn #hint,body.trOn #nextCard,body.trOn #keepBar{display:none!important}
 /* 말로 찾기: 기록 확인 칸 */
 .vaQ{line-height:1.55}
 .vaQb{display:flex;gap:8px;margin-top:10px}
@@ -5400,6 +5404,28 @@ function renderS2(p){
 // 앱을 새로 열고 첫 맞추기에만 방문 1번 (같은 창에서 새로고침은 안 셈)
 function acctOpen(){try{if(sessionStorage.getItem('pinb_opened'))return 0;sessionStorage.setItem('pinb_opened','1');return 1}catch(_){return 0}}
 
+/* ----- 지도 아래 줄 쌓기 (흔적 줄·다음 일정·가고 싶은 곳 줄이 '이 지역 검색' 줄·마이크와 겹치지 않게) ----- */
+(()=>{
+  const tr=$('trBar'),kb=$('keepBar'),nc=$('nextCard');
+  const shown=e=>!!e&&getComputedStyle(e).display!=='none';
+  let raf=0;
+  function stack(){
+    raf=0;
+    const trOn=tr.classList.contains('on');
+    document.body.classList.toggle('trOn',trOn);
+    const bars=trOn?[]:[nc,kb].filter(shown);
+    document.body.classList.toggle('barOn',bars.length>0);
+    let y=74;bars.forEach(b=>{b.style.bottom=y+'px';y+=b.offsetHeight+8});   // 둘 다 보이면 위로 쌓음
+    const va=$('vaBtn');if(va)va.style.bottom=trOn&&tr.offsetHeight?(tr.offsetHeight+20)+'px':'';   // 흔적 줄(아래 10px) 바로 위
+  }
+  const later=()=>{if(!raf)raf=requestAnimationFrame(stack)};
+  const mo=new MutationObserver(later);
+  [tr,kb,nc].forEach(e=>e&&mo.observe(e,{attributes:true,attributeFilter:['class','style'],childList:true,subtree:true}));
+  if(window.ResizeObserver){const ro=new ResizeObserver(later);[tr,kb,nc,$('map')].forEach(e=>e&&ro.observe(e))}
+  addEventListener('resize',later);
+  later();
+})();
+
 /* ----- 🧪 실험실: 설정 맨 아래 버전 글자를 5번 → 비밀번호 5555 ----- */
 const MASTER_EMAIL='yangdlre@gmail.com';
 (()=>{let n=0,t=0;$('appVer').style.cursor='pointer';
@@ -5524,7 +5550,7 @@ const HELP=[
 ];
 /* 🆕 업데이트 내역 — 올릴 때마다 맨 위에 한 줄 묶음 추가 [날짜, 버전, [바뀐 것…]] */
 const CHANGELOG=[
-['10.16','v0.45',['❓ 지도 왼쪽 위 <b>?</b> — 도움말(기능을 누르면 설명·검색·바로 가기) · 🎉 축제 · ✉️ 건의 · 📢 공지','관광·자연을 고르면 🎉 축제 칩 — 지도 주변 축제 바로 보기','깊게 찾기·사진 읽기 무료 횟수는 예상치로 표시']],
+['10.16','v0.45',['❓ 지도 왼쪽 위 <b>?</b> — 도움말(기능을 누르면 설명·검색·바로 가기) · 🎉 축제 · ✉️ 건의 · 📢 공지','관광·자연을 고르면 🎉 축제 칩 — 지도 주변 축제 바로 보기','깊게 찾기·사진 읽기 무료 횟수는 예상치로 표시','지도 아래 겹침 정리 — 지난 여행 흔적 줄, 다음 일정 카드, 가고 싶은 곳 줄이 이 지역 검색·마이크에 안 가리게']],
 ['10.15','v0.45',['🎤 말로 찾기 — 물으면 마이크 자동, 근처 찾기는 별점 검색, 조건·기록·날씨 명령, 📖 명령어 모음','🤖 내 AI 키 연결(무료) — 애매한 말 해석, 후보 비교, 🔎 깊게 찾기, 📷 영수증·예약 사진 읽기','🚗 길안내 앱 고르기(TMAP·카카오내비·네이버 지도) · ⛽ 주유하고 가기','아래 탭에 가리던 창(다녀온 곳·사진 카드·일정 편집 등) 탭 위로']],
 ['','v0.45',['새 메뉴: 아래 탭 찾기·내 여행·내 장소·지출, 위 줄 여행 이름▾·👥 함께·⚙️','찾기 조건 한 줄 요약 · 종류 칩 · 레이어/목록','🧮 ② 종합 점수','한눈에 · 📚 나의 책장 · 다녀온 곳 목록','보류 → 가고 싶은 곳']],
 ['','v0.44',['카드 문자: 카톡 대화 내보내기를 통째로 붙여도 인식']],
