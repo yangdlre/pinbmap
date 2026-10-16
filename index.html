@@ -3923,6 +3923,17 @@ function renderExp(){
     :'<div class="binEmpty">아직 기록이 없어요.</div>';
   $('exList').querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{const e=exps.find(x=>x.uid===b.dataset.x);if(e)stamp(e).del=true;saveExp();renderExp()});
   // 정산
+  const {total,paid,owe,names,tr}=settleCalc(le,ps);
+  $('exSum').innerHTML=total?`<div class="exTot"><span>총 지출</span><b>${won(total)}</b></div>`+
+    `<div class="exTbl"><div class="th"><span>사람</span><span>낸 돈</span><span>쓴 몫</span></div>${names.map(n=>`<div><span>${escapeHtml(n)}</span><span>${won(paid[n]||0)}</span><span>${won(Math.round(owe[n]||0))}</span></div>`).join('')}</div>`+
+    `<div class="settle"><b>💸 정산</b>${tr.length?tr.map(x=>`<div class="st"><span>${escapeHtml(x.f)} → ${escapeHtml(x.t)}</span><b>${won(x.v)}</b></div>`).join(''):'<div class="st0">주고받을 돈 없음 👍</div>'}</div>`:'';
+  expSumText=total?`총 ${won(total)}\n`+names.map(n=>`${n}: 낸 돈 ${won(paid[n]||0)} · 쓴 몫 ${won(Math.round(owe[n]||0))}`).join('\n')+'\n\n[정산]\n'+(tr.length?tr.map(x=>`💸 ${x.f} → ${x.t} ${won(x.v)}`).join('\n'):'주고받을 돈 없음'):'';
+  $('exHint').textContent=room?'여행방 사람들과 같이 맞춰집니다.':'혼자 쓰는 중 — 같이 쓰려면 📅 일정 → 👥 같이 쓰기로 방에 들어가세요. 사람 추가는 위 칸에.';
+}
+let expSumText='';
+// 💸 정산 계산 (경비 화면이 씀 · tests/settle.test.mjs가 검사) — le: 지운 것 뺀 경비, ps: 사람 순서
+// 1원 단위 자투리는 낸 사람부터, 나눌 사람이 비면 낸 사람 혼자. tr = 누가 누구에게 얼마
+function settleCalc(le,ps){
   const bal={},paid={},owe={};let total=0;
   le.forEach(e=>{
     let sp=(e.split&&e.split.length?e.split:[e.payer]);total+=e.amt;
@@ -3936,13 +3947,8 @@ function renderExp(){
   const db=names.filter(n=>bal[n]<-0.5).map(n=>({n,v:-bal[n]})).sort((a,b)=>b.v-a.v);
   const tr=[];let i=0,j=0;
   while(i<db.length&&j<cr.length){const v=Math.min(db[i].v,cr[j].v);tr.push({f:db[i].n,t:cr[j].n,v:Math.round(v)});db[i].v-=v;cr[j].v-=v;if(db[i].v<0.5)i++;if(cr[j].v<0.5)j++}
-  $('exSum').innerHTML=total?`<div class="exTot"><span>총 지출</span><b>${won(total)}</b></div>`+
-    `<div class="exTbl"><div class="th"><span>사람</span><span>낸 돈</span><span>쓴 몫</span></div>${names.map(n=>`<div><span>${escapeHtml(n)}</span><span>${won(paid[n]||0)}</span><span>${won(Math.round(owe[n]||0))}</span></div>`).join('')}</div>`+
-    `<div class="settle"><b>💸 정산</b>${tr.length?tr.map(x=>`<div class="st"><span>${escapeHtml(x.f)} → ${escapeHtml(x.t)}</span><b>${won(x.v)}</b></div>`).join(''):'<div class="st0">주고받을 돈 없음 👍</div>'}</div>`:'';
-  expSumText=total?`총 ${won(total)}\n`+names.map(n=>`${n}: 낸 돈 ${won(paid[n]||0)} · 쓴 몫 ${won(Math.round(owe[n]||0))}`).join('\n')+'\n\n[정산]\n'+(tr.length?tr.map(x=>`💸 ${x.f} → ${x.t} ${won(x.v)}`).join('\n'):'주고받을 돈 없음'):'';
-  $('exHint').textContent=room?'여행방 사람들과 같이 맞춰집니다.':'혼자 쓰는 중 — 같이 쓰려면 📅 일정 → 👥 같이 쓰기로 방에 들어가세요. 사람 추가는 위 칸에.';
+  return {total,paid,owe,bal,names,tr};
 }
-let expSumText='';
 function exAmtVal(){return Math.round(+String($('exAmt').value).replace(/[^\d]/g,''))||0}
 function exPreview(){   // 금액을 넣으면 1인당 얼마인지 바로 보여줌
   const amt=exAmtVal(),n=$('exSplit').querySelectorAll('input:checked').length;
@@ -4664,7 +4670,7 @@ $('bkCatEd').querySelector('[data-close]').addEventListener('click',()=>{renderB
 /* ----- 📋 카드 문자 인식 ----- */
 const CARD_RE=/(KB국민|국민|신한|삼성|현대|롯데|하나|우리|NH농협|농협|NH|BC|비씨|씨티|IBK기업|IBK|기업|카카오뱅크|카카오페이|카카오|토스뱅크|토스|케이뱅크|SC제일|수협|광주|전북|부산|경남|대구|제주|새마을|신협|우체국)\s*(체크|신용)?\s*(카드)?/;
 const CAT_KW=[['cafe',/스타벅스|커피|카페|이디야|투썸|메가|빽다방|컴포즈|폴바셋|할리스|베이커리|제과|빵|파리바게|뚜레쥬르|던킨|배스킨|디저트|아이스크림|설빙/],
-  ['drink',/포차|호프|주점|이자카야|와인|맥주|술집|bar\b|펍/i],['move',/주유|칼텍스|SK에너지|S-?OIL|에쓰오일|현대오일|알뜰|충전|택시|카카오T|티머니|버스|코레일|KTX|SRT|항공|에어|대한항공|아시아나|주차|하이패스|렌터카|렌트/],
+  ['drink',/포차|호프|(^|[^제])주점|이자카야|와인|맥주|술집|bar\b|펍/i],['move',/주유|칼텍스|SK에너지|S-?OIL|에쓰오일|현대오일|알뜰|충전|택시|카카오T|티머니|버스|코레일|KTX|SRT|항공|에어|대한항공|아시아나|주차|하이패스|렌터카|렌트/],
   ['stay',/호텔|모텔|펜션|리조트|게스트하우스|에어비앤비|야놀자|여기어때|스테이|민박/],['life',/보험|통신|관리비|편의점|GS25|CU\b|씨유|세븐일레븐|이마트24|미니스톱|다이소|마트|이마트|홈플러스|롯데마트|하나로|생활/],
   ['med',/약국|병원|의원|치과|한의원|안과|내과/],['souv',/기념품|감귤|한라봉|천혜향|오메기|기프트|소품|굿즈|농장/],['tour',/입장|매표|박물관|미술관|아쿠아|랜드|테마파크|체험|관광|투어/],['shop',/쿠팡(?!이츠)|11번가|G마켓|옥션|무신사|올리브영|백화점|아울렛|면세/],
   ['food',/우아한형제들|배달의민족|배민|요기요|쿠팡이츠|땡겨요|식당|국수|고기|흑돼지|횟집|회|치킨|피자|버거|맥도날드|롯데리아|김밥|분식|해장국|국밥|돈까스|초밥|라멘|중국|짜장|한식|식육|갈비|순대|밥|찌개|탕|면/]];

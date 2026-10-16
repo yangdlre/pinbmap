@@ -2,7 +2,13 @@
   "name": "pinbmap",
   "private": true,
   "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
   "dependencies": {
     "@netlify/blobs": "~10.0.0"
+  },
+  "devDependencies": {
+    "acorn": "^8.19.0"
   }
 }

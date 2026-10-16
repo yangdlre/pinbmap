@@ -4,3 +4,41 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# 개발용 파일은 사이트에서 안 보이게 (저장소에만 둠). 새 개발용 파일·폴더를 만들면 여기에 추가.
+# 서버 함수는 /.netlify/functions/… 로 불리므로 /netlify/* 를 막아도 앱에는 영향 없음.
+[[redirects]]
+  from = "/README.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/CLAUDE.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/tests/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package.json"
+  to = "/404.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/package-lock.json"
+  to = "/404.html"
+  status = 404
+  force = true
