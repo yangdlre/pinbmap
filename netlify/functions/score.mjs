@@ -7,6 +7,7 @@
 //   KAKAO_REST              : 다음 블로그 검색 (카카오 REST API 키)
 //   YT_KEY                  : 유튜브 검색 (Google YouTube Data API v3)
 //   TOUR_KEY                : 한국관광공사 TourAPI (공공데이터포털 일반 인증키, Decoding 값)
+//   NAVER_ID·NAVER_SECRET   : NAVER API HUB Application의 Client ID·Client Secret (예전 개발자센터 키면 NAVER_OLD=1도)
 //   우리 앱 기록             : 키 필요 없음 — 가입자들의 다녀온 곳·가고 싶은 곳 (개수만 집계)
 //
 // 광고 글: 요약글에 협찬·체험단·원고료 등이 보이면 그 글은 집계에서 아예 뺌.
@@ -59,14 +60,18 @@ function sample(items, key, dateOf) {
 }
 const nDate = it => { const s = String(it.postdate || ''); return /^\d{8}$/.test(s) ? Date.UTC(+s.slice(0, 4), +s.slice(4, 6) - 1, +s.slice(6, 8)) : 0; };
 const kDate = it => Date.parse(it.datetime) || 0;
-const naver = (path, q, extra) => getJSON(`https://openapi.naver.com/v1/search/${path}?query=${encodeURIComponent(q)}${extra}`,
-  { headers: { 'X-Naver-Client-Id': ENV('NAVER_ID'), 'X-Naver-Client-Secret': ENV('NAVER_SECRET') } });
+// 네이버 검색: 2026.7.31부터 새 키는 NAVER API HUB(네이버 클라우드)에서만 발급 → HUB 주소·헤더로 부름.
+// 예전 개발자센터 키(2027.6.30까지)를 넣었으면 NAVER_OLD=1. 결과는 화면에 그대로 보여 주지 않고 언급 수만 셈 — AI에는 넣지 않음(네이버 약관).
+const NV_OLD = () => ENV('NAVER_OLD') === '1';
+const nvHead = () => NV_OLD() ? { 'X-Naver-Client-Id': ENV('NAVER_ID'), 'X-Naver-Client-Secret': ENV('NAVER_SECRET') } : { 'X-NCP-APIGW-API-KEY-ID': ENV('NAVER_ID'), 'X-NCP-APIGW-API-KEY': ENV('NAVER_SECRET') };
+const naver = (path, q, extra) => getJSON(NV_OLD() ? `https://openapi.naver.com/v1/search/${path}.json?query=${encodeURIComponent(q)}${extra}` : `https://naverapihub.apigw.ntruss.com/search/v1/${path}?query=${encodeURIComponent(q)}${extra}`,
+  { headers: nvHead() });
 const tourKey = () => { const k = ENV('TOUR_KEY'); return /%[0-9A-F]{2}/i.test(k) ? k : encodeURIComponent(k); };   // Encoding 값을 넣어도 동작
 
 async function onePlace(p) {
   const key = keyOf(p.n), q = `${p.n} ${dongOf(p.a)}`.trim(), parts = {}, S = srcs(), jobs = [];
   if (S.naver) jobs.push((async () => {
-    const [a, b, c] = await Promise.all([naver('blog.json', q, '&display=100&sort=sim'), naver('blog.json', q, '&display=100&sort=date'), naver('cafearticle.json', q, '&display=50&sort=sim')]);
+    const [a, b, c] = await Promise.all([naver('blog', q, '&display=100&sort=sim'), naver('blog', q, '&display=100&sort=date'), naver('cafearticle', q, '&display=50&sort=sim')]);
     if (a) { const s = sample(a.items, key, nDate); parts.blog = { total: a.total || 0, est: s.n ? Math.round((a.total || 0) * s.good / s.n) : 0, ad: s.ad, rel: s.rel, n: s.n }; }
     if (b) { const s = sample(b.items, key, nDate); parts.recent = { r90: s.r90, r365: s.r365, ad: s.ad }; }
     if (c) { const s = sample(c.items, key, () => 0); parts.cafe = { total: c.total || 0, est: s.n ? Math.round((c.total || 0) * s.good / s.n) : 0 }; }
@@ -99,8 +104,8 @@ async function trends(list) {
   const end = new Date(Date.now() + 9 * 36e5), start = new Date(end - 16 * 7 * 864e5), f = d => d.toISOString().slice(0, 10);
   for (let i = 0; i < list.length; i += 5) {
     const g = list.slice(i, i + 5);
-    const d = await getJSON('https://openapi.naver.com/v1/datalab/search', { method: 'POST',
-      headers: { 'X-Naver-Client-Id': ENV('NAVER_ID'), 'X-Naver-Client-Secret': ENV('NAVER_SECRET'), 'Content-Type': 'application/json' },
+    const d = await getJSON(NV_OLD() ? 'https://openapi.naver.com/v1/datalab/search' : 'https://naverapihub.apigw.ntruss.com/search-trend/v1/search', { method: 'POST',
+      headers: { ...nvHead(), 'Content-Type': 'application/json' },
       body: JSON.stringify({ startDate: f(start), endDate: f(end), timeUnit: 'week', keywordGroups: g.map(p => ({ groupName: String(p.id), keywords: [String(p.n).slice(0, 40)] })) }) });
     if (!d || !Array.isArray(d.results)) continue;
     for (const r of d.results) {
