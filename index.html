@@ -5617,6 +5617,7 @@ const HELP_FULL=[
 ['기록하기',`<p>"점심 3만 원 공동 경비로" · "택시비 만 원 내 지출" · "할 일에 렌터카 반납 추가" · "내일 오후 2시에 성산일출봉 넣어 줘" · "여기 다녀왔어" · "기록, 전복죽 최고" — 확인 칸에서 "응"이나 버튼으로 저장해요.</p>`],
 ['물어보기',`<p>"오늘 날씨 어때"(비 오는 시간대까지) · "일몰 몇 시야" · "거기 지금 영업해?" · "거기까지 얼마나 걸려?"(직선 거리) · "오늘 몇 곳 다녔어" · "오늘 얼마 썼어" · "정산 얼마야" · "할 일 남은 거 뭐야"</p>`],
 ['이어서 하기',`<p>"흑돼지 먹고 근처 카페" · "기름 넣고 숙소 가자" · "비 오는데 갈 만한 데" · 화면 열기: "위성 지도로" · "일정 열어" · "가계부" · "다녀온 곳 보여줘"</p>`],
+['잘못 들었을 때',`<p>"신평역"이 "심평역"처럼 <b>소리 나는 대로</b> 적혀 못 찾으면, 받침을 바꾼 비슷한 이름으로 한 번 더 찾아서 "‘신평역’이 있어요. 이걸로 찾을까요?" 하고 물어요. "응"이나 버튼으로 골라요. 깊게 찾기도 같아요.</p><p>AI 키가 있으면 지도 주변 <b>지하철역 이름</b>을 받아쓰기에 참고로 줘서 처음부터 맞게 적힐 때가 많아요. 그래도 안 되면 입력칸에 직접 쳐서 →를 누르세요.</p>`,'voice'],
 ['AI 방식 고르기',`<p>설정 → 🎤 말로 찾기에서 골라요.</p><ul><li><b>① 브라우저 음성인식</b>(기본) — 무료, 연결 없음</li><li><b>② 브라우저 + AI</b> — 정해진 말로 안 되는 말("애들이랑 갈 만한 조용한 데")과 못 찾은 이름만 AI가 한 번 더</li><li><b>③ AI 우선</b> — AI가 녹음을 받아쓰고 해석</li></ul><p>②·③은 내 AI 키가 있어야 해요. "1번이랑 2번 중 어디가 나아?" 같은 후보 비교도 돼요.</p>`,'set'],
 ['AI 키 연결 (무료)',`<p>계정에 로그인한 뒤:</p><ul><li><b>console.groq.com</b>에 가입 → <b>API Keys</b> → <b>Create API Key</b> → 나온 키 복사</li><li>⚙️ 설정 → 🎤 말로 찾기 → 🔑 <b>[관리]</b> → Groq 칸에 붙여 넣고 <b>연결</b></li></ul><p>키는 서버에 암호화해 내 계정에만 묶이고 폰으로 다시 안 내려와요. 키는 자기 것만 쓰고, 결제(유료)를 켠 키는 쓰지 마세요.</p>`,'set'],
 ['깊게 찾기',`<p>설정의 <b>🔎 깊게 찾기</b>(Groq 키) — AI가 검색·상세·날씨·내 여행을 직접 여러 번 확인해서 답해요. 무료로 하루 <b>약 30번</b>쯤이에요(예상치 — 질문에 따라 달라요). 말 해석과 같은 무료 한도를 나눠 써서, 말로 찾기를 많이 쓴 날은 줄어요.</p>`,'set'],
@@ -5661,7 +5662,7 @@ const HELP=[
 ['공동 경비·정산',`<p>지출 → 이번 여행에서 공동 경비를 적으면 사람별 정산이 나와요. ‘내 지출’은 개인 가계부에 저장돼요.</p>`,'exp'],
 ['카드 문자·카톡 내역 넣기',`<p>개인 가계부 → ‘카드 문자로 넣기’에 카드 문자나 카톡 내보내기 내용을 붙여 넣으세요.</p>`,'book']]],
 ['🎤 말·사진',[
-['말로 찾기',`<p>🎤를 누르고 ‘근처 카페 찾아줘’처럼 말하세요. 더 많은 예문은 창 위 ‘명령어’에 있어요. AI 연결 없이도 돼요.</p>`,'voice'],
+['말로 찾기',`<p>🎤를 누르고 ‘근처 카페 찾아줘’처럼 말하세요. 더 많은 예문은 창 위 ‘명령어’에 있어요. AI 연결 없이도 돼요. 이름을 잘못 들으면 비슷한 소리로 다시 찾아 물어봐요.</p>`,'voice'],
 ['AI·사진 사용하기',`<p>설정 → 말로 찾기에서 내 AI를 연결하세요. 영수증·예약 사진도 읽을 수 있어요.</p>`,'set']]],
 ['⚙️ 설치·문제 해결',[
 ['앱 설치·계정',`<p>브라우저 메뉴 → ‘홈 화면에 추가’로 설치하세요. 계정 연결은 설정 → 내 계정에서 할 수 있어요.</p>`,'set'],
@@ -5671,7 +5672,8 @@ const HELP=[
 ];
 /* 🆕 업데이트 내역 — 올릴 때마다 맨 위에 한 줄 묶음 추가 [날짜, 버전, [바뀐 것…]] */
 const CHANGELOG=[
-['10.16','v0.45 dev',['📱 폰 뒤로가기: 맨 위 창부터 하나씩 닫기, 첫 화면에선 "한 번 더 누르면 닫혀요"','지역이 들어간 말("부산 하단동 술집")은 그 동네로 지도를 옮겨서 찾기 · 깊게 찾기도 지역으로 · 못 찾으면 물어봄 · 키워드에 지역명이 안 남음','② 점수 네이버 호출을 NAVER API HUB 방식으로(새 키용)']],
+['10.16','v0.45',['🔊 이름을 소리 나는 대로 받아써도("신평역"→"심평역") 비슷한 소리로 한 번 더 찾고 "이걸로 찾을까요?" 하고 물어봄 · 깊게 찾기도','🚉 AI 키가 있으면 지도 주변 지하철역 이름을 받아쓰기 참고로','깊게 찾기 답 끝에 "정보 없음"이 붙던 것 고침']],
+['10.16','v0.45',['📱 폰 뒤로가기: 맨 위 창부터 하나씩 닫기, 첫 화면에선 "한 번 더 누르면 닫혀요"','지역이 들어간 말("부산 하단동 술집")은 그 동네로 지도를 옮겨서 찾기 · 깊게 찾기도 지역으로 · 못 찾으면 물어봄 · 키워드에 지역명이 안 남음','② 점수 네이버 호출을 NAVER API HUB 방식으로(새 키용)']],
 ['10.16','v0.45',['⭐ 지도 왼쪽 위 바로가기(주 버튼 + ＋ 메뉴, 꾹 눌러 바꾸기) · ? 는 위 줄 ⚙️ 왼쪽으로','📅 일정에 담기 방식(설정): 담기만 / 일정표로 가기 / 바로 넣기 — 카드 튕기면 바로가기(없으면 내 여행 탭)로 빨려 들어가고 3초 뒤 열림','시간 입력 하나의 규칙으로: 시작은 00:00~23:55 그대로(시간표를 넓힘), 자정을 넘는 머무름은 24:00까지로 줄이고 알려 줌, 24:00은 시작으로 안 받음 — 바로 넣기·말로 일정·예약 사진 같음, 다시 열어도 그대로',"'일 번'·'일번이랑 이번' 같은 한글 번호도 숫자 번호와 똑같이 (‘이번 여행’은 번호 아님)",'계정이 바뀌면 핀볼 꺼짐 · 기준을 모르면 거리 안 보임(0m 아님)','거리: 내 위치 / 검색 중심 나눠 표시, 상호 검색 뒤 0m 없앰','말로 찾기: "1번 주차 돼?"·"1번이랑 2번 중 어디가 나아?"는 고르지 않고 답 · 실내+평점 같은 말은 AI로(없으면 실내+평점순)','영수증·예약 빈 칸이면 입력창은 두고 칸 아래 안내','누가 보는 기록인지 한 줄(경비·가계부·사진·영수증)','🎮 핀볼은 실험실(마스터)로 · 도움말 짧은 판(20개) · 업데이트 내역은 실험실로']],
 ['10.16','v0.45',['❓ 도움말 페이지 — 도움말(기능을 누르면 설명·검색·바로 가기) · 🎉 축제 · ✉️ 건의 · 📢 공지','관광·자연을 고르면 🎉 축제 칩 — 지도 주변 축제 바로 보기','깊게 찾기·사진 읽기 무료 횟수는 예상치로 표시','지도 아래 겹침 정리 — 지난 여행 흔적 줄, 다음 일정 카드, 가고 싶은 곳 줄이 이 지역 검색·마이크에 안 가리게']],
 ['10.15','v0.45',['🎤 말로 찾기 — 물으면 마이크 자동, 근처 찾기는 별점 검색, 조건·기록·날씨 명령, 📖 명령어 모음','🤖 내 AI 키 연결(무료) — 애매한 말 해석, 후보 비교, 🔎 깊게 찾기, 📷 영수증·예약 사진 읽기','🚗 길안내 앱 고르기(TMAP·카카오내비·네이버 지도) · ⛽ 주유하고 가기','아래 탭에 가리던 창(다녀온 곳·사진 카드·일정 편집 등) 탭 위로']],
@@ -6197,7 +6199,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   function aiTag(j){if(j&&j.model){aiLine.textContent=`AI · ${aiModelName(j.model)}${j.fb?' (대신 씀)':''} · ${((j.ms||0)/1000).toFixed(1)}초${j.cap?` · 오늘 ${j.today}/${j.cap}회`:''}`;aiLine.classList.add('on')}}
   function modeLine(){const m=vaMode();if(m==='web'){aiLine.classList.remove('on');return}
     aiLine.textContent=(m==='ai'?'③ AI 우선':'② 브라우저 + AI')+' · '+aiModelName(vaModelSel())+(aiOn()?'':acct?' · AI 키 연결 전이라 ① 방식으로 들어요':' · 로그인 전이라 ① 방식으로 들어요');aiLine.classList.add('on')}
-  function open(){$('vaSheet').classList.add('on');$('vaShade').classList.add('on');$('vaEx').style.display=va.cands.length||$('vaCmds').classList.contains('on')?'none':'';modeLine();if($('vaCmds').classList.contains('on'))paintCmds()}
+  function open(){nearStations();$('vaSheet').classList.add('on');$('vaShade').classList.add('on');$('vaEx').style.display=va.cands.length||$('vaCmds').classList.contains('on')?'none':'';modeLine();if($('vaCmds').classList.contains('on'))paintCmds()}
   function close(){stop();va.waitRes=false;va.waitScore=false;va.pending=null;va.afterPick=null;va.asking=false;$('vaSheet').classList.remove('on');$('vaShade').classList.remove('on');try{speechSynthesis.cancel()}catch(_){}}
   btn.onclick=()=>{if(va.cands.length&&va.src==='map'&&va.resSig!==resSig()){va.cands=[];va.sel=null;$('vaList').innerHTML='';$('vaAct').classList.remove('on')}open();va.asking=false;listen()};$('vaClose').onclick=close;$('vaShade').onclick=close;
   $('vaMic').onclick=()=>{if(va.listening){va.aiH?va.aiH.finish():stop()}else{va.asking=false;listen()}};   // ③ 녹음 중에 누르면 바로 보내기
@@ -6314,7 +6316,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       sel:va.sel?va.sel.place_name:(currentPlace&&currentPlace.place_name)||'',
       plan:live(items).filter(it=>it.day===day&&it.p).sort((a,b)=>a.start-b.start).map(it=>it.p.place_name),
       saved:(Array.isArray(saved)?saved:[]).filter(x=>x&&!x.del&&x.p).slice(0,30).map(x=>x.p.place_name),
-      recent:va.recent.slice(0,10).map(p=>p.place_name),time:hm(nowKST().m),
+      recent:va.recent.slice(0,10).map(p=>p.place_name),near:STN.names.slice(0,12),time:hm(nowKST().m),
       trip:d<0?'여행 기간 아님':`${trip.days}일 중 ${d+1}일차`};
   }
   window.vaCtx=aiCtx;
@@ -6486,11 +6488,17 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     placeSearch(name,data=>{
       if(my!==va.seq)return;   // 기다리는 동안 닫았거나 새로 말했으면 버림
       const L=(data||[]).slice(0,5).map(p=>({p:withDist(p),tag:''}));
-      if(!L.length&&!opt.noAI&&aiOn()){aiAsk(opt.raw||name);return}   // ②: 이름을 못 찾으면 AI가 받아쓰기 오류를 고쳐 한 번 더
-      if(!L.length){va.afterPick=null;say(`“${name}”을(를) 찾지 못했어요. 이름을 다르게 말해 보거나, 아래에서 ChatGPT에 물어볼 수 있어요.`);$('vaAct').classList.add('on');['vaTmap','vaInfo','vaPick','vaKeep','vaFuel'].forEach(id=>$(id).style.display='none');$('vaAsk').style.display='';return}
-      ['vaInfo','vaPick','vaKeep'].forEach(id=>$(id).style.display='');
-      if(L.length===1){showCands(L);select(0,wantGo);return}
-      showCands(L,`“${name}” 검색 결과 ${L.length}곳이에요. 1번 ${L[0].p.place_name}${L[0].p._dist?' '+fmtDist(L[0].p._dist):''}.${wantGo?' 번호를 누르면 바로 출발해요.':''} 몇 번째로 할까요?`);
+      const shown=(L,label)=>{['vaInfo','vaPick','vaKeep'].forEach(id=>$(id).style.display='');
+        if(L.length===1){showCands(L);select(0,wantGo);return}
+        showCands(L,`“${label}” 검색 결과 ${L.length}곳이에요. 1번 ${L[0].p.place_name}${L[0].p._dist?' '+fmtDist(L[0].p._dist):''}.${wantGo?' 번호를 누르면 바로 출발해요.':''} 몇 번째로 할까요?`)};
+      if(L.length)return shown(L,name);
+      const none=()=>{
+        if(!opt.noAI&&aiOn()){aiAsk(opt.raw||name);return}   // ②: 이름을 못 찾으면 AI가 받아쓰기 오류를 고쳐 한 번 더
+        va.afterPick=null;say(`“${name}”을(를) 찾지 못했어요. 이름을 다르게 말해 보거나, 아래에서 ChatGPT에 물어볼 수 있어요.`);$('vaAct').classList.add('on');['vaTmap','vaInfo','vaPick','vaKeep','vaFuel'].forEach(id=>$(id).style.display='none');$('vaAsk').style.display=''};
+      if(opt.noAlike)return none();
+      // 🔊 소리 나는 대로 적힌 이름(심평역 → 신평역)이면 비슷한 이름으로 한 번 더 — 바꾸기 전에 묻기
+      alikePlaces(name).then(r=>{if(my!==va.seq)return;if(!r)return none();
+        askAlike(r,()=>shown(r.data.slice(0,5).map(p=>({p:withDist(p),tag:''})),r.to),none)});
     });
   }
   // 대상 장소 정하기: 고른 곳 / 숙소 / 이름(내 목록 → 카카오) → 정해지면 fn(장소)
@@ -6584,14 +6592,85 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     t=String(t||'').replace(/[,]/g,' ').replace(/\s+/g,' ').trim();if(!t)return ok(null);
     try{const S=kakao.maps.services,gc=new S.Geocoder();
       gc.addressSearch(t,(r,st)=>{
-        if(st===S.Status.OK&&r.length){const a=r[0],ad=a.address||a.road_address||{};return ok({lat:+a.y,lng:+a.x,name:t,r1:ad.region_1depth_name||'',lv:ad.region_3depth_name?3:ad.region_2depth_name?2:1})}
+        if(st===S.Status.OK&&r.length){const a=r[0],ad=a.address||a.road_address||{};return ok({lat:+a.y,lng:+a.x,name:t,r1:ad.region_1depth_name||'',lv:ad.region_3depth_name?3:ad.region_2depth_name?2:1,where:[ad.region_1depth_name,ad.region_2depth_name].filter(Boolean).join(' ')})}
         if(typeof ps==='undefined'||!ps)return ok(null);
         ps.keywordSearch(t,(d,s2)=>{
           if(s2!==S.Status.OK||!d.length)return ok(null);
           const last=t.split(' ').pop(),x=d.slice(0,5).find(p=>(/^(SW8|AT4|PO3)$/.test(p.category_group_code||'')||AREA_CAT.test(p.category_name||''))&&String(p.place_name).includes(last));
-          ok(x?{lat:+x.y,lng:+x.x,name:t,r1:'',lv:3}:null)});
+          ok(x?{lat:+x.y,lng:+x.x,name:t,r1:'',lv:3,where:whereOf(x)}:null)});
       });
     }catch(_){ok(null)}})}
+  const whereOf=p=>String((p&&(p.address_name||p.road_address_name))||'').split(' ').slice(0,2).join(' ');
+  // 🔊 소리 나는 대로 받아쓴 이름 되돌리기 — 신평[심평]·한강[항강]·국물[궁물]·종로[종노]·정짓간[정지깐]·축하[추카], ㅐ/ㅔ
+  function soundAlikes(w,max=8){
+    w=String(w||'');const a=[...w],out=[],HG=0xAC00;
+    const D=a.map(ch=>{const k=ch.charCodeAt(0)-HG;return k>=0&&k<11172?[Math.floor(k/588),Math.floor(k%588/28),k%28]:null});
+    const J=(c,v,j)=>String.fromCharCode(HG+c*588+v*28+j);
+    const set=(i,c,v,j,i2,c2,v2,j2)=>{const b=a.slice();b[i]=J(c,v,j);if(i2!=null)b[i2]=J(c2,v2,j2);const s=b.join('');if(s!==w&&!out.includes(s))out.push(s)};
+    for(let i=0;i<a.length;i++){const x=D[i];if(!x)continue;const [c,v,j]=x,y=D[i+1];
+      if(y){const [c2,v2,j2]=y;
+        if(j===16&&[7,17,6,8].includes(c2))set(i,c,v,4);                        // 심평→신평 (ㄴ이 ㅂ·ㅍ·ㅁ 앞에서 ㅁ 소리)
+        if(j===21&&[0,15,1].includes(c2)){set(i,c,v,4);set(i,c,v,16)}           // 항강→한강, 강기→감기
+        if(j===21&&[2,6].includes(c2))set(i,c,v,1);                              // 궁물→국물
+        if(j===4&&[2,6].includes(c2)){set(i,c,v,19);set(i,c,v,7)}                // 거진말→거짓말
+        if(j===16&&[2,6].includes(c2))set(i,c,v,17);                             // 심만→십만
+        if(j===8&&c2===5)set(i,c,v,4);                                           // 실라→신라
+        if((j===21||j===16)&&c2===2)set(i+1,5,v2,j2);                            // 종노→종로
+        if(j&&c2===2&&[20,2,6,12,17].includes(v2))set(i+1,11,v2,j2);             // 신평녁→신평역
+        const P={1:0,4:3,8:7,10:9,13:12}[c2];
+        if(P!=null){set(i+1,P,v2,j2);if(!j)set(i,c,v,19,i+1,P,v2,j2)}           // 정지깐→정지간·정짓간
+        const H={15:1,17:17,14:22}[c2];if(H!=null&&!j)set(i,c,v,H,i+1,18,v2,j2);  // 추카→축하
+      }
+      const V={1:5,5:1,3:7,7:3}[v];if(V!=null)set(i,c,V,j);                       // ㅐ↔ㅔ
+    }
+    return out.slice(0,max);
+  }
+  window.vaAlike=soundAlikes;   // 실험·시험용
+  // 낱말 하나만 바꾼 문장들 → [{v:바뀐 문장, ft:원래 낱말, tt:바뀐 낱말}]
+  function alikePhrases(t,max=6){
+    const tk=String(t||'').trim().split(/\s+/).filter(Boolean),out=[];
+    tk.forEach((w,i)=>soundAlikes(w,4).forEach(x=>{const b=tk.slice();b[i]=x;out.push({v:b.join(' '),ft:w,tt:x})}));
+    return out.slice(0,max);
+  }
+  const stemOf=w=>{const r=String(w||'').replace(AREA_TAIL,'');return r.length>=2?r:String(w||'')};
+  function refLL(){if(searchCenter)return [searchCenter.getLat(),searchCenter.getLng()];if(lastPos)return [lastPos.lat,lastPos.lng];return null}
+  function nearestOf(R,ll){if(R.length<2)return R[0]||null;const c=refLL();if(!c)return R[0];return R.slice().sort((a,b)=>{const x=ll(a),y=ll(b);return distanceM(c[0],c[1],x[0],x[1])-distanceM(c[0],c[1],y[0],y[1])})[0]}
+  // 지역 이름을 못 찾았을 때: 소리가 비슷한 지역 → {…geoArea, from, to, ft, tt}
+  async function alikeArea(t){
+    const V=alikePhrases(t,6);if(!V.length)return null;
+    const R=(await Promise.all(V.map(o=>geoArea(o.v).then(g=>g&&{...g,from:t,to:o.v,ft:o.ft,tt:o.tt},()=>null)))).filter(Boolean);
+    return nearestOf(R,g=>[g.lat,g.lng]);
+  }
+  // 이름 검색이 비었을 때: 소리가 비슷한 이름으로 → {from, to, ft, tt, data, where}
+  async function alikePlaces(q,opt){
+    if(typeof ps==='undefined'||!ps)return null;
+    const V=alikePhrases(q,6);if(!V.length)return null;
+    const S=kakao.maps.services,o=opt||Object.assign({size:15},searchCenter?{location:searchCenter}:{});
+    const R=(await Promise.all(V.map(x=>new Promise(ok=>{try{ps.keywordSearch(x.v,(d,st)=>{
+      if(st!==S.Status.OK||!d.length)return ok(null);
+      const key=nm(stemOf(x.tt)),rest=x.v.split(/\s+/).filter(w=>w!==x.tt&&w.length>1).map(nm);
+      const hit=p=>{const nmA=nm(p.place_name),ad=nm((p.address_name||'')+(p.road_address_name||''));return nmA.includes(key)||ad.includes(key)||rest.some(w=>nmA.includes(w))};
+      const L=d.filter(hit);ok(L.length?{from:q,to:x.v,ft:x.ft,tt:x.tt,data:L,where:whereOf(L[0])}:null)},o)}catch(_){ok(null)}})))).filter(Boolean);
+    return nearestOf(R,r=>[+r.data[0].y,+r.data[0].x]);
+  }
+  const jo=(w,a,b)=>{const c=String(w||'').slice(-1).charCodeAt(0)-0xAC00;return c>=0&&c<11172&&c%28?a:b};
+  // “‘심평역’은 못 찾았어요. ‘신평역’(부산 사하구)이 있어요. 이걸로 찾을까요?”
+  function askAlike(r,yes,no){
+    va.pending={fn:yes,noFn:no};
+    const w=r.where?escapeHtml(r.where)+'에 ':'';
+    say(`<div class="vaQ">‘${escapeHtml(r.from)}’${jo(r.from,'은','는')} 못 찾았어요. ${w}소리가 비슷한 <b>‘${escapeHtml(r.to)}’</b>${jo(r.to,'이','가')} 있어요. 이걸로 찾을까요?<div class="vaQb"><button type="button" data-y>네, 그걸로</button><button type="button" data-n>아니요</button></div></div>`,
+      {html:true,voice:`${r.from}${jo(r.from,'은','는')} 못 찾았어요. ${r.to} 말씀이세요?`,ask:true});
+  }
+  // 🚉 받아쓰기 참고용 근처 지하철역 이름 — 화면 안에서만 잠깐(저장 안 함), 같은 곳이면 30분 재사용
+  var STN={k:'',t:0,names:[]};
+  function nearStations(){
+    try{const c=refLL();if(!c||typeof ps==='undefined'||!ps)return;
+      const k=c[0].toFixed(2)+','+c[1].toFixed(2);if(STN.k===k&&Date.now()-STN.t<18e5)return;STN.k=k;STN.t=Date.now();
+      const S=kakao.maps.services;
+      ps.categorySearch('SW8',(d,st)=>{STN.names=st===S.Status.OK?[...new Set(d.map(p=>String(p.place_name||'').split(' ')[0]).filter(x=>/역$/.test(x)))].slice(0,12):[]},
+        {location:new kakao.maps.LatLng(c[0],c[1]),radius:10000,sort:S.SortBy.DISTANCE});
+    }catch(_){}
+  }
   function centerRegion1(){return new Promise(ok=>{try{if(!searchCenter)return ok('');new kakao.maps.services.Geocoder().coord2RegionCode(searchCenter.getLng(),searchCenter.getLat(),(r,st)=>ok(st===kakao.maps.services.Status.OK&&r[0]?r[0].region_1depth_name:''))}catch(_){ok('')}})}
   async function splitArea(q){
     const tk=String(q||'').split(/[\s,]+/).filter(Boolean);if(tk.length<2)return null;
@@ -6599,7 +6678,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     const cand=[];for(let k=tk.length-1;k>=1;k--)if(AREA_TAIL.test(tk[k-1])||(k===1&&BIG.test(tk[0])))cand.push(k);
     if(!cand.includes(1))cand.push(1);   // '해운대 돼지국밥'처럼 꼬리 없는 지명도 첫 낱말은 한 번 확인
     for(const k of cand.slice(0,3)){const pre=tk.slice(0,k).join(' ');if(tried.has(pre))continue;tried.add(pre);
-      const g=await geoArea(pre);if(g)return {...g,rest:tk.slice(k).join(' ')}}
+      const g=await geoArea(pre);if(g)return {...g,rest:tk.slice(k).join(' ')};
+      if(AREA_TAIL.test(tk[k-1])){const B=await alikeArea(pre);if(B)return {...B,rest:tk.slice(k).join(' '),alike:true}}}   // '심평역 국밥' → 신평역?
     return null;
   }
   function centerQuiet(lat,lng,lv){
@@ -6611,9 +6691,13 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     const my=va.seq;let A=null;
     if(typeof kakao!=='undefined'&&kakao.maps&&kakao.maps.services&&map){
       if(area){state(`‘${area}’ 찾는 중…`);A=await geoArea(area);if(my!==va.seq)return;
-        if(!A){say(`‘${area}’이(가) 어디인지 못 찾았어요. 위 📍 칸에 동네를 넣고 이동한 뒤 다시 말해 주세요.`);return}
+        if(!A){const miss=()=>say(`‘${area}’${jo(area,'이','가')} 어디인지 못 찾았어요. 위 📍 칸에 동네를 넣고 이동한 뒤 다시 말해 주세요.`);
+          const B=await alikeArea(area);if(my!==va.seq)return;state('마이크를 누르고 말해 보세요');
+          if(B){askAlike(B,()=>doNearby({...o,area:B.to,q:String(o.q||'').split(B.ft).join(B.tt)}),miss);return}
+          miss();return}
         const rest=area.split(/\s+/).reduce((s,w)=>s.replace(w,''),q).replace(/^[\s,]+|[\s,]+$/g,'').replace(/\s{2,}/g,' ');A.rest=rest||q}
-      else if(/[\s,]/.test(q)){A=await splitArea(q);if(my!==va.seq)return}
+      else if(/[\s,]/.test(q)){A=await splitArea(q);if(my!==va.seq)return;
+        if(A&&A.alike){const B=A;askAlike(B,()=>{centerQuiet(B.lat,B.lng,B.lv);nearbyHere({q:B.rest,cat,cond},B.to)},()=>nearbyHere({q,cat,cond}));return}}
       if(A){
         let move=true;if(A.lv===1&&A.r1){const r=await centerRegion1();if(my!==va.seq)return;if(r&&r.slice(0,2)===A.r1.slice(0,2))move=false}   // '제주 흑돼지'를 제주에서 말하면 그대로
         q=A.rest;if(move)centerQuiet(A.lat,A.lng,A.lv);
@@ -6870,12 +6954,15 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
         const near=String(a.near||'here').trim();let c=null,p=null,g=null;
         if(near==='selected')p=va.sel||currentPlace;else if(near==='lodging')p=lodging();
         else if(near&&near!=='here'){const L=findLocal(near);if(L.length)p=L[0].p;
-          else{g=await geoArea(near);if(!g)return {err:`'${near}' 위치를 못 찾았어요. 지어내지 말고 어느 동네인지 사용자에게 물어보세요.`};found.area=g}}   // 지역 이름(예: 부산 하단동)
+          else{g=await geoArea(near);
+            if(!g){const B=await alikeArea(near);if(B)return {alike:B};return {err:`'${near}' 위치를 못 찾았어요. 지어내지 말고 어느 동네인지 사용자에게 물어보세요.`}}   // 심평역 → 신평역? 앱이 사용자에게 먼저 물음
+            found.area=g}}   // 지역 이름(예: 부산 하단동)
         if(g)c=[g.lat,g.lng];else if(p&&hasLoc(p))c=[+p.y,+p.x];else if(searchCenter)c=[searchCenter.getLat(),searchCenter.getLng()];else if(lastPos)c=[lastPos.lat,lastPos.lng];
         const S=kakao.maps.services,opt={size:10};
         if(c){opt.location=new kakao.maps.LatLng(c[0],c[1]);opt.radius=Math.max(200,Math.min(20000,+a.radius||3000))}
         const cg={food:'FD6',cafe:'CE7',tour:'AT4',fuel:'OL7'}[a.cat];if(cg)opt.category_group_code=cg;
         const data=await new Promise(ok=>ps.keywordSearch(q,(d,st)=>ok(st===S.Status.OK?d:[]),opt));
+        if(!data.length){const r=await alikePlaces(q,opt);if(r)return {alike:r}}
         return {places:data.slice(0,8).map(x=>{found.set(String(x.id),x);return {id:String(x.id),name:x.place_name,cat:(x.category_name||'').split(' > ').pop(),dist:c?Math.round(distanceM(c[0],c[1],+x.y,+x.x)):null}})};
       }
       if(name==='place_info'){
@@ -6883,8 +6970,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
         const need=ids.filter(id=>!ENRICH[id]||isStale(ENRICH[id]));
         if(need.length){try{const j=await fetch(API+'?ids='+need.join(','),{credentials:'same-origin'}).then(r=>r.ok?r.json():null);if(j)need.forEach(id=>{const v=j[id];if(v&&!v.err){v._t=Date.now();ENRICH[id]=v}})}catch(_){}}
         return {info:ids.map(id=>{const e=ENRICH[id]||{},p=found.get(id)||{},it=live(items).find(x=>x.p&&String(x.p.id)===id),sv=(Array.isArray(saved)?saved:[]).find(x=>x&&!x.del&&x.p&&String(x.p.id)===id);
-          return {id,name:p.place_name||'',rating:e.r||null,reviews:e.n||0,blog:e.b||0,open:e.open&&e.open.t?(e.open.t+(e.open.i?' · '+e.open.i:'')):'정보 없음',
-            parking:Array.isArray(e.navi)&&e.navi.some(g=>/주차/.test(g.n||''))?'주차장 안내 있음':'정보 없음',badge:e.badge||'',price:fuelPrice(e)||null,mine:it?'내 일정':sv?'가고 싶은 곳':'',memo:((it&&it.memo)||(sv&&sv.memo)||'').slice(0,60)}})};
+          return {id,name:p.place_name||'',rating:e.r||null,reviews:e.n||0,blog:e.b||0,open:e.open&&e.open.t?(e.open.t+(e.open.i?' · '+e.open.i:'')):null,
+            parking:Array.isArray(e.navi)&&e.navi.some(g=>/주차/.test(g.n||''))?'주차장 안내 있음':null,badge:e.badge||'',price:fuelPrice(e)||null,mine:it?'내 일정':sv?'가고 싶은 곳':'',memo:((it&&it.memo)||(sv&&sv.memo)||'').slice(0,60)}})};
       }
       if(name==='weather'){const w=await wxReport(a.when==='tomorrow'?'tomorrow':'today');return w?{text:w.s+(w.ss?` 일몰 ${w.ss}`:'')}:{err:'날씨를 못 불러옴'}}
       if(name==='my_trip'){const d=todayIdx(),day=d<0?curDay:d,lg=lodging();
@@ -6894,10 +6981,14 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       return {err:'모르는 도구'};
     }catch(_){return {err:'도구 실행 실패'}}
   }
+  // 답 문장 끝에 붙은 '정보 없음' 같은 빈 칸 표시는 지움
+  const cleanSay=t=>String(t||'').replace(/(^|[.!?。]\s*)\(?정보\s*없음\)?[.!]?\s*(?=$|\S)/g,'$1').replace(/\s{2,}/g,' ').trim();
+  window.vaCleanSay=cleanSay;
   async function agentAsk(t){
     const my=va.seq,found=new Map();
     const C=va.cands.length?va.cands.map(c=>c.p):(lastSelected||[]).slice(0,5);C.forEach(p=>found.set(String(p.id),p));
     const scr={후보:C.map((p,i)=>({n:i+1,id:String(p.id),name:p.place_name})),고른곳:va.sel?{id:String(va.sel.id),name:va.sel.place_name}:null,지금:hm(nowKST().m),여행:todayIdx()<0?'여행 기간 아님':`${todayIdx()+1}일차`};
+    if(STN.names.length)scr.근처역=STN.names.slice(0,12);
     const msgs=[{role:'user',content:`[화면] ${JSON.stringify(scr)}\n[말] ${t}`}];
     let waits=0;
     for(let step=0;step<6;step++){
@@ -6914,7 +7005,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       const tc=(m.tool_calls||[])[0];
       if(!tc){state('마이크를 누르고 말해 보세요');say(m.content||'답을 못 찾았어요.');return}
       let args={};try{args=JSON.parse(tc.function.arguments||'{}')}catch(_){}
-      if(tc.function.name==='answer'){state('마이크를 누르고 말해 보세요');
+      if(tc.function.name==='answer'){state('마이크를 누르고 말해 보세요');args.say=cleanSay(args.say);
         const L=(Array.isArray(args.ids)?args.ids:[]).map(String).map(id=>found.get(id)).filter(Boolean).slice(0,5);
         if(args.go)va.goIntent=true;
         if(L.length&&found.area){const A=found.area;if(L.some(p=>hasLoc(p)&&distanceM(A.lat,A.lng,+p.y,+p.x)<20000))centerQuiet(A.lat,A.lng,A.lv)}   // 지역을 찾았으면 지도도 그리로
@@ -6924,6 +7015,9 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
         say(String(args.say||'답을 못 찾았어요.'));return}
       const res=await runTool(tc.function.name,args,found);
       if(my!==va.seq||!isOpen())return;
+      if(res&&res.alike){const B=res.alike;state('마이크를 누르고 말해 보세요');   // 받아쓰기가 소리 나는 대로 적힌 듯 → 바꿔서 다시 찾을지 묻기
+        const t2=t.includes(B.ft)?t.split(B.ft).join(B.tt):`${t} (${B.from} → ${B.to})`;
+        askAlike(B,()=>agentAsk(t2),()=>say(`그럼 ‘${B.from}’${jo(B.from,'이','가')} 어디인지 다시 말해 주세요. 위 📍 칸에 넣고 이동해도 돼요.`));return}
       msgs.push({role:'tool',tool_call_id:tc.id,name:tc.function.name,content:JSON.stringify(res).slice(0,2800)});
     }
     state('마이크를 누르고 말해 보세요');say('확인할 게 많아서 멈췄어요. 조금 좁혀서 다시 말해 주세요.');
@@ -7078,7 +7172,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(ai){aiAsk(t);return}
     say('잘 못 알아들었어요. 예: “성산식당 가자”, “근처 카페 찾아줘”, “두 번째 거”');
   }
-  window.vaRun=run;window.vaRule=ruleCmd;window.vaKoNum=koNum;window.vaOrd=t=>({list:ordList(t),first:ordinal(t)});window.vaArea={splitArea,geoArea};
+  window.vaRun=run;window.vaRule=ruleCmd;window.vaKoNum=koNum;window.vaOrd=t=>({list:ordList(t),first:ordinal(t)});window.vaArea={splitArea,geoArea,alikeArea,alikePlaces,nearStations,stn:()=>STN.names};
   // AI·정해진 명령이 같이 쓰는 기능 — 실제 검색·좌표·실행은 앱이 맡음
   window.PinbAct={
     findPlace:name=>resolve(String(name||''),false),
