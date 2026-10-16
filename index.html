@@ -1046,6 +1046,11 @@ body.aiPhoto #vaCam.camOnly{display:grid!important}
 #qkMenu .qkF{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:8px;font-size:12.5px;color:var(--muted)}
 #qkMenu .qkF button{font-size:13px;padding:6px 10px;border-radius:10px;flex:none}
 @media (max-width:380px){#qkBar button{padding:0 11px;font-size:13.5px}#qkBar #qkMain span{max-width:70px}}
+/* 📱 뒤로가기: 첫 화면 종료 안내 */
+#exitAsk{position:fixed;left:50%;bottom:calc(var(--tabH) + 92px);transform:translate(-50%,20px);z-index:400;display:flex;align-items:center;gap:12px;background:#252720f2;color:#fff;border-radius:16px;padding:12px 12px 12px 16px;box-shadow:0 8px 24px #0006;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;width:max-content;max-width:calc(100% - 32px)}
+#exitAsk.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#exitAsk b{display:block;font-size:15px}#exitAsk small{display:block;font-size:12.5px;opacity:.8;margin-top:2px}
+#exitAsk button{flex:none;font-size:14px;font-weight:700;padding:9px 12px;border-radius:12px;border:0;background:#fff;color:var(--ink)}
 /* 누가 보는 기록인지 */
 .visTag{font-size:12.5px;color:var(--muted);margin:6px 2px 2px;line-height:1.4}
 .vaErr{display:block;color:#c0392b;font-size:12.5px;margin:-2px 0 4px}
@@ -5548,7 +5553,7 @@ const HELP_FULL=[
 ['앱처럼 설치',`<p>크롬 메뉴(⋮) → <b>홈 화면에 추가</b>를 하면 아이콘으로 앱처럼 열려요.</p><p>처음엔 비밀번호를 한 번 넣어요. 맞히면 이 폰에서 30일 동안 다시 안 물어요. 예전 화면이 계속 보이면 앱을 완전히 닫았다 다시 열어요.</p>`],
 ['계정 만들기',`<p>⚙️ 설정 → 👤 <b>내 계정</b>에서 이메일 + 숫자 4자리로 가입해요. 설정·여행 보관함·가고 싶은 곳·가계부·AI 키를 어느 기기에서나 불러와요.</p><p>숫자 4자리라 보안이 약하니 다른 곳에 쓰는 비밀번호는 쓰지 마세요(50번 틀리면 15분 잠김).</p>`,'set'],
 ['하루 쓰는 순서',`<ul><li><b>찾기</b>에서 맛집·관광지를 찾고</li><li>상세창 <b>📅 일정에 담기</b>로 이번 여행 후보에 넣고</li><li><b>내 여행 › 일정</b>에서 시간 칸에 넣고</li><li>그날은 지도 위 <b>다음 일정 카드</b>로 길안내</li><li>다녀오면 일정에서 <b>✅ 다녀옴</b>을 눌러 표시하고</li><li><b>지출</b>에 경비를 적으면 정산까지 나와요.</li></ul>`],
-['화면 구성',`<p><b>위 줄</b> — 왼쪽 <b>여행 이름 ▾</b>(여행 바꾸기·공유받은 여행·지난 여행) · <b>👥 함께</b>(여행방) · <b>⚙️ 설정</b>.</p><p><b>아래 탭</b> — 찾기 · 내 여행(한눈에·일정·준비·할일·사진·기록) · 내 장소(가고 싶은 곳·다녀온 곳) · 지출(경비·가계부).</p><p>창을 닫으면 원래 보던 창으로 돌아가요. 남은 할 일, 공유받은 여행은 숫자로 떠요.</p>`],
+['화면 구성',`<p><b>위 줄</b> — 왼쪽 <b>여행 이름 ▾</b>(여행 바꾸기·공유받은 여행·지난 여행) · <b>👥 함께</b>(여행방) · <b>⚙️ 설정</b>.</p><p><b>아래 탭</b> — 찾기 · 내 여행(한눈에·일정·준비·할일·사진·기록) · 내 장소(가고 싶은 곳·다녀온 곳) · 지출(경비·가계부).</p><p>창을 닫으면 원래 보던 창으로 돌아가요. <b>폰 뒤로가기</b>로도 맨 위 창부터 하나씩 닫히고, 지도 첫 화면에서 뒤로를 한 번 더 누르면 앱이 닫혀요. 남은 할 일, 공유받은 여행은 숫자로 떠요.</p>`],
 ['❓ 이 페이지',`<p>맨 위 줄 ⚙️ 왼쪽의 <b>?</b>를 누르면 열려요.</p><ul><li><b>📖 도움말</b> — 기능을 누르면 설명, 위 칸에 궁금한 말을 치면 찾아 줘요. '바로 가기'로 그 화면이 열려요.</li><li><b>🎉 축제</b> — 지도 주변이나 전국에서 지금·곧 열리는 축제</li><li><b>✉️ 건의</b> — 불편한 점·고장·원하는 기능을 운영자에게 보내기</li><li><b>📢 공지</b> — 운영자 공지</li></ul><p><b>?</b>에 빨간 점이 뜨면 새 공지가 있다는 뜻이에요.</p>`]]],
 ['🔎 찾기',[
 ['검색 조건',`<p>지도 위 조건 줄(예: 맛집 · 음식점 · 1km · 추천 · TOP 5)을 누르면 아래에서 조건 창이 올라와요.</p><ul><li><b>종류</b>: 🍽 맛집(음식점·카페·흑돼지 등 테마) / 🏝 관광지(명소·오름·해변·폭포·숲·박물관·체험) / ⛽ 주유·충전(휘발유·LPG·전기)</li><li><b>반경</b> 100m ~ 20km(관광지는 제주 전체도) — 종류마다 따로 기억</li><li><b>정렬</b>: 추천(평판) ① · 종합 점수 ② · 평점순 · 가까운순 · 현지인 맛집 / 주유는 최저가순 · 전기는 빈 충전기 많은 순</li><li><b>TOP</b> 5·10·20, <b>프랜차이즈 제외</b>, <b>영업중</b>만, <b>급속만</b>(전기)</li></ul>`,'cond'],
@@ -5660,11 +5665,13 @@ const HELP=[
 ['AI·사진 사용하기',`<p>설정 → 말로 찾기에서 내 AI를 연결하세요. 영수증·예약 사진도 읽을 수 있어요.</p>`,'set']]],
 ['⚙️ 설치·문제 해결',[
 ['앱 설치·계정',`<p>브라우저 메뉴 → ‘홈 화면에 추가’로 설치하세요. 계정 연결은 설정 → 내 계정에서 할 수 있어요.</p>`,'set'],
+['뒤로가기',`<p>폰 뒤로가기를 누르면 맨 위에 열린 창부터 하나씩 닫혀요. 지도 첫 화면에서 한 번 더 누르면 앱이 닫혀요.</p>`],
 ['잘 안될 때',`<p>앱을 닫았다 다시 열고, 마이크가 안 켜지면 브라우저 권한을 확인하세요. 계속 안 되면 건의에서 알려 주세요.</p>`,'suggest'],
 ['축제·공지·건의',`<p>도움말 위 탭에서 축제·공지를 볼 수 있어요. 불편한 점은 ‘건의’로 보내세요.</p>`,'suggest']]]
 ];
 /* 🆕 업데이트 내역 — 올릴 때마다 맨 위에 한 줄 묶음 추가 [날짜, 버전, [바뀐 것…]] */
 const CHANGELOG=[
+['10.16','v0.45 dev',['📱 폰 뒤로가기: 맨 위 창부터 하나씩 닫기, 첫 화면에선 "한 번 더 누르면 닫혀요"','지역이 들어간 말("부산 하단동 술집")은 그 동네로 지도를 옮겨서 찾기 · 깊게 찾기도 지역으로 · 못 찾으면 물어봄 · 키워드에 지역명이 안 남음','② 점수 네이버 호출을 NAVER API HUB 방식으로(새 키용)']],
 ['10.16','v0.45',['⭐ 지도 왼쪽 위 바로가기(주 버튼 + ＋ 메뉴, 꾹 눌러 바꾸기) · ? 는 위 줄 ⚙️ 왼쪽으로','📅 일정에 담기 방식(설정): 담기만 / 일정표로 가기 / 바로 넣기 — 카드 튕기면 바로가기(없으면 내 여행 탭)로 빨려 들어가고 3초 뒤 열림','시간 입력 하나의 규칙으로: 시작은 00:00~23:55 그대로(시간표를 넓힘), 자정을 넘는 머무름은 24:00까지로 줄이고 알려 줌, 24:00은 시작으로 안 받음 — 바로 넣기·말로 일정·예약 사진 같음, 다시 열어도 그대로',"'일 번'·'일번이랑 이번' 같은 한글 번호도 숫자 번호와 똑같이 (‘이번 여행’은 번호 아님)",'계정이 바뀌면 핀볼 꺼짐 · 기준을 모르면 거리 안 보임(0m 아님)','거리: 내 위치 / 검색 중심 나눠 표시, 상호 검색 뒤 0m 없앰','말로 찾기: "1번 주차 돼?"·"1번이랑 2번 중 어디가 나아?"는 고르지 않고 답 · 실내+평점 같은 말은 AI로(없으면 실내+평점순)','영수증·예약 빈 칸이면 입력창은 두고 칸 아래 안내','누가 보는 기록인지 한 줄(경비·가계부·사진·영수증)','🎮 핀볼은 실험실(마스터)로 · 도움말 짧은 판(20개) · 업데이트 내역은 실험실로']],
 ['10.16','v0.45',['❓ 도움말 페이지 — 도움말(기능을 누르면 설명·검색·바로 가기) · 🎉 축제 · ✉️ 건의 · 📢 공지','관광·자연을 고르면 🎉 축제 칩 — 지도 주변 축제 바로 보기','깊게 찾기·사진 읽기 무료 횟수는 예상치로 표시','지도 아래 겹침 정리 — 지난 여행 흔적 줄, 다음 일정 카드, 가고 싶은 곳 줄이 이 지역 검색·마이크에 안 가리게']],
 ['10.15','v0.45',['🎤 말로 찾기 — 물으면 마이크 자동, 근처 찾기는 별점 검색, 조건·기록·날씨 명령, 📖 명령어 모음','🤖 내 AI 키 연결(무료) — 애매한 말 해석, 후보 비교, 🔎 깊게 찾기, 📷 영수증·예약 사진 읽기','🚗 길안내 앱 고르기(TMAP·카카오내비·네이버 지도) · ⛽ 주유하고 가기','아래 탭에 가리던 창(다녀온 곳·사진 카드·일정 편집 등) 탭 위로']],
@@ -5985,6 +5992,58 @@ setTimeout(()=>{
   $('qkSel').onchange=()=>setQkMain($('qkSel').value);
   paintPm();paintQk();
 },0);
+
+/* ===== 📱 폰 뒤로가기: 맨 위에 열린 것부터 하나씩 닫기 · 지도 첫 화면이면 "한 번 더 누르면 닫혀요" =====
+   방식: 지금 화면 위에 '가드' 기록을 하나 올려 두고, 뒤로가기가 그걸 지우면(popstate) 앱이 한 단계 닫은 뒤 가드를 다시 올림.
+   첫 화면에서는 가드를 안 올리고 안내만 띄움 → 그 상태에서 한 번 더 누르면 폰이 앱을 닫음 (웹앱은 스스로 꺼질 수 없음) */
+(()=>{
+  const on=(id,c='on')=>{const e=$(id);return !!e&&e.classList.contains(c)};
+  const clickIf=id=>{const b=$(id);if(b)b.click()};
+  const topSheet=()=>[...document.querySelectorAll('.sheet.on')].pop();
+  function closeSheetTop(s){
+    const b=[...s.querySelectorAll('.sheetHead button')].find(x=>x.dataset.close||/^닫기$/.test(x.textContent.trim()));
+    if(b)b.click();else closeSheet(s.id);
+  }
+  // 위에서부터: 사진 크게 보기 → 작은 메뉴 → 입력창 → 떠 있는 창 → 조건·말로 찾기 → 목록·상세 → 큰 창 → 흔적 보기
+  const STEPS=[
+    [()=>!!pb,()=>{try{pbCleanup()}catch(_){}}],
+    [()=>on('phView'),()=>closeViewer()],
+    [()=>on('qkMenu'),()=>qkMenu(false)],
+    [()=>on('layerPop'),()=>{$('layerPop').classList.remove('on');$('layerBtn')&&$('layerBtn').setAttribute('aria-expanded','false')}],
+    [()=>on('regionPop'),()=>$('regionPop').classList.remove('on')],
+    [()=>on('areaSug'),()=>hideSug()],
+    [()=>on('qpEd'),()=>clickIf('qpX')],
+    [()=>on('epPick'),()=>clickIf('epX')],
+    [()=>on('itemEd'),()=>clickIf('edClose')],
+    [()=>on('routeFind'),()=>clickIf('rfClose')],
+    [()=>on('imMenu'),()=>clickIf('imMenuX')],
+    [()=>on('bkSmsBox'),()=>clickIf('bkSmsX')],
+    [()=>on('pcPanel'),()=>clickIf('pcX')],
+    [()=>on('vsPop'),()=>clickIf('vsPopX')],
+    [()=>on('condSheet'),()=>clickIf('condClose')],
+    [()=>on('vaSheet'),()=>clickIf('vaClose')],
+    [()=>on('listPanel'),()=>clickIf('listClose')],
+    [()=>on('detail','open'),()=>clickIf('closeDetail')],
+    [()=>!!topSheet(),()=>closeSheetTop(topSheet())],
+    [()=>on('trBar'),()=>clickIf('trX')],
+  ];
+  function backStep(){for(const [t,f] of STEPS){let hit=false;try{hit=t()}catch(_){}if(hit){try{f()}catch(_){}return true}}return false}
+  let armed=false,askT=0;
+  const ask=document.createElement('div');ask.id='exitAsk';ask.setAttribute('role','alertdialog');
+  ask.innerHTML='<div><b>핀볼 지도를 닫을까요?</b><small>뒤로를 한 번 더 누르면 닫혀요</small></div><button type="button">계속 쓰기</button>';
+  document.body.append(ask);
+  function arm(){if(armed)return;try{history.pushState({pbGuard:Date.now()},'');armed=true}catch(_){}}
+  function hideAsk(){clearTimeout(askT);ask.classList.remove('on')}
+  ask.querySelector('button').onclick=()=>{hideAsk();arm()};
+  addEventListener('popstate',()=>{
+    armed=false;
+    if(backStep()){hideAsk();arm();return}
+    // 첫 화면: 안내만 (가드 없음 → 한 번 더 누르면 폰이 앱을 닫음). 4초 지나면 안내를 닫고 다시 막아 둠
+    ask.classList.add('on');clearTimeout(askT);askT=setTimeout(()=>{hideAsk();arm()},4000);
+  });
+  // 크롬은 손을 대기 전에 넣은 기록은 뒤로가기에서 건너뛰므로, 처음 손댈 때(그리고 막힌 게 풀려 있을 때마다) 가드를 올림
+  ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{if(!armed&&!ask.classList.contains('on'))arm()},{capture:true,passive:true}));
+})();
 /* ----- 🧪 실험실: 🎤 AI 듣기·해석 비교 (내 키로) — 받아쓰기 오류와 해석 오류를 따로 봄 ----- */
 const LAB_CTX={cands:[{name:'성산식당',cat:'한식'},{name:'성산일출봉 해녀의집',cat:'해물,생선'},{name:'린니쿠',cat:'일식'}],sel:'성산식당',plan:['롯데캐슬 몰운대'],saved:['린니쿠','롯데캐슬 몰운대'],recent:['오설록 티뮤지엄'],time:'12:30',trip:'3일 중 1일차'};
 const LAB_SENT=[['성산식당 가자',{act:'find',q:'성산식당',go:true}],['두 번째 거',{act:'choose',n:2}],['거기로 안내해줘',{act:'navi',alt:{act:'find',q:'성산식당'}}],['근처 흑돼지 찾아줘',{act:'nearby',q:'흑돼지'}],['아까 선택한 곳 저장해줘',{act:'save'}],['배고픈데 이 근처 뭐 먹을까',{act:'nearby'}],['린 니꾸 가자',{act:'find',q:'린니쿠'}],['롯데 캐슬 몰 운대로 데려다줘',{act:'find',q:'롯데캐슬 몰운대'}],
@@ -6268,7 +6327,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(c.then&&c.then.act){const nx=c.then;va.afterPick=p=>{say(`${p.place_name} 근처에서 이어서 찾을게요.`,{voice:''});if(typeof map!=='undefined'&&map&&hasLoc(p))map.setCenter(new kakao.maps.LatLng(+p.y,+p.x));aiExec(nx)}}
     switch(c.act){
       case 'find':if(c.q){if(c.go)va.goIntent=true;resolve(c.q,va.goIntent,o);return}break;
-      case 'nearby':if(c.go)va.goIntent=true;doNearby({q:c.q,cat:c.cat,cond:c.cond});return;
+      case 'nearby':if(c.go)va.goIntent=true;doNearby({q:c.q,cat:c.cat,cond:c.cond,area:c.area});return;
       case 'cond':doCond(c.cond||{});return;
       case 'choose':{const n=c.n||1;if(!va.cands.length&&(lastSelected||[]).length)showCands(lastSelected.map(p=>({p,tag:''})),'','map');
         if(!va.cands.length){say('고를 후보가 아직 없어요. 먼저 장소를 찾아 주세요.');return}
@@ -6517,8 +6576,52 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     $('again').click();
     const my=va.seq;setTimeout(()=>{if(my===va.seq&&va.waitRes&&!va.waitScore){va.waitRes=false;say('검색 결과가 아직 없어요. 지도를 옮겨 다시 해 보세요.')}},15000);
   }
-  function doNearby({q='',cat='',cond=null}={}){
-    q=String(q||'').replace(/(근처|주변|가까운)\s*/g,'').trim();
+  // ----- 지역이 들어간 말: "부산 하단동 술집" → 하단동으로 지도를 옮기고 '술집'으로 찾기 (지역을 못 찾으면 몰래 딴 데서 찾지 않고 물음) -----
+  const AREA_TAIL=/(동|읍|면|리|가|구|군|시|도|역|항|포구|해수욕장|해변|공항|터미널|시장|대학교|사거리|오거리|로터리)$/;
+  const BIG=/^(서울|부산|대구|인천|광주|대전|울산|세종|제주|서귀포|경기|강원|충북|충남|전북|전남|경북|경남)/;
+  const AREA_CAT=/지하철|기차역|해수욕장|관광|명소|구청|시청|군청|주민센터|읍사무소|면사무소|공항|터미널|전통시장|대학교|행정/;
+  function geoArea(t){return new Promise(ok=>{
+    t=String(t||'').replace(/[,]/g,' ').replace(/\s+/g,' ').trim();if(!t)return ok(null);
+    try{const S=kakao.maps.services,gc=new S.Geocoder();
+      gc.addressSearch(t,(r,st)=>{
+        if(st===S.Status.OK&&r.length){const a=r[0],ad=a.address||a.road_address||{};return ok({lat:+a.y,lng:+a.x,name:t,r1:ad.region_1depth_name||'',lv:ad.region_3depth_name?3:ad.region_2depth_name?2:1})}
+        if(typeof ps==='undefined'||!ps)return ok(null);
+        ps.keywordSearch(t,(d,s2)=>{
+          if(s2!==S.Status.OK||!d.length)return ok(null);
+          const last=t.split(' ').pop(),x=d.slice(0,5).find(p=>(/^(SW8|AT4|PO3)$/.test(p.category_group_code||'')||AREA_CAT.test(p.category_name||''))&&String(p.place_name).includes(last));
+          ok(x?{lat:+x.y,lng:+x.x,name:t,r1:'',lv:3}:null)});
+      });
+    }catch(_){ok(null)}})}
+  function centerRegion1(){return new Promise(ok=>{try{if(!searchCenter)return ok('');new kakao.maps.services.Geocoder().coord2RegionCode(searchCenter.getLng(),searchCenter.getLat(),(r,st)=>ok(st===kakao.maps.services.Status.OK&&r[0]?r[0].region_1depth_name:''))}catch(_){ok('')}})}
+  async function splitArea(q){
+    const tk=String(q||'').split(/[\s,]+/).filter(Boolean);if(tk.length<2)return null;
+    const tried=new Set();
+    const cand=[];for(let k=tk.length-1;k>=1;k--)if(AREA_TAIL.test(tk[k-1])||(k===1&&BIG.test(tk[0])))cand.push(k);
+    if(!cand.includes(1))cand.push(1);   // '해운대 돼지국밥'처럼 꼬리 없는 지명도 첫 낱말은 한 번 확인
+    for(const k of cand.slice(0,3)){const pre=tk.slice(0,k).join(' ');if(tried.has(pre))continue;tried.add(pre);
+      const g=await geoArea(pre);if(g)return {...g,rest:tk.slice(k).join(' ')}}
+    return null;
+  }
+  function centerQuiet(lat,lng,lv){
+    searchCenter=new kakao.maps.LatLng(lat,lng);centerMarker.setPosition(searchCenter);map.setCenter(searchCenter);
+    try{map.setLevel(lv===1?8:lv===2?6:5)}catch(_){}try{updateRadiusCircle()}catch(_){}try{clearExclusions()}catch(_){}try{hideSug()}catch(_){}
+  }
+  async function doNearby(o={}){
+    let {q='',cat='',cond=null,area=''}=o;q=String(q||'').replace(/(근처|주변|가까운)\s*/g,'').trim();area=String(area||'').trim();
+    const my=va.seq;let A=null;
+    if(typeof kakao!=='undefined'&&kakao.maps&&kakao.maps.services&&map){
+      if(area){state(`‘${area}’ 찾는 중…`);A=await geoArea(area);if(my!==va.seq)return;
+        if(!A){say(`‘${area}’이(가) 어디인지 못 찾았어요. 위 📍 칸에 동네를 넣고 이동한 뒤 다시 말해 주세요.`);return}
+        const rest=area.split(/\s+/).reduce((s,w)=>s.replace(w,''),q).replace(/^[\s,]+|[\s,]+$/g,'').replace(/\s{2,}/g,' ');A.rest=rest||q}
+      else if(/[\s,]/.test(q)){A=await splitArea(q);if(my!==va.seq)return}
+      if(A){
+        let move=true;if(A.lv===1&&A.r1){const r=await centerRegion1();if(my!==va.seq)return;if(r&&r.slice(0,2)===A.r1.slice(0,2))move=false}   // '제주 흑돼지'를 제주에서 말하면 그대로
+        q=A.rest;if(move)centerQuiet(A.lat,A.lng,A.lv);
+      }
+    }
+    nearbyHere({q,cat,cond},A&&A.name);
+  }
+  function nearbyHere({q='',cat='',cond=null}={},areaName){
     if(!cat||!['food','cafe','tour','fuel'].includes(cat))cat=/주유|기름|충전|LPG/i.test(q)?'fuel':/관광|볼거리|명소|오름|해변|바다|폭포|숲|공원|박물관|미술관|체험/.test(q)?'tour':/카페|커피|디저트|빵/.test(q)?'cafe':'food';
     quiet(()=>{
       const m=setMode(cat);
@@ -6529,7 +6632,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       if(m==='food'&&w&&!/^(맛집|식당|밥|밥집|음식|카페|커피|디저트|빵)$/.test(w))$('kw').value='+'+w.replace(/\s+/g,' +');
       else if(m!=='fuel')$('kw').value='';
     });
-    startSearch(`“${q||'근처'}”`);
+    startSearch(`${areaName?areaName+' ':''}“${q||'근처'}”`);
   }
   function doCond(c){
     const said=quiet(()=>applyCond(c));
@@ -6764,9 +6867,11 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       if(name==='find_places'){
         const q=String(a.q||'').slice(0,40);if(!q)return {err:'q가 필요해요'};
         if(typeof ps==='undefined'||!ps)return {err:'지도가 아직 준비 안 됨'};
-        const near=String(a.near||'here');let c=null,p=null;
-        if(near==='selected')p=va.sel||currentPlace;else if(near==='lodging')p=lodging();else if(near!=='here'){const L=findLocal(near);if(L.length)p=L[0].p}
-        if(p&&hasLoc(p))c=[+p.y,+p.x];else if(searchCenter)c=[searchCenter.getLat(),searchCenter.getLng()];else if(lastPos)c=[lastPos.lat,lastPos.lng];
+        const near=String(a.near||'here').trim();let c=null,p=null,g=null;
+        if(near==='selected')p=va.sel||currentPlace;else if(near==='lodging')p=lodging();
+        else if(near&&near!=='here'){const L=findLocal(near);if(L.length)p=L[0].p;
+          else{g=await geoArea(near);if(!g)return {err:`'${near}' 위치를 못 찾았어요. 지어내지 말고 어느 동네인지 사용자에게 물어보세요.`};found.area=g}}   // 지역 이름(예: 부산 하단동)
+        if(g)c=[g.lat,g.lng];else if(p&&hasLoc(p))c=[+p.y,+p.x];else if(searchCenter)c=[searchCenter.getLat(),searchCenter.getLng()];else if(lastPos)c=[lastPos.lat,lastPos.lng];
         const S=kakao.maps.services,opt={size:10};
         if(c){opt.location=new kakao.maps.LatLng(c[0],c[1]);opt.radius=Math.max(200,Math.min(20000,+a.radius||3000))}
         const cg={food:'FD6',cafe:'CE7',tour:'AT4',fuel:'OL7'}[a.cat];if(cg)opt.category_group_code=cg;
@@ -6812,6 +6917,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       if(tc.function.name==='answer'){state('마이크를 누르고 말해 보세요');
         const L=(Array.isArray(args.ids)?args.ids:[]).map(String).map(id=>found.get(id)).filter(Boolean).slice(0,5);
         if(args.go)va.goIntent=true;
+        if(L.length&&found.area){const A=found.area;if(L.some(p=>hasLoc(p)&&distanceM(A.lat,A.lng,+p.y,+p.x)<20000))centerQuiet(A.lat,A.lng,A.lv)}   // 지역을 찾았으면 지도도 그리로
         if(L.length){showCands(L.map(p=>{const s=scoreOf(p);return {p:withDist(p),tag:s?s.tag:''}}),'',L.length>1?'':'');
           if(L.length===1){select(0,!!args.go);say(`${String(args.say||'')} ${hasLoc(L[0])?'길안내는 아래 버튼을 눌러 주세요.':''}`,{ask:false});return}
           say(`${String(args.say||'')}${va.goIntent?' 번호를 누르면 바로 출발해요.':''} 몇 번째로 할까요?`);return}
@@ -6972,7 +7078,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(ai){aiAsk(t);return}
     say('잘 못 알아들었어요. 예: “성산식당 가자”, “근처 카페 찾아줘”, “두 번째 거”');
   }
-  window.vaRun=run;window.vaRule=ruleCmd;window.vaKoNum=koNum;window.vaOrd=t=>({list:ordList(t),first:ordinal(t)});
+  window.vaRun=run;window.vaRule=ruleCmd;window.vaKoNum=koNum;window.vaOrd=t=>({list:ordList(t),first:ordinal(t)});window.vaArea={splitArea,geoArea};
   // AI·정해진 명령이 같이 쓰는 기능 — 실제 검색·좌표·실행은 앱이 맡음
   window.PinbAct={
     findPlace:name=>resolve(String(name||''),false),

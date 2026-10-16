@@ -37,7 +37,7 @@ const SYS = `너는 한국 여행 지도 앱 '핀볼'의 음성 명령 해석기
 형식: {"heard":"받아쓰기를 고친 문장","act":"…", 그 밖의 칸}
 [장소]
 find: 가게·장소 고유 이름 찾기/가기. q, go(가자·안내해·데려다줘면 true). 음식·메뉴·종류는 find가 아니다.
-nearby: 음식·메뉴·종류로 근처 찾기(제육볶음·국밥·흑돼지·카페·오름·주유소, 배고파, 뭐 먹지, ○○ 먹고 싶어). q, cat(food|cafe|tour|fuel). 조건이 같이 오면 cond 칸도 넣는다.
+nearby: 음식·메뉴·종류로 근처 찾기(제육볶음·국밥·흑돼지·카페·오름·주유소, 배고파, 뭐 먹지, ○○ 먹고 싶어). q, cat(food|cafe|tour|fuel). 조건이 같이 오면 cond 칸도 넣는다. 지역·동네·역 이름이 있으면 area에 넣고 q에는 넣지 않는다(예: "부산 하단동 술집 추천" → area "부산 하단동", q "술집").
 choose: 보이는 후보 고르기. n(1부터, 마지막 -1), go
 navi: 고른 곳(거기·그 집)으로 길안내
 fuel: 가는 길에 주유·충전. q=목적지(숙소·장소, 없으면 "")
@@ -64,11 +64,12 @@ other: say(무슨 사진인지 한 줄)
 글자가 흐리거나 없으면 그 칸은 비운다. 카드번호·전화번호 전체는 적지 않는다. 지어내지 않는다.`;
 const SYS_AGENT = `너는 한국 여행 지도 앱 '핀볼'의 검색 비서다. 도구로 사실을 확인한 뒤 답한다.
 장소는 find_places, 점수·영업·주차는 place_info, 날씨는 weather, 내 일정·숙소·가고 싶은 곳은 my_trip. [화면] 후보 id도 쓸 수 있다.
+사용자가 지역(동네·역)을 말하면 find_places의 near에 그 지역을 넣고 q에는 넣지 않는다. 지역을 못 찾았다는 결과가 오면 지어내지 말고 answer로 어느 동네인지 묻는다.
 도구는 필요한 만큼만(보통 1~3번). 끝낼 때는 반드시 answer: say=한두 문장 한국어(근거 포함, 확인 못 한 건 "정보 없음"), ids=보여 줄 장소 id(도구 결과·[화면]에 나온 것만, 최대 5), go=가자·안내해 같은 말이면 true.
 장소·점수·영업시간을 지어내지 않는다.`;
 const fn = (name, description, properties, required = []) => ({ type: 'function', function: { name, description, parameters: { type: 'object', properties, required } } });
 const TOOLS = [
-  fn('find_places', '카카오 장소 검색. 결과: id·이름·분류·거리(m)', { q: { type: 'string' }, near: { type: 'string', description: 'here(지도 가운데)|selected(고른 곳)|lodging(숙소)|장소 이름' }, radius: { type: 'integer', description: '미터, 기본 3000' }, cat: { type: 'string', enum: ['food', 'cafe', 'tour', 'fuel', 'any'] } }, ['q']),
+  fn('find_places', '카카오 장소 검색. 결과: id·이름·분류·거리(m)', { q: { type: 'string' }, near: { type: 'string', description: "here(지도 가운데)|selected(고른 곳)|lodging(숙소)|내 목록 장소 이름|지역·동네·역 이름(예: '부산 하단동', '서면역')" }, radius: { type: 'integer', description: '미터, 기본 3000' }, cat: { type: 'string', enum: ['food', 'cafe', 'tour', 'fuel', 'any'] } }, ['q']),
   fn('place_info', '장소 상세: 평점·후기 수·영업 상태·주차장 안내·내 메모', { ids: { type: 'array', items: { type: 'string' } } }, ['ids']),
   fn('weather', '지금 위치 날씨(시간별 비 포함)', { when: { type: 'string', enum: ['today', 'tomorrow'] } }),
   fn('my_trip', '오늘 일정·숙소·가고 싶은 곳', {}),
@@ -267,6 +268,7 @@ function cleanCmd(o, depth = 0) {
   const act = ACTS.has(o.act) ? o.act : 'none';
   const c = { act, q: s(o.q, 60), n: Math.max(-1, Math.min(10, Math.round(+o.n || 0))), go: bool(o.go) === true, cat: pickIn(o.cat, ['food', 'cafe', 'tour', 'fuel']) || 'food', say: s(o.say, 200), heard: s(o.heard, 200) };
   if (act === 'nearby' || act === 'cond') { const cd = condOf(o); if (Object.keys(cd).length) c.cond = cd; }
+  if (act === 'nearby') { const ar = s(o.area, 30); if (ar) c.area = ar; }
   if (act === 'exp') { const a = Math.round(+String(o.amt ?? '').replace(/[^\d.]/g, '') || 0); c.amt = a > 0 && a <= 1e8 ? a : 0; c.title = s(o.title, 40); c.who = pickIn(o.who, ['with', 'me']); c.bcat = s(o.bcat, 12); }
   if (act === 'todo' || act === 'memo') c.text = s(o.text, 120);
   if (act === 'sched') { c.rel = pickIn(o.rel, ['today', 'tomorrow', 'dayafter']); const d = Math.round(+o.day || 0); c.day = d >= 1 && d <= 30 ? d : 0; const tm = String(o.time || '').match(/^(\d{1,2}):(\d{2})$/); c.time = tm && +tm[1] < 25 && +tm[2] < 60 ? `${+tm[1]}:${tm[2]}` : ''; }
