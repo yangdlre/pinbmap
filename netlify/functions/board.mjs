@@ -71,7 +71,7 @@ async function fest(body, st) {
   if (!ENV('TOUR_KEY')) return ok({ err: 'nokey' });
   const now = Date.now(), all = await festAll(st, now);
   if (!all) return ok({ err: 'tour' }, 502);
-  const today = ymd(now), days = Math.min(120, Math.max(0, +body.days || 30)), until = ymd(now + days * 864e5);
+  const today = ymd(now), dd = body.days == null || body.days === '' ? 30 : +body.days, days = Math.min(120, Math.max(0, Number.isFinite(dd) ? dd : 30)), until = ymd(now + days * 864e5);   // days 0 = 지금 하는 것만
   const lat = +body.lat, lng = +body.lng, r = Math.min(600, Math.max(0, +body.r || 0));
   let list = all.items.filter(x => x.e >= today && x.s <= until);
   if (r && Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) > 1) list = list.filter(x => x.x && x.y).map(x => ({ ...x, d: dist(lat, lng, x.y, x.x) })).filter(x => x.d <= r * 1000);
