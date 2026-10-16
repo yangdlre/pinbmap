@@ -842,7 +842,7 @@ header select,header input[type=text],header button{font-size:14px;padding:9px 1
 #catRow::-webkit-scrollbar{display:none}
 #catRow button{flex:none;height:40px;padding:0 15px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:15px;font-weight:700;color:var(--ink)}
 #catRow button.on{background:var(--accent);border-color:var(--accent);color:#fff}
-body:not(.mode-tour) #catJeju{display:none}
+body:not(.mode-tour) #catJeju,body:not(.mode-tour) #catFest{display:none}
 #mapBottom{position:absolute;left:10px;right:10px;bottom:14px;z-index:46;display:flex;gap:8px;align-items:center}
 #viewSeg{flex:none;display:flex;background:#fff;border-radius:26px;padding:4px;box-shadow:0 4px 14px #0003}
 #viewSeg button{border:0;background:none;height:44px;padding:0 12px;border-radius:22px;font-size:14px;font-weight:700;color:var(--muted)}
@@ -1018,6 +1018,78 @@ body.aiPhoto #vaCam.camOnly{display:grid!important}
 .vaRc .vaQb{clear:both}
 .vmDeep{display:flex;gap:8px;align-items:flex-start;margin-top:8px;font-size:14px}
 .vmDeep small{display:block;color:var(--muted);font-size:12px}
+/* 실험실: 사용 설명서 */
+#labManual details.man{border-top:1px solid var(--line);padding:2px 0}
+#labManual summary{font-weight:700;font-size:15px;padding:10px 2px;cursor:pointer}
+#labManual .manB{font-size:14px;line-height:1.65;padding:0 2px 10px}
+#labManual .manB p{margin:6px 0}
+#labManual .manB ul{margin:4px 0;padding-left:18px}
+#labManual .manB li{margin:3px 0}
+#labManual code{background:#f1f2ee;border-radius:5px;padding:1px 5px;font-size:13px}
+/* ❓ 도움말 버튼(지도 왼쪽 위) · 도움말 페이지 */
+#helpBtn{position:absolute;left:10px;top:10px;z-index:45;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:#fffffff2;box-shadow:0 1px 5px #0002;font-size:20px;font-weight:800;color:var(--ink);display:grid;place-items:center;padding:0;line-height:1}
+#helpBtn .hpDot,#hpTabs .hpDot{position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;background:#e5484d;border:2px solid #fff;display:none}
+#helpBtn.new .hpDot{display:block}
+#helpPg .sheetBody{padding:0 0 18px}
+#hpTabs{position:sticky;top:0;z-index:3;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:10px 12px;background:var(--bg);border-bottom:1px solid var(--line)}
+#hpTabs button{position:relative;padding:9px 2px;border-radius:20px;border:1px solid var(--line);background:#fff;font-size:14.5px;font-weight:600;white-space:nowrap;color:var(--ink)}
+#hpTabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+#hpTabs .hpDot{top:2px;right:2px}
+@media (max-width:380px){#hpTabs{gap:4px;padding:8px 8px}#hpTabs button{font-size:13px;padding:8px 1px}}
+#hpBody{padding:12px 14px}
+#hpBody .cg{display:flex;flex-wrap:wrap;gap:6px}
+#hpBody .cg button{font-size:14px;padding:8px 12px;border-radius:18px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+#hpBody .cg button.on{border-color:var(--accent);background:#e7f1ed;color:var(--accent);font-weight:700}
+.hpSearch input{width:100%;box-sizing:border-box;font-size:15.5px;padding:11px 14px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.hpH{margin:18px 0 7px;font-size:15.5px;font-weight:800}
+.hpG{border-bottom:1px solid var(--line);padding-bottom:2px}.hpG.on{padding-bottom:12px}
+.hpGh{display:flex;align-items:center;gap:6px;width:100%;margin:6px 0 0;padding:12px 2px;border:0;background:none;font-size:15.5px;font-weight:800;color:var(--ink);text-align:left}
+.hpGh small{font-size:12.5px;font-weight:600;color:var(--muted);background:#ecebe4;border-radius:9px;padding:0 6px}
+.hpGh i{margin-left:auto;font-style:normal;color:var(--muted);font-size:13px}
+.hpAns{margin-top:8px;background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.62}
+.hpAns p{margin:5px 0}.hpAns ul{margin:5px 0;padding-left:18px}.hpAns li{margin:3px 0}
+.hpAns code{background:#f1f2ee;border-radius:5px;padding:1px 5px;font-size:13px}
+.hpAt{display:block;font-size:15px;margin-bottom:2px}
+.hpGo{display:inline-block;margin-top:8px;font-size:14px;font-weight:700;padding:8px 13px;border-radius:12px;border:1px solid var(--accent);background:#fff;color:var(--accent)}
+.hpHit{margin-top:12px}.hpHit>small{color:var(--muted);font-size:12.5px}
+.hpEmpty{text-align:center;color:var(--muted);font-size:14.5px;padding:26px 8px;line-height:1.6}
+.hpNote{font-size:13px;color:var(--muted);margin-top:10px;line-height:1.5}
+.hpMain{width:100%;margin-top:10px;font-size:16px;font-weight:700;padding:12px;border-radius:14px;border:0;background:var(--accent);color:#fff}
+.hpMain:disabled{opacity:.55}
+.fBar{display:flex;flex-direction:column;gap:7px}
+.fCard{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;margin-top:9px}
+.fCard.open{border-color:var(--accent)}
+.fTop{display:flex;gap:10px;align-items:center;cursor:pointer}
+.fTop img,.fNo{width:66px;height:66px;flex:none;border-radius:10px;object-fit:cover;background:#f1f2ee;display:grid;place-items:center;font-size:26px}
+.fTx{min-width:0;font-size:13.5px;line-height:1.45}
+.fTx b{display:block;font-size:15px;line-height:1.35;margin-bottom:2px}
+.fTx small{display:block;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fOn,.fSoon{display:inline-block;font-size:12px;font-weight:700;border-radius:8px;padding:0 6px;margin-right:2px}
+.fOn{background:#e7f1ed;color:var(--accent)}.fSoon{background:#fff1e6;color:#c2410c}
+.fInfo{margin-top:9px;border-top:1px solid var(--line);padding-top:8px;font-size:14px;line-height:1.55}
+.fInfo>div>span{display:inline-block;min-width:38px;color:var(--muted);margin-right:6px}
+.fOv{margin:7px 0 2px;white-space:pre-line;font-size:13.5px;color:#3d3f37}
+.fBtns{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.fBtns button{font-size:13.5px;padding:8px 11px;border-radius:12px;border:1px solid var(--line);background:#fff}
+.festTag{background:#fff;border:2px solid #c2410c;border-radius:12px;padding:5px 9px;font-size:13px;font-weight:700;box-shadow:0 3px 10px #0003;white-space:nowrap;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.sgBox textarea,.ntEd textarea,.ntEd input[type=text],.sgRow input{width:100%;box-sizing:border-box;font-size:15px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;margin-top:9px;font-family:inherit}
+.sgRow{display:flex;gap:6px}.sgRow input{flex:1;min-width:0}
+#sgKinds{margin-top:10px}
+.sgIt{border-top:1px solid var(--line);padding:8px 0}
+.sgH{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 4px;align-items:center}
+.sgH b{color:var(--ink)}.sgH button{margin-left:auto;font-size:12px;padding:4px 8px}
+.sgT{font-size:14.5px;white-space:pre-wrap;margin-top:3px;word-break:break-word}
+.ntEd .ntPin{display:flex;gap:6px;align-items:center;font-size:14px;margin-top:8px}
+.ntEd .row button{font-size:14px}
+.ntIt{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-top:8px}
+.ntIt.ntPinned{border-color:#e0a800;background:#fffcf0}
+.ntH{display:flex;gap:6px;align-items:baseline}.ntH b{font-size:15px;flex:1;min-width:0}.ntH small{color:var(--muted);font-size:12px;flex:none}
+.ntB{font-size:14.5px;line-height:1.6;margin-top:5px;word-break:break-word}
+.ntA{display:flex;gap:6px;justify-content:flex-end;margin-top:6px}.ntA button{font-size:12.5px;padding:5px 9px}
+.clIt{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin-top:7px}
+.clIt summary{cursor:pointer;font-size:14.5px}.clIt summary small{color:var(--muted);margin-left:4px}
+.clIt ul{margin:6px 0 2px;padding-left:18px;font-size:14px;line-height:1.55}
+#labManual h5{margin:12px 0 2px;font-size:14.5px}
 /* 말로 찾기: 기록 확인 칸 */
 .vaQ{line-height:1.55}
 .vaQb{display:flex;gap:8px;margin-top:10px}
@@ -1060,6 +1132,7 @@ body.aiPhoto #vaCam.camOnly{display:grid!important}
 </header>
 <div id="status">현재 위치 확인 중…</div>
 <div id="map">
+  <button type="button" id="helpBtn" aria-label="도움말">?<i class="hpDot"></i></button>
   <div id="mapFloatTools" class="mbar"><span id="mapTypeGrp" class="mbGrp"><button id="roadMapBtn" class="active mt">🗺 일반</button><button id="hybridMapBtn" class="mt">🛰 위성</button></span><button id="visitedBtn">👣 다녀온 곳</button></div>
   <div id="leftTools" class="mbar"><button id="schedBtn">📅 일정<span class="badge" id="pickBadge"></span></button><button id="todoBtn">✅ 할일<span class="badge" id="todoBadge"></span></button><button id="expBtn">💳 경비</button><button id="savedBtn">📌 가고 싶은 곳</button><button id="bookBtn">📒 가계부</button><button id="setBtn" title="내 설정 동기화">⚙️</button></div>
   <div id="restoreTools" class="mbar"><button id="listBtn" style="font-weight:700">≡ 목록</button><button id="regionBtn">🗺 지역 ▾</button></div>
@@ -1076,6 +1149,7 @@ body.aiPhoto #vaCam.camOnly{display:grid!important}
 <div id="tripPick" class="sheet"><div class="sheetHead"><b>여행 선택</b><button type="button" id="tpClose">닫기</button></div><div class="sheetBody" id="tpBody"><div class="tpNote">지난 여행을 열면 지금 여행은 보관함에 남아요. 🗺 흔적은 바꾸지 않고 지도에서 구경만 해요. 가고 싶은 곳·가계부는 여행을 바꿔도 그대로예요.</div></div></div>
 <div id="tripHub" class="sheet"><div class="sheetHead"><b>한눈에</b><button type="button" data-hubclose="tripHub">닫기</button></div><div class="sheetBody" id="hubBody"></div></div>
 <div id="visList" class="sheet"><div class="sheetHead"><b>👣 다녀온 곳</b><button type="button" data-hubclose="visList">닫기</button></div><div class="sheetBody" id="vlBody"></div></div>
+<div id="helpPg" class="sheet"><div class="sheetHead"><b>도움말</b><button type="button" id="hpClose">닫기</button></div><div class="sheetBody"><div id="hpTabs"></div><div id="hpBody"></div></div></div>
 <div id="labEd" class="sheet"><div class="sheetHead"><b>🧪 실험실</b><button type="button" id="labClose">닫기</button></div><div class="sheetBody" id="labBody"></div></div>
 <div id="vaShade"></div><div id="vaSheet" role="dialog" aria-label="말로 찾기"><div class="vaHead"><b>🎤 말로 찾기</b><label><input type="checkbox" id="vaTts"> 읽어 주기</label><button type="button" id="vaClose">닫기</button></div><div id="vaState" role="status"><i></i><span>마이크를 누르고 말해 보세요</span></div><div class="vaIn"><input type="text" id="vaText" placeholder="예: 성산식당 가자" enterkeyhint="go" autocomplete="off"><button type="button" id="vaMic" aria-label="말하기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button><button type="button" id="vaGo" aria-label="보내기"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div><div id="vaSay" aria-live="polite"></div><div id="vaList"></div><div id="vaAct"><button type="button" id="vaTmap">🚗 길안내 (<span class="navNm">TMAP</span>)</button><button type="button" id="vaFuel">⛽ 주유하고 가기</button><button type="button" id="vaInfo">상세 보기</button><button type="button" id="vaPick">📅 일정에 담기</button><button type="button" id="vaKeep">📌 가고 싶은 곳</button><button type="button" id="vaAsk" style="display:none">ChatGPT에 물어보기</button></div><div id="vaEx"><button type="button">성산식당 가자</button><button type="button">근처 카페 찾아줘</button><button type="button">다음 일정 뭐야</button><button type="button">두 번째 거</button><button type="button">아까 본 곳</button><button type="button">저장한 곳</button></div></div>
 <div id="themeEd" class="sheet"><div class="sheetHead"><b>✏️ 맛집 테마 편집</b><button data-close="themeEd">닫기</button></div>
@@ -5224,10 +5298,11 @@ document.querySelectorAll('.sheetHead>b').forEach(b=>{if(b.children.length)retur
 (()=>{
   // 1) 종류 칩: 한 번 누르면 바로 검색
   const row=document.createElement('div');row.id='catRow';
-  row.innerHTML='<button type="button" data-cat="food:FD6">식사</button><button type="button" data-cat="food:CE7">커피</button><button type="button" data-cat="tour">관광·자연</button><button type="button" data-cat="fuel">주유·충전</button><button type="button" id="catJeju" data-cat="jeju">제주 전체</button>';
+  row.innerHTML='<button type="button" data-cat="food:FD6">식사</button><button type="button" data-cat="food:CE7">커피</button><button type="button" data-cat="tour">관광·자연</button><button type="button" id="catJeju" data-cat="jeju">제주 전체</button><button type="button" id="catFest">🎉 축제</button><button type="button" data-cat="fuel">주유·충전</button>';
   $('condBtn').after(row);
   const fire=id=>$(id).dispatchEvent(new Event('change',{bubbles:true}));
-  row.onclick=e=>{const b=e.target.closest('[data-cat]');if(!b)return;const [m,c]=b.dataset.cat.split(':');
+  row.onclick=e=>{if(e.target.closest('#catFest')){openHelp('fest');return}
+    const b=e.target.closest('[data-cat]');if(!b)return;const [m,c]=b.dataset.cat.split(':');
     const real=searchPlaces;searchPlaces=function(){};   // 종류·테마를 바꾸는 동안의 검색은 막고 마지막에 한 번만
     try{
       if(m==='jeju'){$('radius').value='jeju';fire('radius')}
@@ -5237,7 +5312,9 @@ document.querySelectorAll('.sheetHead>b').forEach(b=>{if(b.children.length)retur
     condSum();$('again').click()};
   const oldSum=window.condSum;
   window.condSum=function(){oldSum();const m=appMode(),t=themeList.find(t=>t.id===$('theme').value),cat=m==='food'?(t&&t.cat==='CE7'?'food:CE7':'food:FD6'):m;
-    row.querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('on',b.dataset.cat===cat||(b.dataset.cat==='jeju'&&$('radius').value==='jeju')))};
+    row.querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('on',b.dataset.cat===cat||(b.dataset.cat==='jeju'&&$('radius').value==='jeju')));
+    // 관광·자연으로 바뀌면 그 칩과 제주 전체·🎉 축제가 보이게 줄을 밀어 줌
+    if(m!==row._m){row._m=m;setTimeout(()=>{const t=row.querySelector('[data-cat="tour"]');try{row.scrollTo({left:m==='tour'&&t?Math.max(0,t.offsetLeft-row.offsetLeft-16):0,behavior:'smooth'})}catch(_){}},30)}};
   setTimeout(condSum,0);
 
   // 2) 지도 아래: 지도 · 오늘 · 모아보기 + 이 지역 검색
@@ -5340,7 +5417,7 @@ function openLab(){
     <div class="rbox"><b>🧮 ② 종합 점수 연결 상태</b><div id="labSrc" class="labNote" style="margin-top:6px">확인 중…</div>
     <div class="labNote" style="margin-top:8px">② = 블로그 언급 30 · 최근 글 15 · 다음 블로그 15 · 검색 추세 10 · 관광공사 10 · 우리 기록 15 · 카페 5 · 유튜브 5 (연결된 것만으로 100점 환산). 요약글에 협찬·체험단·원고료 등이 보이는 글과 가게 이름이 없는 글은 아예 빼고 셉니다. 정렬할 땐 거리도 조금 반영해요.</div></div>`;
   openSheet('labEd');
-  labAiBox();
+  labAiBox();labManualBox();
   if(isM)acctCall({action:'admin',email:acct.email,token:acct.token,lab:'5555'}).then(r=>{
     const el=$('labAdm');if(!el)return;
     if(!r.ok){el.textContent='불러오지 못했어요 ('+(r.j.err||r.status)+')';return}
@@ -5356,6 +5433,365 @@ function openLab(){
   }).catch(()=>{const el=$('labSrc');if(el)el.textContent='점수 서버에 연결하지 못했어요.'});
 }
 
+/* ----- ❓ 도움말 자료 (도움말 페이지와 🧪 실험실 사용 설명서가 같이 씀) -----
+   [묶음 제목, [[칩 이름, 설명 HTML, 바로 가기?], …], 실험실 전용?] */
+const HELP=[
+['🚀 처음이라면',[
+['앱처럼 설치',`<p>크롬 메뉴(⋮) → <b>홈 화면에 추가</b>를 하면 아이콘으로 앱처럼 열려요.</p><p>처음엔 비밀번호를 한 번 넣어요. 맞히면 이 폰에서 30일 동안 다시 안 물어요. 예전 화면이 계속 보이면 앱을 완전히 닫았다 다시 열어요.</p>`],
+['계정 만들기',`<p>⚙️ 설정 → 👤 <b>내 계정</b>에서 이메일 + 숫자 4자리로 가입해요. 설정·여행 보관함·가고 싶은 곳·가계부·AI 키를 어느 기기에서나 불러와요.</p><p>숫자 4자리라 보안이 약하니 다른 곳에 쓰는 비밀번호는 쓰지 마세요(50번 틀리면 15분 잠김).</p>`,'set'],
+['하루 쓰는 순서',`<ul><li><b>찾기</b>에서 맛집·관광지를 찾고</li><li>상세창 <b>📅 일정에 담기</b>로 이번 여행 후보에 넣고</li><li><b>내 여행 › 일정</b>에서 시간 칸에 넣고</li><li>그날은 지도 위 <b>다음 일정 카드</b>로 길안내</li><li>가까이 가면 <b>✅ 다녀옴</b>이 저절로 찍히고</li><li><b>지출</b>에 경비를 적으면 정산까지 나와요.</li></ul>`],
+['화면 구성',`<p><b>위 줄</b> — 왼쪽 <b>여행 이름 ▾</b>(여행 바꾸기·공유받은 여행·지난 여행) · <b>👥 함께</b>(여행방) · <b>⚙️ 설정</b>.</p><p><b>아래 탭</b> — 찾기 · 내 여행(한눈에·일정·준비·할일·사진·기록) · 내 장소(가고 싶은 곳·다녀온 곳) · 지출(경비·가계부).</p><p>창을 닫으면 원래 보던 창으로 돌아가요. 남은 할 일, 공유받은 여행은 숫자로 떠요.</p>`],
+['❓ 이 페이지',`<p>지도 왼쪽 위 <b>?</b>를 누르면 열려요.</p><ul><li><b>📖 도움말</b> — 기능을 누르면 설명, 위 칸에 궁금한 말을 치면 찾아 줘요. '바로 가기'로 그 화면이 열려요.</li><li><b>🎉 축제</b> — 지도 주변이나 전국에서 지금·곧 열리는 축제</li><li><b>✉️ 건의</b> — 불편한 점·고장·원하는 기능을 운영자에게 보내기</li><li><b>📢 공지</b> — 운영자 공지와 업데이트 내역</li></ul><p><b>?</b>에 빨간 점이 뜨면 새 공지나 업데이트가 있다는 뜻이에요.</p>`]]],
+['🔎 찾기',[
+['검색 조건',`<p>지도 위 조건 줄(예: 맛집 · 음식점 · 1km · 추천 · TOP 5)을 누르면 아래에서 조건 창이 올라와요.</p><ul><li><b>종류</b>: 🍽 맛집(음식점·카페·흑돼지 등 테마) / 🏝 관광지(명소·오름·해변·폭포·숲·박물관·체험) / ⛽ 주유·충전(휘발유·LPG·전기)</li><li><b>반경</b> 100m ~ 20km(관광지는 제주 전체도) — 종류마다 따로 기억</li><li><b>정렬</b>: 추천(평판) ① · 종합 점수 ② · 평점순 · 가까운순 · 현지인 맛집 / 주유는 최저가순 · 전기는 빈 충전기 많은 순</li><li><b>TOP</b> 5·10·20, <b>프랜차이즈 제외</b>, <b>영업중</b>만, <b>급속만</b>(전기)</li></ul>`,'cond'],
+['종류 칩',`<p>조건 줄 아래 <b>식사 · 커피 · 관광·자연 · 주유·충전</b>을 한 번 누르면 바로 그 종류로 검색해요. 관광·자연일 땐 <b>제주 전체</b>와 <b>🎉 축제</b>(지도 주변 축제 목록) 칩도 떠요.</p>`],
+['키워드 + −',`<p>조건 창 키워드 칸에 <code>+흑돼지 +고기국수 -체인</code>처럼 적어요. <b>+</b>는 꼭 들어갈 말(그걸로 검색), <b>−</b>는 빼고 싶은 말이에요. 반경 안에 없으면 더 넓게 찾아요.</p>`,'cond'],
+['장소·지역 이동',`<p>📍 칸에 공항·주차장·숙소·동네 이름이나 주소를 넣고 <b>이동</b>하면 지도가 그리로 가요. 목록에서 바로 📅 담기·길안내도 돼요.</p>`],
+['시작위치',`<p>📍 칸 오른쪽 <b>현재위치 ▾</b>에서 현재 위치나 저장해 둔 출발지(숙소 등)를 골라요. 상세창의 <b>🏷 시작위치로</b>로 저장하고, 설정 → ✏️ 편집 → 📍 시작위치에서 ⭐ 기본을 정해요.</p>`],
+['이 지역 검색',`<p>지도를 움직여 가운데 <b>+</b>를 원하는 곳에 맞추고 아래 <b>이 지역 검색</b>을 눌러요. 결과는 지도 위 카드로 떠요(카드 탭 = 상세창).</p>`],
+['점수 ①과 ②',`<p><b>① 추천(평판)</b> — 카카오 평점·후기·블로그를 함께 본 점수.</p><p><b>② 종합 점수</b> — 블로그 언급(광고 글은 빼고)·최근 글·카페·검색 추세·관광공사·우리 앱 기록을 더한 100점 점수. 카드에 둘 다 보이고, 상세창에서 ②의 근거를 볼 수 있어요.</p>`],
+['레이어·목록',`<p>지도 오른쪽 위 <b>레이어</b> — 일반/위성 · 다녀온 곳 · 지역 경계 · 가고 싶은 곳을 지도에.</p><p><b>목록</b> — 결과를 한 줄씩 보기.</p>`],
+['오늘 동선·내 장소',`<p>지도 아래 막대: <b>검색 결과</b>(평소) · <b>오늘 동선</b>(오늘 일정을 번호 핀과 선으로) · <b>내 장소</b>(가고 싶은 곳·다녀온 곳 모아 보기).</p>`],
+['다음 일정 카드',`<p>여행 중엔 지도에 다음 일정 카드가 떠서 바로 길안내하거나 ✓ 다녀옴을 누를 수 있어요.</p>`],
+['지도 카드 놀이',`<ul><li>카드 <b>탭</b> = 상세창 · <b>끌기</b> = 손가락 따라 빙빙</li><li>카드를 <b>아래로 휙 튕기면</b> 🎰 일정에 담기</li><li>설정 → 🃏 지도 카드 동작: 선 길이 조절, <b>🎮 핀볼 게임</b>(카드를 맨 아래까지 당겼다 놓으면 쇠구슬 발사)</li></ul>`,'set']]],
+['📋 장소 상세창',[
+['일정에 담기',`<p>맨 위 큰 버튼 <b>📅 일정에 담기</b> — 이번 여행의 '담아둔 곳'(후보)으로 들어가요. 이미 있으면 <b>＋ 한 번 더 담기</b>로 다른 날 재방문.</p>`],
+['가고 싶은 곳 저장',`<p><b>📌 가고 싶은 곳에 저장</b> — 여행이 바뀌어도 남는 내 목록이에요. 이번 여행 후보는 '담아둔 곳', 언젠가 갈 곳은 '가고 싶은 곳'.</p>`],
+['길안내 버튼',`<p><b>🚗 길안내</b> — 설정에서 고른 앱(TMAP·카카오내비·네이버 지도)으로 열려요.</p>`],
+['로드뷰·검색 제외',`<ul><li>🛣 <b>로드뷰</b> · 카카오 상세 · 웹·블로그 검색(상호만 / 상호+동네)</li><li>✕ <b>검색 제외</b> — 결과에서 빼요. 상태줄의 ↶로 되돌려요.</li><li>평점·후기·영업 상태·가격(주유)·② 점수 근거 · 다른 검색 결과(접힌 칸)</li></ul>`],
+['버튼 순서 바꾸기',`<p>설정 → ✏️ 편집 → 🔘 <b>상세창 버튼 배치</b>에서 순서를 바꾸거나 숨겨요(맛집·관광지·주유 따로).</p>`,'set']]],
+['📅 내 여행',[
+['한눈에',`<p>날짜에 따라 바뀌어요. 여행 전: 할 일·일정 짜기 / 여행 중: <b>다음 일정 + 길안내</b> + 오늘 일정 / 여행 뒤: 사진·기록.</p>`,'hub'],
+['일정 짜기',`<ul><li>맨 위에서 시작 날짜·며칠·하루 시간(몇 시~몇 시)을 정해요.</li><li><b>담아둔 곳</b>을 고른 뒤 빈 시간 칸을 누르면 그 시간에 들어가요. 칩을 끌어 넣어도 되고, 두 번 톡톡 하면 날짜·시간(1233 = 12:33)을 바로 넣어요.</li><li>직접 적은 장소(주소를 넣으면 지도·길안내도)도 추가할 수 있어요.</li><li>일정을 누르면 시간(−5분/+5분)·메모·📌 시간 고정·다녀옴 표시를 고쳐요.</li><li>일정 사이에 이동 시간(직선 거리로 어림)이 보여요.</li></ul>`,'sched'],
+['날씨',`<p>일정의 일차 탭에 날씨 아이콘, 아래에 최저·최고 기온·비 확률·일몰이 떠요(16일 전부터). 비 오는 날엔 '실내 관광지' 버튼이 떠요.</p>`,'sched'],
+['출발·숙소',`<p>날짜 탭 아래 <b>🏁 출발 · 🏨 도착</b>을 정하면 이동 시간이 계산돼요. 도착을 숙소로 정하면 다음 날 출발도 자동으로 그 숙소예요(바뀌는 날만 다시).</p>`,'sched'],
+['동선 정리',`<p><b>🔀 동선 정리</b> — 가까운 순서로 다시 짜요(📌 시간 고정은 그대로, 되돌리기 가능). <b>🗺 이 날 지도</b> · <b>📋 글자로 복사</b> · 💬 단톡방 바로가기도 같은 줄에 있어요.</p>`,'sched'],
+['중간 주변 찾기',`<p>두 일정 사이의 <b>중간 주변 찾기</b>로 가는 길에 있는 맛집·주유소를 찾아요.</p>`,'sched'],
+['자동 다녀옴',`<p>여행 중 앱을 켜 두고 일정 장소 150m 안에 가면 ✅ 다녀옴이 저절로 찍혀요(고칠 수 있음).</p>`],
+['준비·할일',`<p>렌터카 예약 확인·신분증·배편 시간 같은 걸 적고 체크해요. 여행방이면 같이 맞춰져요. 완료한 것 지우기 · 📋 복사.</p>`,'todo'],
+['사진 넣기',`<ul><li><b>＋ 사진 추가</b> — 여러 장 고르면 찍은 시간으로 그날 일정에 자동으로 나눠 붙여요. 확인 → 올리기.</li><li>사진은 긴 변 1600px로 줄인 사본만 저장해요. 설정 → 📷 여행 사진에서 <b>여행방에 공유</b>를 끄면 이 폰에만.</li><li>🖼 앨범 · 📦 사진 받기(일차별 정리 zip)</li></ul>`,'photo'],
+['여행 기록',`<p><b>📒 여행 기록</b> — 일차별 다녀옴 ✅/⬜/✖️ · 메모 · 그날 경비 합계를 한 장에 봐요.</p>`,'photo'],
+['여행 바꾸기·새 여행',`<p>위 <b>여행 이름 ▾</b> → 📨 공유받은 여행 · 지금 여행 · 📚 나의 책장(지난 여행) · ＋ 새 여행. 새 여행을 시작하면 지금 여행은 보관함으로 가요. 가고 싶은 곳·가계부는 여행과 상관없이 남아요.</p>`,'trip'],
+['지난 여행 흔적',`<p>📚 나의 책장의 지난 여행 카드 → <b>🗺 흔적</b> — 그 여행 동선을 날짜별 색·번호로 보여 줘요. 핀을 누르면 그때 일정·메모·사진. 흔적 화면에서 📷 사진 넣기도 돼요. <b>열기</b>를 누르면 그 여행으로 바뀌어요.</p>`,'trip']]],
+['👥 함께 쓰기',[
+['여행방 만들기',`<p>위 줄 <b>👥 함께</b> → <b>여행방 만들기</b> → 나온 코드나 <b>초대 링크</b>(카톡으로 보내기)를 친구에게 보내요.</p>`,'room'],
+['여행방 참여',`<p>받은 링크를 누르고 이름만 적어 <b>참여</b>. '내 폰의 지금 일정도 합치기'를 안 고르면 지금 여행은 보관함에 넣고 방 일정만 가져와요.</p>`,'room'],
+['아이디로 공유',`<p><b>👤 아이디로</b> 친구 계정 이메일을 등록해 두면, 공유한 여행이 친구의 '공유받은 여행'에 바로 들어가요(여행 이름 옆 숫자). '새 여행도 자동 공유'도 돼요.</p>`,'room'],
+['같이 맞춰지는 것',`<p>같은 방끼리 일정(담아둔 곳 포함)·할일·경비·사진이 자동으로 맞춰져요(보고 있으면 몇 초마다). 안 보이면 같은 방인지 확인하고 ⚙️ → 지금 맞추기.</p>`],
+['단톡방 바로가기',`<p>💬 우리 단톡방에 카카오톡 오픈채팅 링크를 넣어 두면 일정 화면에서 바로 들어가요.</p>`,'room']]],
+['📌 내 장소',[
+['가고 싶은 곳',`<p>"언젠가 일부러 가 볼 곳". 상세창 📌로 저장하고, 여행을 바꿔도 남아요. 🗺 지도로 보기 · 📋 글자로 복사(카카오맵 링크 포함) · 📅 지금 일정에 다시 담기.</p>`,'saved'],
+['다녀온 곳',`<p>지금 여행의 ✅와 지난 여행의 다녀온 곳을 모아요. 지도에서 모두 보기 · 장소를 누르면 언제 갔는지·사진 · 🗺 그 여행 흔적 보기. 검색 카드엔 '👣 가봄'이 붙어요.</p>`,'visited']]],
+['💳 지출',[
+['공동 경비 (N빵)',`<p>지출 › 이번 여행 → <b>👥 공동 경비</b>: 제목·금액·날짜·낸 사람·나눌 사람 → 기록하기. 금액을 넣으면 1인당 금액이 바로 보여요.</p>`,'exp'],
+['정산',`<p>공동 경비 아래에 총 지출·사람별 낸 돈·쓴 몫과 <b>💸 정산</b>(누가 누구에게 얼마)이 나와요. 말로 "정산 얼마야"라고 물어도 돼요.</p>`,'exp'],
+['내 지출',`<p>이번 여행 위 전환을 <b>👤 내 지출</b>로 바꾸면 내 가계부에만 적혀요(친구에게 안 보임).</p>`,'exp'],
+['영수증 사진',`<p>AI 키가 연결돼 있으면 경비 화면 <b>📷 영수증</b>, 가계부 <b>📷 영수증 사진으로 넣기</b>가 보여요. 사진으로 가게·금액·날짜를 읽어 확인 칸에 채워 줘요(고칠 수 있음).</p>`,'exp'],
+['가계부',`<p>지출 › 개인 가계부 — 달별 쓴 돈 · 카테고리 · 결제(카드·현금·계좌이체) · ⚙️ 카테고리·월 예산(넘으면 빨갛게) · ⬇ 이 달 엑셀(CSV). 여행 N빵 경비 중 내 몫도 같이 볼 수 있어요.</p>`,'book'],
+['카드 문자로 넣기',`<p>가계부 <b>📋 카드 문자로 넣기</b> — 카드 승인 문자를 복사해 붙여 넣으면 금액·가게·날짜·카드를 읽어요. 여러 통, 카톡 '대화 내용 내보내기'도 통째로 돼요. 취소는 마이너스, 이미 넣은 건 빼 둬요.</p><p>홈 화면 앱이면 문자 → 공유 → 핀볼지도로 바로 보내도 돼요.</p>`,'book']]],
+['🚗 길안내',[
+['길안내 앱 고르기',`<p>설정 → 🚗 <b>길안내 앱</b>: TMAP · 카카오내비 · 네이버 지도. 앱 곳곳의 버튼 이름도 같이 바뀌어요.</p><ul><li>카카오내비: 차종(승용·경차·이륜)·경로(추천·빠른·무료 도로·짧은·고속도로 우선)와 경유지까지</li><li>네이버 지도: 자동차 길찾기로 열려요(안내 시작은 앱에서 한 번 더)</li><li>TMAP: 목적지만</li></ul>`,'set'],
+['주유하고 가기',`<p>말로 찾기에서 장소를 고른 뒤 <b>⛽ 주유하고 가기</b> — 지금 위치 → 목적지 사이에서 덜 돌아가는 주유소(설정이 LPG·전기면 그 충전소) 5곳을 가격과 함께 보여 주고, 고르면 경유지로 안내해요.</p>`],
+['내비가 안 열릴 때',`<p>폰 브라우저는 다른 앱을 열 때 손으로 누르는 걸 요구해요. 그래서 마지막엔 큰 길안내 버튼을 한 번 눌러요. 카카오내비는 처음 한 번 더 눌러야 할 때가 있어요.</p>`]]],
+['🎤 말로 찾기',[
+['시작하기',`<p>지도 오른쪽 아래 초록 <b>🎤</b>를 누르면 바로 들어요. 결과는 읽어 줘요(끌 수 있음). 앱이 "…까요?" 하고 물으면 다 읽은 뒤 마이크가 저절로 켜져요.</p>`,'voice'],
+['명령어 모음',`<p>말로 찾기 창 위 <b>📖 명령어</b>에 예문이 모여 있어요. 누르면 바로 실행돼요.</p>`,'voice'],
+['장소 말하기',`<p>"성산식당 가자" · "근처 흑돼지 찾아줘" · "제육볶음 먹고 싶어" · "배고파" · "두 번째 거" · "거기로 가자" · "숙소 가자" · "다음 일정 뭐야" · "오늘 일정" · "아까 본 곳" · "저장한 곳"</p><p>근처 찾기는 지금 조건으로 하는 별점 검색이에요. '가자'로 찾은 목록·다음 일정·주유소 목록은 <b>번호를 누르면 바로 출발</b>해요.</p>`],
+['조건 바꾸기',`<p>"3km로 넓혀 줘" · "TOP 10으로" · "프차 빼고 흑돼지 찾아줘" · "영업 중인 곳만" · "가까운 순으로" · "종합 점수로" · "카페로 바꿔" · "LPG 제일 싼 데"</p>`],
+['기록하기',`<p>"점심 3만 원 공동 경비로" · "택시비 만 원 내 지출" · "할 일에 렌터카 반납 추가" · "내일 오후 2시에 성산일출봉 넣어 줘" · "여기 다녀왔어" · "기록, 전복죽 최고" — 확인 칸에서 "응"이나 버튼으로 저장해요.</p>`],
+['물어보기',`<p>"오늘 날씨 어때"(비 오는 시간대까지) · "일몰 몇 시야" · "거기 지금 영업해?" · "거기까지 얼마나 걸려?"(직선 거리) · "오늘 몇 곳 다녔어" · "오늘 얼마 썼어" · "정산 얼마야" · "할 일 남은 거 뭐야"</p>`],
+['이어서 하기',`<p>"흑돼지 먹고 근처 카페" · "기름 넣고 숙소 가자" · "비 오는데 갈 만한 데" · 화면 열기: "위성 지도로" · "일정 열어" · "가계부" · "다녀온 곳 보여줘"</p>`],
+['AI 방식 고르기',`<p>설정 → 🎤 말로 찾기에서 골라요.</p><ul><li><b>① 브라우저 음성인식</b>(기본) — 무료, 연결 없음</li><li><b>② 브라우저 + AI</b> — 정해진 말로 안 되는 말("애들이랑 갈 만한 조용한 데")과 못 찾은 이름만 AI가 한 번 더</li><li><b>③ AI 우선</b> — AI가 녹음을 받아쓰고 해석</li></ul><p>②·③은 내 AI 키가 있어야 해요. "1번이랑 2번 중 어디가 나아?" 같은 후보 비교도 돼요.</p>`,'set'],
+['AI 키 연결 (무료)',`<p>계정에 로그인한 뒤:</p><ul><li><b>console.groq.com</b>에 가입 → <b>API Keys</b> → <b>Create API Key</b> → 나온 키 복사</li><li>⚙️ 설정 → 🎤 말로 찾기 → 🔑 <b>[관리]</b> → Groq 칸에 붙여 넣고 <b>연결</b></li></ul><p>키는 서버에 암호화해 내 계정에만 묶이고 폰으로 다시 안 내려와요. 키는 자기 것만 쓰고, 결제(유료)를 켠 키는 쓰지 마세요.</p>`,'set'],
+['깊게 찾기',`<p>설정의 <b>🔎 깊게 찾기</b>(Groq 키) — AI가 검색·상세·날씨·내 여행을 직접 여러 번 확인해서 답해요. 무료로 하루 <b>약 30번</b>쯤이에요(예상치 — 질문에 따라 달라요). 말 해석과 같은 무료 한도를 나눠 써서, 말로 찾기를 많이 쓴 날은 줄어요.</p>`,'set'],
+['사진 읽기',`<p>키가 있으면 말로 찾기 입력줄에 <b>📷</b>가 생겨요. 영수증은 금액·가게·날짜를 읽어 공동 경비/가계부로, 예약 화면은 일정으로(여행 기간 밖이면 할 일로). 사진 1장 = 1회. 무료로 하루 <b>약 60장</b>쯤이에요(예상치 — 사진에 따라 달라요). 앱의 하루 500회 상한은 다른 AI 사용과 같이 세요.</p>`],
+['하루 한도',`<p>계정마다 하루 500회 상한(말 한 번·사진 한 장·깊게 찾기 한 번 = 1회, 모두 합쳐서). 깊게 찾기 '약 30번'·사진 '약 60장'은 예상치이고 같은 날 다른 AI 사용만큼 줄어요. Groq 무료 한도가 차거나 오류가 나면 ① 방식으로 이어가요. AI에는 문장과 화면 장소의 이름·점수·거리만 가고 위치 좌표는 안 가요.</p>`]]],
+['⚙️ 설정·자료',[
+['설정 메뉴',`<ul><li>🎤 말로 찾기 — 방식 · 모델 · 🔑 AI 키 · 🔎 깊게 찾기</li><li>🚗 길안내 앱</li><li>👤 내 계정 — 로그인·가입 · 지금 맞추기 · 로그아웃 · 탈퇴(AI 키도 같이 지워져요)</li><li>🃏 지도 카드 동작 · 📷 여행 사진</li><li>✏️ 편집 — 📍 시작위치 · 🍽 맛집 테마 · 🔘 상세창 버튼 배치</li></ul>`,'set'],
+['자료는 어디에',`<ul><li><b>이 폰</b> — 모든 자료가 먼저 이 폰에(인터넷이 끊겨도 보임)</li><li><b>내 계정</b> — 설정·시작위치·여행 보관함·가고 싶은 곳·가계부·AI 키(암호화). 항목별로 나중에 고친 쪽이 남아요.</li><li><b>여행방</b> — 일정·담아둔 곳·할일·경비·사진 목록을 방 사람과 같이</li><li><b>사진</b> — 여행방에 공유를 켜면 줄인 사본을 서버에, 끄면 이 폰에만</li></ul>`],
+['바로가기 주소',`<ul><li><code>pinbmap.netlify.app/?book</code> — 바로 가계부</li><li><code>pinbmap.netlify.app/?sched</code> — 바로 일정</li></ul><p>홈 화면 앱 아이콘을 길게 눌러도 가계부·일정 바로가기가 나와요.</p>`]]],
+['🛠 문제가 생기면',[
+['예전 화면이 보여요',`<p>앱을 완전히 닫았다 다시 열어요. 홈 화면 앱은 잠깐 예전 화면을 기억해요.</p>`],
+['지도가 안 떠요',`<p>인터넷 연결을 확인하고 다시 열어요. 계속 안 되면 ✉️ 건의로 알려 주세요.</p>`],
+['마이크가 안 켜져요',`<p>주소창 자물쇠 → 권한 → 마이크 허용. 대답 자동 듣기가 막히면 마이크를 눌러 대답해요.</p>`],
+['AI가 "한도"라고 해요',`<p>Groq 무료는 분당·하루 한도가 있어요. 잠시 뒤나 내일 다시 해요. 그동안은 ① 방식으로 돼요.</p>`],
+['친구 일정이 안 보여요',`<p>👥 함께에서 같은 여행방인지 보고, ⚙️ 설정 → 지금 맞추기를 눌러요.</p>`,'room'],
+['그래도 안 되면',`<p>위 <b>✉️ 건의</b> 탭에서 '오류'를 골라 어떤 화면에서 무엇을 눌렀는지 적어 보내 주세요.</p>`,'suggest']]],
+['🧪 실험실',[
+['들어가기',`<p>설정 맨 아래 버전 글자를 2.5초 안에 5번 → 비밀번호 5555.</p>`],
+['들어 있는 것',`<ul><li>👥 가입자(마스터 계정만) — 총 인원·이메일·방문 횟수·마지막 접속</li><li>🧮 ② 종합 점수 연결 상태</li><li>🎤 AI 듣기·해석 비교 — 같은 녹음을 모델마다 받아쓰기 비교 / 정해진 15문장 해석 시험</li><li>📖 이 사용 설명서(도움말과 같은 내용을 한 번에)</li></ul>`],
+['마스터 일',`<p>마스터 계정으로 로그인하면 도움말 페이지의 <b>📢 공지</b>에서 공지를 쓰고·고치고·지우고, <b>✉️ 건의</b>에서 받은 건의를 봐요.</p>`]],true]
+];
+/* 🆕 업데이트 내역 — 올릴 때마다 맨 위에 한 줄 묶음 추가 [날짜, 버전, [바뀐 것…]] */
+const CHANGELOG=[
+['10.16','v0.45',['❓ 지도 왼쪽 위 <b>?</b> — 도움말(기능을 누르면 설명·검색·바로 가기) · 🎉 축제 · ✉️ 건의 · 📢 공지','관광·자연을 고르면 🎉 축제 칩 — 지도 주변 축제 바로 보기','깊게 찾기·사진 읽기 무료 횟수는 예상치로 표시','아래 탭에 가리던 창(다녀온 곳·사진 카드·일정 편집 등) 탭 위로']],
+['10.15','v0.45',['🎤 말로 찾기 — 물으면 마이크 자동, 근처 찾기는 별점 검색, 조건·기록·날씨 명령, 📖 명령어 모음','🤖 내 AI 키 연결(무료) — 애매한 말 해석, 후보 비교, 🔎 깊게 찾기, 📷 영수증·예약 사진 읽기','🚗 길안내 앱 고르기(TMAP·카카오내비·네이버 지도) · ⛽ 주유하고 가기']],
+['','v0.45',['새 메뉴: 아래 탭 찾기·내 여행·내 장소·지출, 위 줄 여행 이름▾·👥 함께·⚙️','찾기 조건 한 줄 요약 · 종류 칩 · 레이어/목록','🧮 ② 종합 점수','한눈에 · 📚 나의 책장 · 다녀온 곳 목록','보류 → 가고 싶은 곳']],
+['','v0.44',['카드 문자: 카톡 대화 내보내기를 통째로 붙여도 인식']],
+['','v0.43',['🏁 날마다 출발 · 🏨 도착(숙소)','🔁 재방문 담기','지도 위 버튼 배치']],
+['','v0.42',['👣 다녀온 곳을 지도에 한꺼번에(사진 핀)']],
+['','v0.41',['📍 주소로 장소 찾기','📒 가계부 · 📋 카드 문자로 넣기','홈 화면 바로가기·문자 공유']],
+['','v0.40',['🗺 지역 경계 · 🗂 지난 여행 흔적','📷 여행 사진(자동 분류·앨범·zip)','👤 아이디로 같이 쓰기']],
+['','v0.39',['💳 경비·정산 크게','📌 보류 맛집(지금의 가고 싶은 곳)']],
+['','v0.38',['📍 공항·주차장 등 모든 장소 찾기','🎮 핀볼 C 발사 통로']]
+];
+const CL_KEY=CHANGELOG[0][1]+'@'+CHANGELOG[0][0];
+
+/* ----- 🧪 실험실: 📖 전체 사용 설명서 (도움말 자료를 한 번에 펼쳐 봄) ----- */
+function labManualBox(){
+  const b=document.createElement('div');b.className='rbox';b.id='labManual';
+  b.innerHTML=`<b>📖 사용 설명서 <small style="font-weight:400;color:var(--muted)">${escapeHtml(appVerTxt())} · 전체</small></b>
+    <div class="labNote" style="margin:6px 0">제목을 누르면 펼쳐져요. 지도 왼쪽 위 ? 도움말과 같은 내용이에요.</div>`+HELP.map(([h,its])=>`<details class="man"><summary>${h}</summary><div class="manB">${its.map(([t,c])=>`<h5>${escapeHtml(t)}</h5>${c}`).join('')}</div></details>`).join('');
+  $('labBody').append(b);
+}
+function appVerTxt(){const m=document.title.match(/v[\d.]+$/);return m?m[0]:''}
+
+/* ===== ❓ 도움말 페이지: 📖 도움말 · 🎉 축제 · ✉️ 건의 · 📢 공지 ===== */
+const BOARD_API='/.netlify/functions/board';
+async function boardCall(b){
+  try{const r=await fetchT(BOARD_API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(b)},15000);
+    let j={};try{j=await r.json()}catch(_){}return {ok:r.ok&&!j.err,status:r.status,j}}
+  catch(_){return {ok:false,status:0,j:{err:'net'}}}
+}
+const isMasterAcct=()=>!!(acct&&acct.email===MASTER_EMAIL);
+const masterAuth=()=>({email:acct.email,token:acct.token,lab:'5555'});
+const hp={tab:'help',open:-1,q:'',gOpen:new Set([0]),fest:{near:true,r:50,days:30,list:null,at:0,key:'',err:''},info:{},notices:null,sgKind:'건의',sgList:null,edit:null};
+const HP_TABS=[['help','📖 도움말'],['fest','🎉 축제'],['suggest','✉️ 건의'],['notice','📢 공지']];
+const HP_GO={
+  set:()=>$('setBtn').click(), room:()=>openRoom(), trip:()=>$('tbTrip').click(),
+  sched:()=>goSub('sched'), todo:()=>goSub('todo'), photo:()=>goSub('photo'), hub:()=>goSub('hub'),
+  saved:()=>goSub('saved'), visited:()=>goSub('visited'), exp:()=>goSub('exp'), book:()=>goSub('book'),
+  cond:()=>{closeSheet('helpPg');goTab('find');setTimeout(()=>$('condBtn').click(),60)},
+  voice:()=>{closeSheet('helpPg');goTab('find');setTimeout(()=>$('vaBtn').click(),60)},
+  suggest:()=>hpTab('suggest')
+};
+const HP_GO_TXT={set:'⚙️ 설정 열기',room:'👥 함께 열기',trip:'여행 선택 열기',sched:'📅 일정 열기',todo:'✅ 할일 열기',photo:'📷 사진·기록 열기',hub:'한눈에 열기',saved:'📌 가고 싶은 곳 열기',visited:'👣 다녀온 곳 열기',exp:'💳 경비 열기',book:'📒 가계부 열기',cond:'검색 조건 열기',voice:'🎤 말로 찾기 열기',suggest:'✉️ 건의 쓰기'};
+function openHelp(tab){
+  openSheet('helpPg');
+  hpTab(tab||hp.tab||'help');
+}
+function hpTab(t){
+  hp.tab=t;
+  $('hpTabs').innerHTML=HP_TABS.map(([k,l])=>`<button type="button" data-hpt="${k}" class="${k===t?'on':''}">${l}${k==='notice'?'<i class="hpDot"></i>':''}</button>`).join('');
+  hpDots();
+  ({help:hpHelp,fest:hpFest,suggest:hpSuggest,notice:hpNotice})[t]();
+  $('helpPg').querySelector('.sheetBody').scrollTop=0;
+}
+/* --- 📖 도움말 --- */
+const hpPlain=h=>String(h).replace(/<[^>]+>/g,' ').replace(/\s+/g,' ');
+function hpItemHtml(gi,ii,full){
+  const [t,c,go]=HELP[gi][1][ii];
+  return `<div class="hpAns">${full?`<b class="hpAt">${escapeHtml(t)}</b>`:''}${c}${go&&HP_GO[go]?`<button type="button" class="hpGo" data-go="${go}">${HP_GO_TXT[go]||'바로 가기'} →</button>`:''}</div>`;
+}
+function hpHelp(){
+  const groups=HELP.map((g,gi)=>[g,gi]).filter(([g])=>!g[2]);
+  $('hpBody').innerHTML=`<div class="hpSearch"><input type="search" id="hpQ" placeholder="궁금한 기능 찾기 (예: 정산, 사진)" value="${escapeHtml(hp.q)}" enterkeyhint="search"></div><div id="hpList"></div>`;
+  const paint=()=>{
+    const q=hp.q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if(q.length){
+      const hits=[];groups.forEach(([g,gi])=>g[1].forEach((it,ii)=>{const s=(it[0]+' '+hpPlain(it[1])+' '+g[0]).toLowerCase();if(q.every(w=>s.includes(w)))hits.push([gi,ii,it[0].toLowerCase().includes(q[0])?0:1])}));
+      hits.sort((a,b)=>a[2]-b[2]);
+      $('hpList').innerHTML=hits.length?hits.slice(0,15).map(([gi,ii])=>`<div class="hpHit"><small>${HELP[gi][0]}</small>${hpItemHtml(gi,ii,true)}</div>`).join('')
+        :`<div class="hpEmpty">“${escapeHtml(hp.q)}”에 맞는 설명이 없어요.<br><button type="button" class="hpGo" data-go="suggest">✉️ 건의로 물어보기 →</button></div>`;
+      return;
+    }
+    $('hpList').innerHTML=groups.map(([g,gi])=>{
+      const oi=hp.open>=0&&Math.floor(hp.open/100)===gi?hp.open%100:-1,go=hp.gOpen.has(gi);
+      return `<div class="hpG${go?' on':''}"><button type="button" class="hpGh" data-hg="${gi}" aria-expanded="${go}">${g[0]}<small>${g[1].length}</small><i>${go?'▴':'▾'}</i></button>${go?`<div class="cg">${g[1].map((it,ii)=>`<button type="button" data-hi="${gi*100+ii}" class="${ii===oi?'on':''}">${escapeHtml(it[0])}</button>`).join('')}</div>${oi>=0?hpItemHtml(gi,oi):''}`:''}</div>`}).join('');
+  };
+  paint();
+  $('hpQ').oninput=e=>{hp.q=e.target.value;hp.open=-1;paint()};
+  $('hpList').onclick=e=>{
+    const gh=e.target.closest('[data-hg]');
+    if(gh){const gi=+gh.dataset.hg;if(hp.gOpen.has(gi)){hp.gOpen.delete(gi);if(Math.floor(hp.open/100)===gi)hp.open=-1}else hp.gOpen.add(gi);paint();return}
+    const b=e.target.closest('[data-hi]');
+    if(b){const n=+b.dataset.hi;hp.open=hp.open===n?-1:n;paint();const el=$('hpList').querySelector(`[data-hi="${n}"]`);if(el&&hp.open===n)el.closest('.hpG').querySelector('.hpAns').scrollIntoView({block:'nearest',behavior:'smooth'});return}
+  };
+}
+$('helpPg').addEventListener('click',e=>{
+  const t=e.target.closest('[data-hpt]');if(t){hpTab(t.dataset.hpt);return}
+  const g=e.target.closest('.hpGo[data-go]');if(g&&HP_GO[g.dataset.go]){HP_GO[g.dataset.go]();return}
+});
+/* --- 🎉 축제 --- */
+const ymdDot=s=>s&&s.length===8?`${+s.slice(4,6)}.${+s.slice(6,8)}`:'';
+function festWhen(f){
+  const t=new Date(Date.now()+9*36e5).toISOString().slice(0,10).replace(/-/g,'');
+  if(f.s<=t)return `<span class="fOn">진행 중</span> ~${ymdDot(f.e)}`;
+  const d=Math.round((Date.UTC(+f.s.slice(0,4),+f.s.slice(4,6)-1,+f.s.slice(6,8))-Date.UTC(+t.slice(0,4),+t.slice(4,6)-1,+t.slice(6,8)))/864e5);
+  return `<span class="fSoon">D-${d}</span> ${ymdDot(f.s)}~${ymdDot(f.e)}`;
+}
+const kmTxt=m=>m==null?'':m<1000?m+'m':(m/1000).toFixed(m<10000?1:0)+'km';
+function festCenter(){try{if(typeof map!=='undefined'&&map&&map.getCenter){const c=map.getCenter();return {lat:c.getLat(),lng:c.getLng()}}}catch(_){}return null}
+function hpFest(){
+  const F=hp.fest;
+  const chip=(k,v,l)=>`<button type="button" data-f${k}="${v}" class="${String(F[k])===String(v)?'on':''}">${l}</button>`;
+  $('hpBody').innerHTML=`<div class="fBar"><div class="cg">${chip('near',true,'📍 지도 주변')}${chip('near',false,'🇰🇷 전국')}</div>
+    ${F.near?`<div class="cg">${[20,50,100].map(r=>chip('r',r,r+'km')).join('')}</div>`:''}
+    <div class="cg">${chip('days',0,'지금 하는 것')}${chip('days',14,'2주 안')}${chip('days',30,'한 달 안')}${chip('days',90,'석 달 안')}</div></div>
+    <div id="fList"><div class="hpEmpty">불러오는 중…</div></div>
+    <div class="hpNote">자료: 한국관광공사 · 날짜·내용은 바뀔 수 있으니 가기 전에 홈페이지나 전화로 확인해요.</div>`;
+  $('hpBody').querySelector('.fBar').onclick=e=>{
+    const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.fnear!=null)F.near=b.dataset.fnear==='true';
+    if(b.dataset.fr!=null)F.r=+b.dataset.fr;
+    if(b.dataset.fdays!=null)F.days=+b.dataset.fdays;
+    hpFest();
+  };
+  festLoad();
+}
+async function festLoad(){
+  const F=hp.fest,c=F.near?festCenter():null;
+  const req={action:'fest',days:F.days};
+  if(F.near&&c){req.lat=+c.lat.toFixed(3);req.lng=+c.lng.toFixed(3);req.r=F.r}
+  const key=JSON.stringify(req);
+  if(F.key===key&&F.list&&Date.now()-F.at<10*6e4){festPaint();return}
+  F.key=key;F.list=null;F.err='';
+  const r=await boardCall(req);
+  if(F.key!==key)return;
+  if(!r.ok){F.err=r.j.err||'net';F.list=[]}else{F.list=r.j.items||[];F.total=r.j.total||0;F.at=Date.now()}
+  F.noCenter=F.near&&!c;
+  festPaint();
+}
+function festPaint(){
+  const F=hp.fest,el=$('fList');if(!el||hp.tab!=='fest')return;
+  if(F.err==='nokey'){el.innerHTML=`<div class="hpEmpty">🎉 축제 정보는 아직 준비 중이에요.${isMasterAcct()?`<div class="hpAns" style="text-align:left;margin-top:10px"><b>마스터 안내</b><p>Netlify → 프로젝트 → Project configuration → Environment variables에 <code>TOUR_KEY</code>(공공데이터포털 '한국관광공사_국문 관광정보 서비스_GW' 일반 인증키)를 넣고 다시 배포하면 보여요. ② 종합 점수의 관광공사 항목도 같이 켜져요.</p></div>`:''}</div>`;return}
+  if(F.err){el.innerHTML=`<div class="hpEmpty">축제 정보를 불러오지 못했어요. 잠시 뒤 다시 열어 주세요.</div>`;return}
+  if(!F.list.length){el.innerHTML=`<div class="hpEmpty">${F.near?`지도 주변 ${F.r}km 안에`:'이 기간에'} 열리는 축제가 없어요.${F.near?'<br>반경을 넓히거나 🇰🇷 전국으로 봐요.':''}</div>`;return}
+  el.innerHTML=(F.noCenter?'<div class="hpNote">지도를 못 불러와 전국으로 보여요.</div>':'')+`<div class="hpNote">${F.total>F.list.length?`${F.total}곳 중 ${F.list.length}곳`:`${F.list.length}곳`} · 진행 중인 것 먼저</div>`+F.list.map((f,i)=>`<div class="fCard${hp.info.open===f.id?' open':''}" data-fi="${i}">
+    <div class="fTop">${f.img?`<img src="${escapeHtml(f.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:'<span class="fNo">🎉</span>'}
+    <div class="fTx"><b>${escapeHtml(f.t)}</b><div>${festWhen(f)}${f.d!=null?` · ${kmTxt(f.d)}`:''}</div><small>${escapeHtml(f.a)}</small></div></div>
+    ${hp.info.open===f.id?festInfoHtml(f):''}</div>`).join('');
+  el.onclick=e=>{
+    const a=e.target.closest('[data-fa]');
+    const card=e.target.closest('[data-fi]');if(!card)return;
+    const f=F.list[+card.dataset.fi];if(!f)return;
+    if(a){festAct(a.dataset.fa,f);return}
+    if(e.target.closest('.fInfo'))return;
+    hp.info.open=hp.info.open===f.id?null:f.id;festPaint();
+    if(hp.info.open===f.id&&!hp.info[f.id])boardCall({action:'festInfo',id:f.id}).then(r=>{hp.info[f.id]=r.ok?r.j.info:{err:1};festPaint()});
+  };
+}
+function festInfoHtml(f){
+  const i=hp.info[f.id];
+  const row=(k,v)=>v?`<div><span>${k}</span>${escapeHtml(v)}</div>`:'';
+  const tel=(i&&i.tel)||f.tel;
+  return `<div class="fInfo">${!i?'<div class="hpNote">자세한 내용 불러오는 중…</div>':i.err?'<div class="hpNote">자세한 내용을 못 불러왔어요.</div>'
+    :`${row('장소',i.place)}${row('기간',ymdDot(f.s)+' ~ '+ymdDot(f.e))}${row('시간',i.time)}${row('요금',i.fee)}${row('주최',i.host)}${i.ov?`<p class="fOv">${escapeHtml(i.ov)}</p>`:''}`}
+    <div class="fBtns">${f.x&&f.y?`<button type="button" data-fa="map">🗺 지도에서</button><button type="button" data-fa="navi">🚗 ${escapeHtml(navName())}</button>`:''}${i&&i.home?`<button type="button" data-fa="home">🌐 홈페이지</button>`:''}${tel?`<button type="button" data-fa="tel">📞 전화</button>`:''}<button type="button" data-fa="web">🔎 검색</button></div></div>`;
+}
+let festOv=null;
+function festAct(a,f){
+  const p={place_name:f.t,x:f.x,y:f.y,address_name:f.a};
+  if(a==='navi'){openNavi(p);return}
+  if(a==='home'){const i=hp.info[f.id];if(i&&i.home)openUrl(i.home);return}
+  if(a==='tel'){const t=((hp.info[f.id]||{}).tel||f.tel||'').match(/[\d-]{7,}/);if(t)location.href='tel:'+t[0];return}
+  if(a==='web'){openUrl('https://m.search.naver.com/search.naver?query='+encodeURIComponent(f.t));return}
+  if(a==='map'){
+    closeSheet('helpPg');goTab('find');
+    if(typeof map==='undefined'||!map)return;
+    const ll=new kakao.maps.LatLng(+f.y,+f.x);
+    searchCenter=ll;centerMarker.setPosition(ll);map.setCenter(ll);try{map.setLevel(5)}catch(_){}
+    if(festOv)festOv.setMap(null);
+    const el=document.createElement('div');el.className='festTag';el.textContent='🎉 '+f.t;el.onclick=()=>{festOv.setMap(null);festOv=null};
+    festOv=new kakao.maps.CustomOverlay({position:ll,content:el,yAnchor:1.9,zIndex:30});festOv.setMap(map);
+    setStatus(`🎉 ${f.t} — 아래 '이 지역 검색'을 누르면 이 근처 맛집을 찾아요.`);
+  }
+}
+/* --- ✉️ 건의 --- */
+function hpSuggest(){
+  const draft=lsGet('sgDraft','');
+  $('hpBody').innerHTML=`<div class="sgBox">
+    <div class="hpNote" style="margin-top:0">불편한 점, 고장 난 곳, 있었으면 하는 기능을 적어 주세요. 운영자에게 메일로 가요.</div>
+    <div class="cg" id="sgKinds">${['건의','오류','칭찬','기타'].map(k=>`<button type="button" data-k="${k}" class="${k===hp.sgKind?'on':''}">${{건의:'💡',오류:'🐞',칭찬:'👍',기타:'💬'}[k]} ${k}</button>`).join('')}</div>
+    <textarea id="sgMsg" maxlength="1000" rows="6" placeholder="${hp.sgKind==='오류'?'어떤 화면에서 무엇을 눌렀더니 어떻게 됐는지 적어 주면 고치기 쉬워요.':'자유롭게 적어 주세요.'}">${escapeHtml(draft)}</textarea>
+    <div class="sgRow"><input type="text" id="sgNick" maxlength="20" placeholder="이름(선택)" value="${escapeHtml(myNick())}"><input type="email" id="sgFrom" maxlength="100" placeholder="답장 받을 이메일(선택)" value="${escapeHtml(acct?acct.email:'')}"></div>
+    <button type="button" id="sgSend" class="hpMain">보내기</button><div id="sgMsgOut" class="hpNote"></div></div>
+    ${isMasterAcct()?'<div class="rbox" id="sgAdm" style="margin-top:14px"><b>📥 받은 건의 <small>(마스터)</small></b><div id="sgAdmL" class="hpNote">불러오는 중…</div></div>':''}`;
+  $('sgKinds').onclick=e=>{const b=e.target.closest('[data-k]');if(!b)return;hp.sgKind=b.dataset.k;lsSet('sgDraft',$('sgMsg').value);hpSuggest()};
+  $('sgMsg').oninput=()=>lsSet('sgDraft',$('sgMsg').value);
+  $('sgSend').onclick=sgSend;
+  if(isMasterAcct())sgAdmLoad();
+}
+let sgBusy='';
+async function sgSend(){
+  const msg=$('sgMsg').value.trim(),out=$('sgMsgOut');
+  if(msg.length<2){out.textContent='내용을 적어 주세요.';return}
+  if(sgBusy===msg){out.textContent='보내는 중이에요…';return}
+  sgBusy=msg;$('sgSend').disabled=true;out.textContent='보내는 중…';
+  const doc={kind:hp.sgKind,msg,nick:$('sgNick').value.trim(),from:$('sgFrom').value.trim(),ver:appVerTxt()+(location.hostname.startsWith('dev--')?' dev':''),ua:navigator.userAgent.replace(/\s*\([^)]*\)\s*/g,' ').slice(0,120)};
+  const [r,m]=await Promise.all([boardCall({action:'suggest',...doc}),
+    fetchT('/',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:new URLSearchParams({'form-name':'suggest',kind:doc.kind,msg:doc.msg,nick:doc.nick,from:doc.from,ver:doc.ver}).toString()},15000).then(x=>x.ok).catch(()=>false)]);
+  sgBusy='';
+  // 보내는 동안 탭을 바꾸거나 새 글을 썼으면, 보낸 그 글일 때만 비움 (새로 쓰던 글은 그대로)
+  const here=hp.tab==='suggest'&&$('sgMsg'),same=here&&$('sgMsg').value.trim()===msg,o=here?$('sgMsgOut'):null;
+  if(here)$('sgSend').disabled=false;
+  if(r.ok||m){
+    if(String(lsGet('sgDraft','')).trim()===msg)lsSet('sgDraft','');
+    if(same)$('sgMsg').value='';
+    if(o)o.innerHTML=same?'✅ 보냈어요. 고마워요!':'✅ 앞에 쓴 건의를 보냈어요.';
+    if(here&&isMasterAcct())sgAdmLoad();return}
+  if(o&&same)o.textContent=r.j.err==='limit'?'오늘은 더 보낼 수 없어요(하루 10건). 내일 다시 보내 주세요.':'보내지 못했어요. 인터넷을 확인하고 다시 눌러 주세요. (적은 내용은 남아 있어요)';
+}
+async function sgAdmLoad(op){
+  const el=$('sgAdmL');if(!el)return;
+  const r=await boardCall({action:op?'sgDel':'suggests',id:op,...masterAuth()});
+  if(!$('sgAdmL'))return;
+  if(!r.ok){el.textContent='불러오지 못했어요 ('+(r.j.err||r.status)+')';return}
+  const L=r.j.items||[];
+  el.innerHTML=L.length?`<div style="margin:4px 0 6px">모두 ${r.j.total}건</div>`+L.map(x=>`<div class="sgIt"><div class="sgH"><b>${escapeHtml(x.kind)}</b> · ${fmtT(x.at)}${x.nick?' · '+escapeHtml(x.nick):''}${x.from?' · '+escapeHtml(x.from):''}${x.ver?' · '+escapeHtml(x.ver):''}<button type="button" data-sgdel="${escapeHtml(x.id)}">지우기</button></div><div class="sgT">${escapeHtml(x.msg)}</div></div>`).join(''):'아직 받은 건의가 없어요.';
+  el.onclick=e=>{const b=e.target.closest('[data-sgdel]');if(b&&confirm('이 건의를 지울까요?'))sgAdmLoad(b.dataset.sgdel)};
+}
+/* --- 📢 공지 + 🆕 업데이트 내역 --- */
+const linkify=s=>escapeHtml(s).replace(/https?:\/\/[^\s<]+/g,u=>`<a href="${u}" target="_blank" rel="noopener">${u}</a>`).replace(/\n/g,'<br>');
+function hpNotice(){
+  const M=isMasterAcct(),E=hp.edit;
+  const N=hp.notices;
+  $('hpBody').innerHTML=`${M?`<div class="rbox ntEd"><b>${E&&E.id?'✏️ 공지 고치기':'✏️ 공지 쓰기'} <small>(마스터)</small></b>
+      <input type="text" id="ntT" maxlength="60" placeholder="제목" value="${escapeHtml(E?E.title:'')}">
+      <textarea id="ntB" maxlength="2000" rows="4" placeholder="내용 (주소를 넣으면 링크가 돼요)">${escapeHtml(E?E.body:'')}</textarea>
+      <label class="ntPin"><input type="checkbox" id="ntP" ${E&&E.pin?'checked':''}> 📌 맨 위에 고정</label>
+      <div class="row" style="gap:6px"><button type="button" id="ntSave" class="hpMain">${E&&E.id?'고친 내용 올리기':'올리기'}</button>${E?'<button type="button" id="ntCancel">취소</button>':''}</div><div id="ntMsg" class="hpNote"></div></div>`:''}
+    <h4 class="hpH">📢 공지</h4><div id="ntList">${N==null?'<div class="hpEmpty">불러오는 중…</div>':!N.length?'<div class="hpEmpty">아직 공지가 없어요.</div>'
+      :N.map(n=>`<div class="ntIt${n.pin?' ntPinned':''}"><div class="ntH">${n.pin?'📌 ':''}<b>${escapeHtml(n.title||'공지')}</b><small>${fmtT(n.at).slice(0,8)}</small></div>${n.body?`<div class="ntB">${linkify(n.body)}</div>`:''}${M?`<div class="ntA"><button type="button" data-ned="${n.id}">고치기</button><button type="button" data-ndel="${n.id}">지우기</button></div>`:''}</div>`).join('')}</div>
+    <h4 class="hpH">🆕 업데이트 내역</h4>${CHANGELOG.map((c,i)=>`<details class="clIt"${i<2?' open':''}><summary><b>${c[1]}</b>${c[0]?` <small>${c[0]}</small>`:''}</summary><ul>${c[2].map(x=>`<li>${x}</li>`).join('')}</ul></details>`).join('')}`;
+  if(N==null)noticeLoad(true).then(()=>{if(hp.tab==='notice')hpNotice()});
+  else{helpSeen();if(Date.now()-(hp.ntAt||0)>6e4){const was=JSON.stringify(N);noticeLoad(true).then(()=>{
+    const typing=$('ntT')&&($('ntT').value||$('ntB').value);
+    if(hp.tab==='notice'&&!hp.edit&&!typing&&JSON.stringify(hp.notices)!==was)hpNotice()})}}
+  if(!M)return;
+  $('ntSave').onclick=async()=>{
+    const title=$('ntT').value.trim(),body=$('ntB').value.trim();
+    if(!title&&!body){$('ntMsg').textContent='제목이나 내용을 적어 주세요.';return}
+    $('ntSave').disabled=true;$('ntMsg').textContent='올리는 중…';
+    const r=await boardCall({action:'notice',id:E&&E.id||'',title,body,pin:$('ntP').checked,...masterAuth()});
+    if(!r.ok){$('ntSave').disabled=false;$('ntMsg').textContent='못 올렸어요 ('+(r.j.err||r.status)+')';return}
+    hp.notices=r.j.items;hp.edit=null;noticeCache(r.j.items);hpNotice();
+  };
+  if(E)$('ntCancel').onclick=()=>{hp.edit=null;hpNotice()};
+  $('ntList').onclick=async e=>{
+    const ed=e.target.closest('[data-ned]'),dl=e.target.closest('[data-ndel]');
+    if(ed){hp.edit={...hp.notices.find(n=>n.id===ed.dataset.ned)};hpNotice();$('helpPg').querySelector('.sheetBody').scrollTop=0;return}
+    if(dl&&confirm('이 공지를 지울까요?')){const r=await boardCall({action:'notice',op:'del',id:dl.dataset.ndel,...masterAuth()});if(r.ok){hp.notices=r.j.items;noticeCache(r.j.items);hpNotice()}else alert('못 지웠어요 ('+(r.j.err||r.status)+')')}
+  };
+}
+function noticeCache(items){lsSet('ntCache',{at:Date.now(),items})}
+async function noticeLoad(force){
+  const c=lsGet('ntCache',null);
+  if(!force&&c&&Date.now()-c.at<30*6e4){hp.notices=c.items;return}
+  const r=await boardCall({action:'notices'});
+  if(r.ok){hp.notices=r.j.items||[];hp.ntAt=Date.now();noticeCache(hp.notices)}else if(c)hp.notices=c.items;else if(force)hp.notices=[];
+}
+/* 새 소식 점: 새 공지(가장 최근 글 시각) 또는 새 업데이트 내역이 있으면 ? 와 📢 탭에 */
+function helpNew(){
+  const s=lsGet('helpSeen',{n:0,c:''}),N=hp.notices||[];
+  const newest=N.reduce((m,n)=>Math.max(m,n.at||0),0);
+  return newest>(s.n||0)||s.c!==CL_KEY;
+}
+function hpDots(){const on=helpNew();$('helpBtn').classList.toggle('new',on);const d=$('hpTabs').querySelector('.hpDot');if(d)d.style.display=on?'block':'none'}
+function helpSeen(){const N=hp.notices||[];lsSet('helpSeen',{n:N.reduce((m,n)=>Math.max(m,n.at||0),0),c:CL_KEY});hpDots()}
+$('helpBtn').onclick=()=>openHelp(hp.tab);
+$('hpClose').onclick=()=>closeSheet('helpPg');
+hpDots();setTimeout(()=>noticeLoad(false).then(hpDots),2500);
 /* ----- 🧪 실험실: 🎤 AI 듣기·해석 비교 (내 키로) — 받아쓰기 오류와 해석 오류를 따로 봄 ----- */
 const LAB_CTX={cands:[{name:'성산식당',cat:'한식'},{name:'성산일출봉 해녀의집',cat:'해물,생선'},{name:'린니쿠',cat:'일식'}],sel:'성산식당',plan:['롯데캐슬 몰운대'],saved:['린니쿠','롯데캐슬 몰운대'],recent:['오설록 티뮤지엄'],time:'12:30',trip:'3일 중 1일차'};
 const LAB_SENT=[['성산식당 가자',{act:'find',q:'성산식당',go:true}],['두 번째 거',{act:'choose',n:2}],['거기로 안내해줘',{act:'navi',alt:{act:'find',q:'성산식당'}}],['근처 흑돼지 찾아줘',{act:'nearby',q:'흑돼지'}],['아까 선택한 곳 저장해줘',{act:'save'}],['배고픈데 이 근처 뭐 먹을까',{act:'nearby'}],['린 니꾸 가자',{act:'find',q:'린니쿠'}],['롯데 캐슬 몰 운대로 데려다줘',{act:'find',q:'롯데캐슬 몰운대'}],
@@ -6373,7 +6809,7 @@ function applyNavLabels(){document.querySelectorAll('.navNm').forEach(el=>el.tex
     <div id="vmPop" role="listbox" aria-label="AI 모델"></div>
     <div class="vmKey"><span id="vmKeyTxt"></span><button type="button" id="vmKeyBtn" aria-expanded="false">관리</button></div>
     <div id="aiConn"></div>
-    <label class="vmDeep" id="vmDeepRow"><input type="checkbox" id="vmDeep"> <span><b>🔎 깊게 찾기</b> <small>AI가 검색·상세 조회를 직접 여러 번 해서 답해요(함수 호출). Groq 키 · 무료로 하루 약 30번, 다 쓰면 보통 방식으로</small></span></label>
+    <label class="vmDeep" id="vmDeepRow"><input type="checkbox" id="vmDeep"> <span><b>🔎 깊게 찾기</b> <small>AI가 검색·상세 조회를 직접 여러 번 해서 답해요(함수 호출). Groq 키 · 무료로 하루 약 30번(예상치, 말 해석과 한도 공유), 다 쓰면 보통 방식으로</small></span></label>
     <details class="vmInfo"><summary>ⓘ 안내</summary><div class="labNote">· ① 폰 브라우저가 받아쓰고 정해진 명령을 앱이 처리(무료, 연결 없음) · ② 정해진 말로 안 되는 말만 AI가 한 번 더 · ③ AI가 받아쓰고 애매한 말을 해석<br>· AI 키는 각자 자기 것(Gemini나 Groq 하나면 돼요). 서버에 암호화해 내 계정에만 묶고, 폰으로 다시 내려오지 않아요.<br>· AI에는 말한 문장(③은 녹음)과 화면 후보의 이름·점수·거리만 보내요. 위치 좌표는 안 보내요.<br>· 무료 모델만 불러요. 한도가 차거나 오류면 ① 방식으로 이어가요. 결제를 켠 키는 요금이 나갈 수 있어요. 하루 500회 상한(말 한 번 = 1회).<br>· Gemini 무료 키로 보낸 내용은 구글이 서비스 개선에 쓸 수 있어요.</div></details>`;
   $('navBox').after(box);
   const msg=t=>{const el=$('aiMsg');if(el)el.textContent=t||''};
@@ -6441,4 +6877,5 @@ $('gatePin').addEventListener('keydown',e=>{if(e.key==='Enter')tryGate()});
 if(gateOk())startApp();
 else{$('gate').classList.add('on');setStatus('비밀번호 확인 대기 중');setTimeout(()=>$('gatePin').focus(),100)}
 </script>
+<form name="suggest" data-netlify="true" netlify-honeypot="bot-field" hidden><input name="bot-field"><input name="kind"><input name="nick"><input name="from"><input name="ver"><textarea name="msg"></textarea></form>
 </body></html>
