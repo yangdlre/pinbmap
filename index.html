@@ -2850,7 +2850,7 @@ function cleanEndPt(v){if(!v||typeof v!=='object')return undefined;if(v.none)ret
 function cleanEnds(e){const o={};if(e&&typeof e==='object')for(let d=0;d<7;d++){const v=e[d];if(!v||typeof v!=='object')continue;const s=cleanEndPt(v.s),en=cleanEndPt(v.e);if(s||en){o[d]={};if(s)o[d].s=s;if(en)o[d].e=en}}return o}
 function cleanTrip(t){
   if(!t||typeof t!=='object')return null;
-  return {start:/^\d{4}-\d{2}-\d{2}$/.test(t.start)?t.start:todayPlus(1),days:Math.floor(num(t.days,1,7,3)),from:Math.floor(num(t.from,5,12,7)),to:Math.floor(num(t.to,18,24,23)),
+  return {start:/^\d{4}-\d{2}-\d{2}$/.test(t.start)?t.start:todayPlus(1),days:Math.floor(num(t.days,1,7,3)),from:Math.floor(num(t.from,0,12,7)),to:Math.floor(num(t.to,18,24,23)),
     name:typeof t.name==='string'?t.name.slice(0,30):'',chat:typeof t.chat==='string'&&/^https:\/\/open\.kakao\.com\/[\w\/?=&.-]{1,150}$/.test(t.chat)?t.chat:'',
     upd:num(t.upd,0,Date.now()+864e5,0),people:Array.isArray(t.people)?t.people.slice(0,30).filter(x=>typeof x==='string').map(x=>str(x,20)).filter(Boolean):[],
     ends:cleanEnds(t.ends),
@@ -2893,6 +2893,11 @@ function pickFollow(p,delay){
   };
   delay?setTimeout(run,delay):run();
 }
+// 시간 정책(빠른 넣기·말로 일정·예약 사진 공통): 시작은 00:00~23:55만(24:00은 시작으로 안 받음, 입력한 시각을 바꾸지 않음),
+// 머무름이 자정을 넘으면 24:00에 끝나게 줄이고 알려 줌. 시간표 밖이면 시간표를 넓힘.
+const T_MAX=23*60+55;
+function fitSlot(start,dur){if(!(start>=0&&start<=T_MAX))return null;const d=Math.max(5,Math.min(dur,24*60-start));return {start,dur:d,cut:d<dur}}
+function slotNote(s){return s&&s.cut?` · 자정을 넘어서 머무름을 ${s.dur}분(24:00까지)으로 줄였어요`:''}
 // 일정표 밖 시간(예: 06:30)은 시간표를 그만큼 넓혀서 그대로 넣음 (예전엔 07:00으로 바뀜)
 function widenHours(m,dur=30){
   const f=Math.min(trip.from,Math.max(0,Math.floor(m/60))),t=Math.max(trip.to,Math.min(24,Math.ceil((m+dur)/60)));
@@ -2914,7 +2919,7 @@ function hm(min){const h=Math.floor(min/60),m=min%60;return String(h).padStart(2
 function fillTripCfg(){
   $('tripStart').value=trip.start;
   $('tripDays').innerHTML=[1,2,3,4,5,6,7].map(n=>`<option value="${n}">${n===1?'당일':`${n-1}박${n}일`}</option>`).join('');$('tripDays').value=trip.days;
-  $('tripFrom').innerHTML=[...new Set([0,1,2,3,4,5,6,7,8,9,10,11,12,trip.from])].sort((a,b)=>a-b).filter(n=>n>=4||n===trip.from).map(n=>`<option value="${n}">${n}시</option>`).join('');$('tripFrom').value=trip.from;
+  $('tripFrom').innerHTML=[0,1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<option value="${n}">${n}시</option>`).join('');$('tripFrom').value=trip.from;
   $('tripTo').innerHTML=[18,19,20,21,22,23,24].map(n=>`<option value="${n}">${n}시</option>`).join('');$('tripTo').value=trip.to;
 }
 ['tripStart','tripDays','tripFrom','tripTo'].forEach(id=>$(id).onchange=()=>{
@@ -3100,20 +3105,22 @@ function openQuick(puid){
   $('qpTime').value='';$('qpMsg').textContent=$('sched').classList.contains('on')?'':'닫으면 담아둔 곳에 그대로 남아요.';$('qpMsg').style.color='var(--muted)';qpPreview();$('qpEd').classList.add('on');
   setTimeout(()=>$('qpTime').focus(),60);
 }
-function qpPreview(){const m=parseHHMM($('qpTime').value),raw=$('qpTime').value.trim();
-  $('qpOut').textContent=m==null?(raw?'시간을 확인해 주세요':'예) 1233 → 12:33'):`→ ${hm(m)} ~ ${hm(m+30)} (30분)`;$('qpOut').classList.toggle('bad',!!raw&&m==null)}
+function qpPreview(){const m=parseHHMM($('qpTime').value),raw=$('qpTime').value.trim(),sl=m==null?null:fitSlot(m,30);
+  $('qpOut').textContent=m==null?(raw?'시간을 확인해 주세요':'예) 1233 → 12:33'):!sl?'시작은 23:55까지예요':`→ ${hm(m)} ~ ${hm(m+sl.dur)} (${sl.dur}분)`;$('qpOut').classList.toggle('bad',!!raw&&!sl)}
 $('qpTime').addEventListener('input',qpPreview);
 $('qpTime').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$('qpOk').click()}});
 $('qpX').onclick=()=>{$('qpEd').classList.remove('on');qpUid=null};
 $('qpOk').onclick=()=>{
   const m=parseHHMM($('qpTime').value);if(m==null){$('qpMsg').style.color='';$('qpMsg').textContent='시간을 숫자 4자리로 넣어주세요. 예) 1233 → 12:33, 930 → 09:30';$('qpTime').focus();return}
+  const sl=fitSlot(m,30);
+  if(!sl){$('qpMsg').style.color='';$('qpMsg').textContent='시작은 00:00~23:55만 넣을 수 있어요. 24:00이면 다음 날 0000으로 넣어 주세요.';$('qpTime').focus();return}
   const day=+$('qpDay').value,k=picks.find(x=>x.uid===qpUid&&!x.del);if(!k)return;
-  const wide=widenHours(m,30);
-  placePick(qpUid,day,m);const it=items.find(x=>x.uid==='i'+k.uid);if(it&&it.start!==m){it.start=m;stamp(it);savePlan()}
+  const wide=widenHours(m,sl.dur);
+  placePick(qpUid,day,m);const it=items.find(x=>x.uid==='i'+k.uid);if(it&&(it.start!==m||it.dur!==sl.dur)){it.start=m;it.dur=sl.dur;stamp(it);savePlan()}
   $('qpEd').classList.remove('on');qpUid=null;selPick=null;curDay=day;dayTouched=Date.now();renderPlan();
   const el=$('gridIn').querySelector(`.item[data-uid="i${k.uid}"]`);if(el)$('grid').scrollTop=Math.max(0,el.offsetTop-ROW*2);
-  $('planSum').textContent=`⏱ “${k.p.place_name}” ${dayLabel(day)} ${hm(m)}에 넣었어요 (30분)${wide?` · 시간표를 ${trip.from}시~${trip.to}시로 넓혔어요`:''}`;
-  if(!$('sched').classList.contains('on'))setStatus(`⏱ “${k.p.place_name}” ${dayLabel(day)} ${hm(m)}에 넣었어요${wide?` · 시간표 ${trip.from}시~${trip.to}시`:''}`);
+  $('planSum').textContent=`⏱ “${k.p.place_name}” ${dayLabel(day)} ${hm(m)}에 넣었어요 (${sl.dur}분)${wide?` · 시간표를 ${trip.from}시~${trip.to}시로 넓혔어요`:''}${slotNote(sl)}`;
+  if(!$('sched').classList.contains('on'))setStatus(`⏱ “${k.p.place_name}” ${dayLabel(day)} ${hm(m)}에 넣었어요${wide?` · 시간표 ${trip.from}시~${trip.to}시`:''}${slotNote(sl)}`);
 };
 
 /* ----- 일정 하나 편집 ----- */
@@ -3163,7 +3170,7 @@ function distText(p){const {me,ctr,same}=distParts(p);
   if(me!=null&&(same||ctr==null))return `내 위치에서 ${fmtDist(me)}`;
   if(me!=null)return `내 위치 ${fmtDist(me)} · 검색 중심 ${fmtDist(ctr)}`;
   return ctr!=null?`검색 중심에서 ${fmtDist(ctr)}`:'';}
-function withDist(p){return {...p,_dist:searchCenter?distanceM(searchCenter.getLat(),searchCenter.getLng(),+p.y,+p.x):0}}
+function withDist(p){return {...p,_dist:searchCenter&&hasLoc(p)?distanceM(searchCenter.getLat(),searchCenter.getLng(),+p.y,+p.x):null}}
 
 /* ----- 직접 추가 (공항 도착, 렌터카 픽업 등) ----- */
 $('addCustom').onclick=()=>{$('customBox').classList.toggle('on');$('customName').focus()};
@@ -4977,6 +4984,7 @@ renderSetBits();
 
 /* ---------- 🃏 지도 카드 동작 옵션 ---------- */
 var pbArmed=false;
+{const ls=lsSet;lsSet=function(k,v){if(k==='acct'){pbArmed=false;try{if(pb)pbCleanup()}catch(_){}}return ls(k,v)}}   // 로그인·로그아웃·탈퇴·로그인 풀림
 function isMasterNow(){return !!(acct&&acct.email==='yangdlre@gmail.com')}   // 🎮 핀볼: 마스터 계정이 실험실에서 켰을 때만, 앱을 다시 열면 꺼짐 (저장된 옵션만으로는 안 켜짐)
 function cardOpt(){const o=lsGet('cardOpt',null)||{},n=(v,a,b)=>Math.max(a,Math.min(b,Math.round(+v||a))),
     sp=k=>{const v=+(o.speed&&o.speed[k]);return Number.isFinite(v)&&v>0?Math.max(.1,Math.min(1.5,Math.round(v*20)/20)):.7};
@@ -5657,7 +5665,7 @@ const HELP=[
 ];
 /* 🆕 업데이트 내역 — 올릴 때마다 맨 위에 한 줄 묶음 추가 [날짜, 버전, [바뀐 것…]] */
 const CHANGELOG=[
-['10.16','v0.45 dev',['⭐ 지도 왼쪽 위 바로가기(주 버튼 + ＋ 메뉴, 꾹 눌러 바꾸기) · ? 는 위 줄 ⚙️ 왼쪽으로','📅 일정에 담기 방식(설정): 담기만 / 일정표로 가기 / 바로 넣기 — 카드 튕기면 바로가기(없으면 내 여행 탭)로 빨려 들어가고 3초 뒤 열림','시간표 밖 시간은 시간표를 넓혀서 그대로(06:30이 07:00으로 바뀌던 것)','거리: 내 위치 / 검색 중심 나눠 표시, 상호 검색 뒤 0m 없앰','말로 찾기: "1번 주차 돼?"·"1번이랑 2번 중 어디가 나아?"는 고르지 않고 답 · 실내+평점 같은 말은 AI로(없으면 실내+평점순)','영수증·예약 빈 칸이면 입력창은 두고 칸 아래 안내','누가 보는 기록인지 한 줄(경비·가계부·사진·영수증)','🎮 핀볼은 실험실(마스터)로 · 도움말 짧은 판(20개) · 업데이트 내역은 실험실로']],
+['10.16','v0.45',['⭐ 지도 왼쪽 위 바로가기(주 버튼 + ＋ 메뉴, 꾹 눌러 바꾸기) · ? 는 위 줄 ⚙️ 왼쪽으로','📅 일정에 담기 방식(설정): 담기만 / 일정표로 가기 / 바로 넣기 — 카드 튕기면 바로가기(없으면 내 여행 탭)로 빨려 들어가고 3초 뒤 열림','시간 입력 하나의 규칙으로: 시작은 00:00~23:55 그대로(시간표를 넓힘), 자정을 넘는 머무름은 24:00까지로 줄이고 알려 줌, 24:00은 시작으로 안 받음 — 바로 넣기·말로 일정·예약 사진 같음, 다시 열어도 그대로',"'일 번'·'일번이랑 이번' 같은 한글 번호도 숫자 번호와 똑같이 (‘이번 여행’은 번호 아님)",'계정이 바뀌면 핀볼 꺼짐 · 기준을 모르면 거리 안 보임(0m 아님)','거리: 내 위치 / 검색 중심 나눠 표시, 상호 검색 뒤 0m 없앰','말로 찾기: "1번 주차 돼?"·"1번이랑 2번 중 어디가 나아?"는 고르지 않고 답 · 실내+평점 같은 말은 AI로(없으면 실내+평점순)','영수증·예약 빈 칸이면 입력창은 두고 칸 아래 안내','누가 보는 기록인지 한 줄(경비·가계부·사진·영수증)','🎮 핀볼은 실험실(마스터)로 · 도움말 짧은 판(20개) · 업데이트 내역은 실험실로']],
 ['10.16','v0.45',['❓ 도움말 페이지 — 도움말(기능을 누르면 설명·검색·바로 가기) · 🎉 축제 · ✉️ 건의 · 📢 공지','관광·자연을 고르면 🎉 축제 칩 — 지도 주변 축제 바로 보기','깊게 찾기·사진 읽기 무료 횟수는 예상치로 표시','지도 아래 겹침 정리 — 지난 여행 흔적 줄, 다음 일정 카드, 가고 싶은 곳 줄이 이 지역 검색·마이크에 안 가리게']],
 ['10.15','v0.45',['🎤 말로 찾기 — 물으면 마이크 자동, 근처 찾기는 별점 검색, 조건·기록·날씨 명령, 📖 명령어 모음','🤖 내 AI 키 연결(무료) — 애매한 말 해석, 후보 비교, 🔎 깊게 찾기, 📷 영수증·예약 사진 읽기','🚗 길안내 앱 고르기(TMAP·카카오내비·네이버 지도) · ⛽ 주유하고 가기','아래 탭에 가리던 창(다녀온 곳·사진 카드·일정 편집 등) 탭 위로']],
 ['','v0.45',['새 메뉴: 아래 탭 찾기·내 여행·내 장소·지출, 위 줄 여행 이름▾·👥 함께·⚙️','찾기 조건 한 줄 요약 · 종류 칩 · 레이어/목록','🧮 ② 종합 점수','한눈에 · 📚 나의 책장 · 다녀온 곳 목록','보류 → 가고 싶은 곳']],
@@ -6349,8 +6357,19 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   const ORD={'첫':1,'한':1,'하나':1,'일':1,'두':2,'둘':2,'이':2,'세':3,'셋':3,'삼':3,'네':4,'넷':4,'사':4,'다섯':5,'오':5};
   const QWORD=/나아|낫|비교|어느|어디가|어때|좋아|괜찮|주차|영업|열었|열어|문\s*열|몇\s*시까지|평점|별점|후기|리뷰|점수|맛있|가까|멀어|얼마나|걸려|되나|돼$|있어$|있나/;
   const CMPW=/나아|낫|비교|어느|어디가|좋아|골라|괜찮/;
-  function ordinals(t){const out=[],re=/(\d)\s*(?:번째|번)|(첫|한|하나|두|둘|세|셋|네|넷|다섯)\s*(?:번째|번)|마지막/g;let m;
-    while((m=re.exec(t))){const n=m[0]==='마지막'?va.cands.length||(lastSelected||[]).length:m[1]?+m[1]:ORD[m[2]];if(n&&!out.includes(n))out.push(n)}return out}
+  // 문장 안의 번호들(나온 순서): 1번·2번째 · 첫/두/세 번째 · 일/이/삼/사/오 번(문장 맨 앞이거나 다른 번호와 같이 나올 때만 — ‘이번 여행’과 헷갈리지 않게) · 마지막(-1)
+  function ordList(t){
+    const hits=[];let m;
+    const r1=/(\d)\s*(?:번째|번)/g;while((m=r1.exec(t)))hits.push([m.index,+m[1]]);
+    const r2=/(첫|한|하나|두|둘|세|셋|네|넷|다섯)\s*(?:번째|번)/g;while((m=r2.exec(t)))hits.push([m.index,ORD[m[1]]]);
+    const ko=[],r3=/(?:^|[^가-힣])(일|이|삼|사|오)\s*(?:번째|번)(?!\s*(?:여행|주|달|에|엔|만큼|처럼|기회|만))/g;
+    while((m=r3.exec(t))){ko.push([m.index+m[0].lastIndexOf(m[1],m[0].search(/\s*(?:번째|번)/)),ORD[m[1]]]);r3.lastIndex=m.index+m[0].length}
+    ko.forEach(([i,n])=>{if(i===0||hits.length||ko.length>1)hits.push([i,n])});
+    const z=t.indexOf('마지막');if(z>=0)hits.push([z,-1]);
+    hits.sort((a,b)=>a[0]-b[0]);
+    return [...new Set(hits.map(x=>x[1]))];
+  }
+  function ordinals(t){const L=va.cands.length||(lastSelected||[]).length;return [...new Set(ordList(t).map(n=>n===-1?L:n))].filter(n=>n>0)}
   function factLine(p,topic){
     const e=ENRICH[p.id]||{},s2=SCORE2[p.id],pk=parkingOf(p),d=distTxt(p);
     const open=e.open&&e.open.c?(e.open.c==='OPEN'?'영업 중':(e.open.t||'영업 전이거나 마감')):'';
@@ -6374,10 +6393,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   }
   function ordinal(t){
     if(/마지막/.test(t))return -1;
-    let m=t.match(/(\d)\s*(번째|번)/);if(m)return +m[1];
-    m=t.match(/(첫|한|하나|두|둘|세|셋|네|넷|다섯)\s*(번째|번)/);if(m)return ORD[m[1]];
-    m=t.match(/^(일|이|삼|사|오)\s*번/);if(m)return ORD[m[1]];
-    return 0;
+    return ordList(t)[0]||0;
   }
   const keyOf=n=>{const t=String(n||'').trim().split(/\s+/);return nm(t.length>1&&/점$/.test(t[t.length-1])?t.slice(0,-1).join(''):t.join(''))};
   function pools(){
@@ -6560,13 +6576,14 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     let day=c.day?c.day-1:c.rel==='tomorrow'?(d<0?null:d+1):c.rel==='dayafter'?(d<0?null:d+2):(d<0?curDay:d);
     if(day==null||day<0||day>=trip.days){say('여행 기간 밖의 날이에요. “2일차 3시에 ○○ 넣어 줘”처럼 말해 보세요.');return}
     const tm=String(c.time||'').match(/^(\d{1,2}):(\d{2})$/);if(!tm){say('몇 시인지 못 알아들었어요. 예: “내일 오후 2시에 성산일출봉 넣어 줘”');return}
-    const start=Math.min((+tm[1])*60+(+tm[2]),23*60);
-    withTarget(c.q,p=>confirmQ(`📅 <b>${escapeHtml(dayLabel(day))} ${hm(start)}</b><br>${escapeHtml(p.place_name)}`,`${dayLabel(day).split(' ')[0]} ${spokenTime(hm(start))}에 ${p.place_name}, 일정에 넣을까요?`,()=>{
-      widenHours(start,60);const k=live(picks).find(x=>x.p&&x.p.id===p.id);if(k)stamp(k).del=true;
+    const sl=fitSlot((+tm[1])*60+(+tm[2]),60);if(!sl){say('시작은 밤 11시 55분까지 넣을 수 있어요. 자정이면 다음 날 0시로 말해 주세요.');return}
+    const start=sl.start;
+    withTarget(c.q,p=>confirmQ(`📅 <b>${escapeHtml(dayLabel(day))} ${hm(start)}</b>${sl.cut?` <small>(${sl.dur}분, 24:00까지)</small>`:''}<br>${escapeHtml(p.place_name)}`,`${dayLabel(day).split(' ')[0]} ${spokenTime(hm(start))}에 ${p.place_name}, 일정에 넣을까요?`,()=>{
+      widenHours(start,sl.dur);const k=live(picks).find(x=>x.p&&x.p.id===p.id);if(k)stamp(k).del=true;
       const old=k&&items.find(x=>x.uid==='i'+k.uid);
-      if(old){Object.assign(old,{day,start,dur:60,del:false});stamp(old)}else items.push(stamp({uid:'i'+(k?k.uid:uid()),day,start,dur:60,memo:k&&k.memo||'',p:slimPlace(p)}));
+      if(old){Object.assign(old,{day,start,dur:sl.dur,del:false});stamp(old)}else items.push(stamp({uid:'i'+(k?k.uid:uid()),day,start,dur:sl.dur,memo:k&&k.memo||'',p:slimPlace(p)}));
       savePlan();try{if($('sched').classList.contains('on'))renderPlan()}catch(_){}
-      say(`✅ ${dayLabel(day)} ${hm(start)}에 ${p.place_name}, 넣었어요.`)},'네, 넣어요'),'일정에 넣을');
+      say(`✅ ${dayLabel(day)} ${hm(start)}에 ${p.place_name}, 넣었어요.${slotNote(sl)}`)},'네, 넣어요'),'일정에 넣을');
   }
   function itemFor(p){const d=todayIdx(),b=d<0?curDay:d;return live(items).filter(it=>it.p&&p&&it.p.id===p.id).sort((a,c)=>Math.abs(a.day-b)-Math.abs(c.day-b))[0]}
   function doVisit(c){
@@ -6630,7 +6647,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       say(`${p.place_name}은(는) ${e.open.t}${e.open.i?', '+e.open.i:''}이에요.`);return}
     if(w==='dist'){const p=target(c.q);if(!p||!hasLoc(p)){say('어느 곳인지 먼저 골라 주세요.');return}
       const o=await myPos(true);if(my!==va.seq)return;
-      if(!o){const q=withDist(p);say(`지금 위치를 몰라서 지도 가운데 기준으로 ${p.place_name}까지 직선 ${fmtDist(q._dist)}예요.`);return}
+      if(!o){const q=withDist(p);say(q._dist!=null?`지금 위치를 몰라서 지도 가운데 기준으로 ${p.place_name}까지 직선 ${fmtDist(q._dist)}예요.`:`지금 위치를 몰라서 거리를 알 수 없어요.`);return}
       say(`${p.place_name}까지 직선으로 ${fmtDist(distanceM(o.lat,o.lng,+p.y,+p.x))}예요.`);return}
     if(w==='visited'){const d=todayIdx();if(d<0){say('오늘은 여행 기간이 아니에요.');return}
       const L=live(items).filter(it=>it.day===d&&it.visited&&it.p).sort((a,b)=>a.start-b.start);
@@ -6718,10 +6735,12 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(day<0||!time){const text=`예약: ${place}${date?' '+date.slice(5).replace('-','/'):''}${time?' '+time:''}${note?' · '+note:''}`;
       todos.push(stamp({uid:uid(),t:text,done:false}));saveTodo();try{renderTodo()}catch(_){}
       say(`${day<0?'여행 기간 밖이라':'시간이 없어서'} 할 일에 적었어요. ${text}`);return}
-    const start=Math.min((+time.slice(0,2))*60+(+time.slice(3,5)),23*60);   // 예약 시각은 그대로 (시간표를 넓힘)
-    withTarget(place,p=>{widenHours(start,90);const k=live(picks).find(x=>x.p&&x.p.id===p.id);if(k)stamp(k).del=true;
-      items.push(stamp({uid:'i'+(k?k.uid:uid()),day,start,dur:90,memo,p:slimPlace(p)}));savePlan();try{if($('sched').classList.contains('on'))renderPlan()}catch(_){}
-      say(`✅ ${dayLabel(day)} ${hm(start)} ${p.place_name}, 예약 일정으로 넣었어요.`)},'예약 장소로 할');
+    const sl=fitSlot((+time.slice(0,2))*60+(+time.slice(3,5)),90);   // 예약 시각은 그대로 (시간표를 넓힘)
+    if(!sl){va.pending={fn:saveReserve};formErr('rvT','시작은 23:55까지 넣을 수 있어요.');return}
+    const start=sl.start;
+    withTarget(place,p=>{widenHours(start,sl.dur);const k=live(picks).find(x=>x.p&&x.p.id===p.id);if(k)stamp(k).del=true;
+      items.push(stamp({uid:'i'+(k?k.uid:uid()),day,start,dur:sl.dur,memo,p:slimPlace(p)}));savePlan();try{if($('sched').classList.contains('on'))renderPlan()}catch(_){}
+      say(`✅ ${dayLabel(day)} ${hm(start)} ${p.place_name}, 예약 일정으로 넣었어요.${slotNote(sl)}`)},'예약 장소로 할');
   }
 
   // ----- 🔎 깊게 찾기 (설정에서 켬): AI가 도구를 불러 여러 번 확인 — 도구는 폰에서 실행, 다 쓰면 보통 방식 -----
@@ -6904,7 +6923,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       const i=o<0?va.cands.length-1:o-1;if(!select(i,wantGo))say(`${o}번째 후보가 없어요.`);else if(SAVE.test(t)&&va.sel)say(`${va.sel.place_name}, 아래 ‘${/저장/.test(t)?'가고 싶은 곳':'일정에 담기'}’을 누르면 ${/저장/.test(t)?'저장해':'담아'}요.`);return;
     }
     va.afterPick=null;
-    if(o&&/^(첫|한|하나|두|둘|세|셋|네|넷|다섯|\d|마지막)/.test(t)){say('고를 후보가 아직 없어요. 먼저 장소를 찾아 주세요.');return}
+    if(o&&/^(첫|한|하나|두|둘|세|셋|네|넷|다섯|일|이|삼|사|오|\d|마지막)/.test(t)){say('고를 후보가 아직 없어요. 먼저 장소를 찾아 주세요.');return}
     va.goIntent=wantGo;
     // 2) 거기로 가자 / 여기로 길안내 (이미 고른 곳 또는 열려 있는 상세창)
     if(/^(거기|여기|그곳|이곳|그리로|그 ?집)/.test(t)&&wantGo){const p=va.sel||currentPlace;if(p){showCands([{p,tag:''}]);select(0,true)}else say('먼저 장소를 골라 주세요.');return}
@@ -6953,7 +6972,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(ai){aiAsk(t);return}
     say('잘 못 알아들었어요. 예: “성산식당 가자”, “근처 카페 찾아줘”, “두 번째 거”');
   }
-  window.vaRun=run;window.vaRule=ruleCmd;window.vaKoNum=koNum;
+  window.vaRun=run;window.vaRule=ruleCmd;window.vaKoNum=koNum;window.vaOrd=t=>({list:ordList(t),first:ordinal(t)});
   // AI·정해진 명령이 같이 쓰는 기능 — 실제 검색·좌표·실행은 앱이 맡음
   window.PinbAct={
     findPlace:name=>resolve(String(name||''),false),
