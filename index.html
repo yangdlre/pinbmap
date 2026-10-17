@@ -5717,7 +5717,7 @@ const HELP=[
 ];
 /* 🆕 업데이트 내역 — 올릴 때마다 맨 위에 한 줄 묶음 추가 [날짜, 버전, [바뀐 것…]] */
 const CHANGELOG=[
-['10.18','v0.45',['📍 설정 → 말로 찾기에 "동네 찾는 범위"(전국·서울·부산·제주·도별, 기본 부산) — 같은 이름 동네가 다른 지역에 있어도 범위 안에서 찾음','같은 이름 동네가 여러 곳이면 버튼으로 물어봄(번호·구 이름으로 대답해도 됨) · 범위 밖에만 있으면 보여 주고 물어봄','"부산의 연지동이라는 동네"처럼 말해도 동네만 뽑고, "부산 연지동"처럼 구가 빠져도 찾음 · 깊게 찾기도 같음','옛 아이폰(iOS 16.4 미만)에서 앱이 안 열리던 것 고침','부산 "서면"처럼 행정 동네가 아닌 곳은 서면역으로(다른 지역 서면·비슷한 글자 면 이름으로 가던 것 고침)','못 찾으면 이전 결과는 치우고 🚗 티맵 · 🗺 카카오맵 · 🟢 네이버 지도 검색 버튼을 바로 아래에','"서면 커피", "하단 국밥"처럼 지역 + 종류말이면 "찾아줘" 없이도 별점 검색','남포동1가·3가·6가처럼 숫자만 다른 동은 한 동네로(묻지 않음)','깊게 찾기: 음식점으로만 찾다 못 찾으면 종류 빼고 다시(아파트·건물도 나오게), 찾던 이름 대신 엉뚱한 곳을 보여 주지 않게','"신평역 찾아줘"·"○○아파트 찾아줘"처럼 이름이면 이름 검색(음식점으로 찾던 것 고침), "카페·국밥 찾아줘"는 그대로 별점 검색','마이크를 켜자마자 말해도 알아듣게(처음 소리를 배경 소음으로 보던 것), 권한 창 중에 닫으면 녹음 안 함','"하단에서 LPG 제일 싼 데"는 하단으로 옮겨서 찾기','AI 무료 한도에 잠깐 걸리면 몇십 초만 쉬고 다시 AI로(예전엔 앱을 다시 열 때까지 꺼짐)','"오전 12시"는 자정(0시)으로']],
+['10.18','v0.45',['📍 설정 → 말로 찾기에 "동네 찾는 범위"(전국·서울·부산·제주·도별, 기본 부산) — 같은 이름 동네가 다른 지역에 있어도 범위 안에서 찾음','같은 이름 동네가 여러 곳이면 버튼으로 물어봄(번호·구 이름으로 대답해도 됨) · 범위 밖에만 있으면 보여 주고 물어봄','"부산의 연지동이라는 동네"처럼 말해도 동네만 뽑고, "부산 연지동"처럼 구가 빠져도 찾음 · 깊게 찾기도 같음','옛 아이폰(iOS 16.4 미만)에서 앱이 안 열리던 것 고침','부산 "서면"처럼 행정 동네가 아닌 곳은 서면역으로(다른 지역 서면·비슷한 글자 면 이름으로 가던 것 고침)','못 찾으면 이전 결과는 치우고 🚗 티맵 · 🗺 카카오맵 · 🟢 네이버 지도 검색 버튼을 바로 아래에','"서면 커피", "하단 국밥"처럼 지역 + 종류말이면 "찾아줘" 없이도 별점 검색','남포동1가·3가·6가처럼 숫자만 다른 동은 한 동네로(묻지 않음)','깊게 찾기: 음식점으로만 찾다 못 찾으면 종류 빼고 다시(아파트·건물도 나오게), 찾던 이름 대신 엉뚱한 곳을 보여 주지 않게','"신평역 찾아줘"·"○○아파트 찾아줘"처럼 이름이면 이름 검색(음식점으로 찾던 것 고침), "카페·국밥 찾아줘"는 그대로 별점 검색','마이크를 켜자마자 말해도 알아듣게(처음 소리를 배경 소음으로 보던 것), 권한 창 중에 닫으면 녹음 안 함','"하단에서 LPG 제일 싼 데"는 하단으로 옮겨서 찾기','AI 무료 한도에 잠깐 걸리면 몇십 초만 쉬고 다시 AI로(예전엔 앱을 다시 열 때까지 꺼짐)','"오전 12시"는 자정(0시)으로','"이마트·이디야·에버랜드 찾아줘"의 첫 글자가 잘리던 것 고침','"근처 신평역"처럼 근처가 붙어도 이름이면 이름 검색 · 약국·주차장·편의점·숙소는 그 시설로 가까운 순(음식점으로 찾던 것)','"정짓간 국밥"처럼 가게 이름일 수도 있으면 AI가 판단하거나, AI가 없으면 [가게 찾기 / 주변 국밥] 중에 물어봄','"하단에서 3km 안에 LPG…"는 하단 + 반경 3km로, "…데로"·"…중"의 남은 글자는 지역으로 안 씀','툭 치는 짧은 소리는 말로 보지 않음, AI 한도는 알려 준 시간만큼 쉬고 다시']],
 ['10.16','v0.45',['🔊 이름을 소리 나는 대로 받아써도("신평역"→"심평역") 비슷한 소리로 한 번 더 찾고 "이걸로 찾을까요?" 하고 물어봄 · 깊게 찾기도','🚉 AI 키가 있으면 지도 주변 지하철역 이름을 받아쓰기 참고로','깊게 찾기 답 끝에 "정보 없음"이 붙던 것 고침']],
 ['10.16','v0.45',['📱 폰 뒤로가기: 맨 위 창부터 하나씩 닫기, 첫 화면에선 "한 번 더 누르면 닫혀요"','지역이 들어간 말("부산 하단동 술집")은 그 동네로 지도를 옮겨서 찾기 · 깊게 찾기도 지역으로 · 못 찾으면 물어봄 · 키워드에 지역명이 안 남음','② 점수 네이버 호출을 NAVER API HUB 방식으로(새 키용)']],
 ['10.16','v0.45',['⭐ 지도 왼쪽 위 바로가기(주 버튼 + ＋ 메뉴, 꾹 눌러 바꾸기) · ? 는 위 줄 ⚙️ 왼쪽으로','📅 일정에 담기 방식(설정): 담기만 / 일정표로 가기 / 바로 넣기 — 카드 튕기면 바로가기(없으면 내 여행 탭)로 빨려 들어가고 3초 뒤 열림','시간 입력 하나의 규칙으로: 시작은 00:00~23:55 그대로(시간표를 넓힘), 자정을 넘는 머무름은 24:00까지로 줄이고 알려 줌, 24:00은 시작으로 안 받음 — 바로 넣기·말로 일정·예약 사진 같음, 다시 열어도 그대로',"'일 번'·'일번이랑 이번' 같은 한글 번호도 숫자 번호와 똑같이 (‘이번 여행’은 번호 아님)",'계정이 바뀌면 핀볼 꺼짐 · 기준을 모르면 거리 안 보임(0m 아님)','거리: 내 위치 / 검색 중심 나눠 표시, 상호 검색 뒤 0m 없앰','말로 찾기: "1번 주차 돼?"·"1번이랑 2번 중 어디가 나아?"는 고르지 않고 답 · 실내+평점 같은 말은 AI로(없으면 실내+평점순)','영수증·예약 빈 칸이면 입력창은 두고 칸 아래 안내','누가 보는 기록인지 한 줄(경비·가계부·사진·영수증)','🎮 핀볼은 실험실(마스터)로 · 도움말 짧은 판(20개) · 업데이트 내역은 실험실로']],
@@ -5742,7 +5742,7 @@ const LAB_KW=['연지동 청구 2차','연지청구2차','연지2차청구아파
 function labDiagBox(){
   const b=document.createElement('div');b.className='rbox';b.id='labDiag';
   const L=(window.vaDiag&&window.vaDiag.list())||[];
-  const recTxt=r=>r?`녹음 ${(r.ms/1000).toFixed(1)}초 · ${Math.round(r.size/1024)}KB · 최대 ${r.peak} · 소음 ${r.noise} · ${r.spoke?'말소리 있음':'말소리 없음'}${r.model?` · ${r.model} ${((r.sttMs||0)/1000).toFixed(1)}초`:''}`:'';
+  const recTxt=r=>r?`녹음 ${(r.ms/1000).toFixed(1)}초 · ${Math.round(r.size/1024)}KB · 최대 ${r.peak} · 소음 ${r.noise} · ${r.flat?'음량을 못 재서 그냥 보냄':r.spoke?'말소리 있음':'말소리 없음'}${r.voiced!=null?` (기준 넘은 ${r.voiced}ms)`:''}${r.model?` · ${r.model} ${((r.sttMs||0)/1000).toFixed(1)}초`:''}`:'';
   const txt=()=>`[말로 찾기 기록] ${L.length}건 · ${($('appVer')&&$('appVer').textContent)||document.title}\n`+L.map(e=>`${fmtT(e.t)} [${e.mode}] “${e.heard||'(받아쓴 말 없음)'}”${e.rec?'\n  · '+recTxt(e.rec):''}${e.steps.map(x=>'\n  → '+x).join('')}`).join('\n');
   b.innerHTML=`<b>🩺 말로 찾기 기록</b> <small style="color:var(--muted)">최근 ${L.length}번 · 이 기기에만</small>
     <div class="labNote" style="margin-top:4px">말로 찾기를 몇 번 써 본 뒤 [기록 복사]로 붙여 보내 주세요. '못 들음'과 '들었지만 잘못 처리함'을 나눠 볼 수 있어요. 키·토큰·녹음 파일은 남기지 않아요.</div>
@@ -6221,16 +6221,25 @@ async function aiCall(action,b={}){
 function aiErrTxt(j){return AI_ERR[j&&j.err]||('AI 오류 ('+((j&&j.err)||'?')+')')}
 // 말소리 판정(프레임마다): 소음 기준은 처음 8프레임의 가장 작은 값에서 시작해, 조용해지면 바로 내려가고 커지면 천천히 따라감.
 //   마이크를 켜자마자 말해도 말이 끝나 조용해지면 기준이 내려가므로, 그때까지의 가장 큰 소리(peak)가 기준을 넘었으면 '말했음'으로 봄
-function vadNew(t0){return {t0,noise:0,nb:0,peak:0,spoke:false,quiet:0,flat:0}}
+function vadNew(t0){return {t0,last:t0,noise:0,nb:0,peak:0,spoke:false,quiet:0,flat:0,flatPass:false,run:0,voiced:0,hist:[]}}
+// 말로 보는 기준: 기준을 넘는 소리가 이어서 80ms 이상이거나 모두 합쳐 200ms 이상 ('네' 한 마디는 넘고, 툭 치는 소리·짧은 잡음은 안 넘음)
+const VAD_RUN=80,VAD_SUM=200;
 function vadStep(v,rms,now){   // → 'go' 계속 · 'end' 끝내기 · 'flat' 소리 크기를 못 재는 기기(손으로 끝내거나 10초)
-  if(rms===0){if(++v.flat>60){v.spoke=true;return 'flat'}}
+  const dt=Math.max(1,Math.min(100,now-v.last));v.last=now;
+  if(rms===0){if(++v.flat>60){v.spoke=true;v.flatPass=true;return 'flat'}}
   if(v.nb<8){v.noise=v.nb?Math.min(v.noise,rms):rms;v.nb++}
-  else if(rms<v.noise)v.noise=rms;else v.noise+=(rms-v.noise)*0.002;
+  else if(rms<v.noise)v.noise=rms;else v.noise+=(rms-v.noise)*Math.min(1,dt/8000);   // 커지는 쪽은 8초쯤에 걸쳐 천천히(프레임 수가 아니라 시간 기준)
   if(rms>v.peak)v.peak=rms;
+  v.hist.push([dt,rms]);if(v.hist.length>700)v.hist.shift();
   const th=Math.max(0.02,v.noise*3);
-  if(rms>th){v.spoke=true;v.quiet=0}
-  else if(!v.spoke&&v.nb>=8&&v.peak>th){v.spoke=true;v.quiet=now}   // 처음부터 말한 경우: 끝난 뒤에 알아챔
-  else if(v.spoke){if(!v.quiet)v.quiet=now;else if(now-v.quiet>1100)return 'end'}
+  if(rms>th){v.run+=dt;v.voiced+=dt;if(!v.spoke&&(v.run>=VAD_RUN||v.voiced>=VAD_SUM))v.spoke=true;if(v.spoke)v.quiet=0}
+  else{
+    v.run=0;
+    if(!v.spoke&&v.nb>=8&&v.peak>th){   // 처음부터 말한 경우: 기준이 내려간 뒤, 지난 소리 기록으로 늦게라도 판정
+      let run=0,best=0,sum=0;for(const [d,r] of v.hist){if(r>th){run+=d;sum+=d;if(run>best)best=run}else run=0}
+      if(best>=VAD_RUN||sum>=VAD_SUM){v.spoke=true;v.quiet=now}}
+    else if(v.spoke){if(!v.quiet)v.quiet=now;else if(now-v.quiet>1100)return 'end'}
+  }
   if(now-v.t0>(v.spoke?9000:6000))return 'end';
   return 'go';
 }
@@ -6256,7 +6265,7 @@ async function recVoice(h){
   return new Promise((res,rej)=>{
     rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
     rec.onstop=()=>{cleanup();
-      res(h.cancelled?null:{blob:new Blob(chunks,{type:(rec.mimeType||mime||'audio/webm')}),spoke:v.spoke,peak:v.peak,noise:v.noise,ms:Date.now()-t0})};
+      res(h.cancelled?null:{blob:new Blob(chunks,{type:(rec.mimeType||mime||'audio/webm')}),spoke:v.spoke,flat:v.flatPass,voiced:v.voiced,peak:v.peak,noise:v.noise,ms:Date.now()-t0})};
     rec.onerror=()=>{cleanup();res(null)};
     try{rec.start(250)}catch(e){cleanup();rej(e);return}
     if(!h.cancelled&&h.onStart)h.onStart();
@@ -6273,7 +6282,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   // 🩺 진단 기록(실험실): 받아쓴 말 → 고른 길 → 검색어·지역·종류·조건 → 모델·시간·실패 이유, 녹음 길이·소리 크기. 이 기기에만 30개 (키·토큰·녹음은 안 남김)
   var DIAG=(()=>{try{const a=lsGet('vaDiag',[]);return Array.isArray(a)?a.slice(-30):[]}catch(_){return []}})();
   const dsave=()=>{while(DIAG.length>30)DIAG.shift();try{lsSet('vaDiag',DIAG)}catch(_){}};
-  function dstart(heard){try{const r=va.lastRec&&Date.now()-va.lastRec.at<20000?va.lastRec:null;va.lastRec=null;DIAG.push({t:Date.now(),seq:va.seq,mode:vaMode(),heard:String(heard||'').slice(0,120),rec:r,steps:[]});dsave()}catch(_){}}
+  function dstart(heard){try{const r=va.lastRec&&Date.now()-va.lastRec.at<20000&&va.lastRec.seq>=va.seq-1?va.lastRec:null;va.lastRec=null;DIAG.push({t:Date.now(),seq:va.seq,mode:vaMode(),heard:String(heard||'').slice(0,120),rec:r,steps:[]});dsave()}catch(_){}}
   function dlog(path,detail){try{let cur=DIAG[DIAG.length-1];if(!cur||cur.seq!==va.seq||Date.now()-cur.t>120000){cur={t:Date.now(),seq:va.seq,mode:vaMode(),heard:'',steps:[]};DIAG.push(cur)}
     cur.steps.push(path+(detail!=null&&detail!==''?': '+String(typeof detail==='string'?detail:JSON.stringify(detail)).slice(0,160):''));if(cur.steps.length>20)cur.steps.splice(1,1);dsave()}catch(_){}}
   window.vaDiag={list:()=>DIAG,clear:()=>{DIAG.length=0;dsave()}};
@@ -6350,6 +6359,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(r){cmdBox.classList.remove('on');cmdBtn.classList.remove('on');cmdBtn.setAttribute('aria-expanded','false');$('vaText').value=r.dataset.run;run(r.dataset.run)}};
   // 확인 칸의 [네]·[취소] 버튼
   $('vaSay').addEventListener('click',e=>{const b=e.target.closest('[data-else]');if(!b)return;stop();openSearchApp(b.dataset.else,b.dataset.q)});
+  $('vaSay').addEventListener('click',e=>{const b=e.target.closest('[data-ch]');if(!b||!va.choice)return;const P=va.choice,o=P.opts[+b.dataset.ch];if(!o)return;va.choice=null;va.pending=null;stop();dlog('고름',o.label);o.fn()});
   $('vaSay').addEventListener('click',e=>{const b=e.target.closest('[data-ar]');if(!b||!va.areaPick)return;stop();pickedArea(va.areaPick,+b.dataset.ar)});
   $('vaSay').addEventListener('click',e=>{const y=e.target.closest('[data-y]'),n=e.target.closest('[data-n]');if(!y&&!n)return;const p=va.pending;va.pending=null;stop();if(!p)return;if(y)p.fn();else if(p.noFn)p.noFn();else say('취소했어요.')});
 
@@ -6367,7 +6377,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(my!==va.seq)return;   // 닫았거나 새로 시작했으면 버림
     va.aiH=null;va.listening=false;
     if(!r||!isOpen()){state('마이크를 누르고 말해 보세요');return}
-    const rs={at:Date.now(),ms:r.ms,size:r.blob.size,peak:+(r.peak||0).toFixed(3),noise:+(r.noise||0).toFixed(3),spoke:r.spoke};
+    const rs={at:Date.now(),seq:va.seq,ms:r.ms,size:r.blob.size,peak:+(r.peak||0).toFixed(3),noise:+(r.noise||0).toFixed(3),voiced:Math.round(r.voiced||0),spoke:r.spoke,flat:!!r.flat};
     if(!r.spoke||r.blob.size<1200){va.lastRec=rs;dstart('');dlog('말소리 판정: 안 들림 (AI에 안 보냄)')}
     if(!r.spoke||r.blob.size<1200){if(va.asking&&va.askTries<1){va.askTries++;return aiListen()}va.asking=false;state('말소리가 안 들렸어요. 다시 눌러 주세요.');return}
     state('AI가 받아쓰는 중…');
@@ -6375,8 +6385,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(my!==va.seq||!isOpen())return;
     aiTag(a.j);
     if(!a.ok){va.lastRec=rs;dstart('');dlog('AI 받아쓰기 실패',(a.j&&a.j.err)||'?');aiFall(a.j);return}
-    rs.model=a.j.model||'';rs.sttMs=a.j.ms||0;va.lastRec=rs;
-    if(!a.j.heard){if(va.asking&&va.askTries<1){va.askTries++;return aiListen()}state('말소리가 안 들렸어요. 다시 눌러 주세요.');return}
+    rs.model=(a.j.used&&a.j.used.stt)||a.j.model||'';if(a.j.fb)rs.model+=' (대신 씀)';rs.sttMs=a.j.ms||0;va.lastRec=rs;
+    if(!a.j.heard){dstart('');dlog('AI 받아쓰기: 빈 결과 (말소리는 있었음)');if(va.asking&&va.askTries<1){va.askTries++;return aiListen()}state('말소리가 안 들렸어요. 다시 눌러 주세요.');return}
     $('vaText').value=a.j.heard;state('마이크를 누르고 말해 보세요');
     run(a.j.heard,{ai3:true});
   }
@@ -6418,7 +6428,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     let m=aiErrTxt(j);
     if(j&&(j.err==='nokey'||j.err==='bad token'))va.aiOff=true;
     else if(j&&j.err==='cap'){const n=nowKST();va.aiOffUntil=Date.now()+((24*60-n.m)*60+60)*1000}
-    else if(j&&j.err==='quota'){const sec=j.daily?3600:Math.max(20,Math.min(300,+j.wait||30));va.aiOffUntil=Date.now()+sec*1000;m+=j.daily?' (오늘 한도 — 1시간 뒤 다시 AI로 해 볼게요)':` (${sec}초 쉬었다가 다시 AI로)`}
+    else if(j&&j.err==='quota'){const w=Math.max(0,+j.wait||0),sec=Math.min(21600,j.daily?Math.max(3600,w):Math.max(20,w||30));   // 서버가 준 재시도 시각보다 앞당기지 않음
+      va.aiOffUntil=Date.now()+sec*1000;m+=j.daily?` (오늘 한도 — ${sec>=3600?Math.round(sec/3600)+'시간':Math.round(sec/60)+'분'} 뒤 다시 AI로 해 볼게요)`:sec>=120?` (${Math.round(sec/60)}분 쉬었다가 다시 AI로)`:` (${sec}초 쉬었다가 다시 AI로)`}
     dlog('AI 실패 → 기본 방식',(j&&j.err)||'?');
     if(t){say(m+'. 기본 방식으로 찾을게요.',{voice:''});run(t,{noAI:true,keep:true});return}
     state(m+'. 기본 방식으로 다시 말해 주세요.');const my=va.seq;va.reT=setTimeout(()=>{va.reT=0;if(my===va.seq&&isOpen())webListen()},600);
@@ -6706,18 +6717,46 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   // ----- 지역이 들어간 말: "부산 하단동 술집" → 하단동으로 지도를 옮기고 '술집'으로 찾기 (지역을 못 찾으면 몰래 딴 데서 찾지 않고 물음) -----
   const AREA_TAIL=/(동|읍|면|리|가|구|군|시|도|역|항|포구|해수욕장|해변|공항|터미널|시장|대학교|사거리|오거리|로터리)$/;
   // '○○ 찾아줘'의 ○○가 고유 이름인지 종류(메뉴·업종)인지 — 이름이면 이름 검색, 종류면 별점 검색, 모르면 AI(없으면 이름 검색)
-  const KIND_WORD=/^(맛집|밥집|식당|음식점|밥|카페|커피|커피숍|찻집|디저트|빵집|베이커리|술집|포차|호프|이자카야|와인바|주유소|충전소|lpg|약국|편의점|마트|관광지|명소|볼거리|놀거리|오름|해변|바다|폭포|공원|숲|산책로|박물관|미술관|체험|숙소|호텔|펜션|모텔|게스트하우스|화장실|주차장|국밥|돼지국밥|밀면|냉면|라면|쫄면|짜장면|짬뽕|국수|칼국수|막국수|우동|라멘|초밥|스시|회|물회|육회|횟집|해장국|순댓국|곰탕|설렁탕|갈비탕|삼계탕|감자탕|고기|고깃집|삼겹살|흑돼지|돼지고기|소고기|한우|갈비|곱창|막창|족발|보쌈|치킨|피자|햄버거|버거|분식|떡볶이|김밥|만두|돈까스|돈가스|파스타|스테이크|브런치|샐러드|한식|중식|일식|양식|중국집|아침|점심|저녁|야식)$/i;
+  const KIND_WORD=/^(맛집|밥집|식당|음식점|밥|카페|커피|커피숍|찻집|디저트|빵집|베이커리|술집|포차|호프|이자카야|와인바|주유소|충전소|lpg|관광지|명소|볼거리|놀거리|오름|해변|바다|폭포|공원|숲|산책로|박물관|미술관|체험|국밥|돼지국밥|밀면|냉면|라면|쫄면|짜장면|짬뽕|국수|칼국수|막국수|우동|라멘|초밥|스시|회|물회|육회|횟집|해장국|순댓국|곰탕|설렁탕|갈비탕|삼계탕|감자탕|고기|고깃집|삼겹살|흑돼지|돼지고기|소고기|한우|갈비|곱창|막창|족발|보쌈|치킨|피자|햄버거|버거|분식|떡볶이|김밥|만두|돈까스|돈가스|파스타|스테이크|브런치|샐러드|한식|중식|일식|양식|중국집|아침|점심|저녁|야식)$/i;
   const KIND_END=/(볶음|찌개|전골|구이|찜|탕|덮밥|비빔밥|볶음밥|쌈밥|정식|백반|맛집|국밥|회|집)$/;
   const NAME_END=/(역|아파트|빌라|오피스텔|맨션|타워|빌딩|센터|공항|터미널|병원|의원|치과|한의원|학교|대학교|대학|시장|공원|해수욕장|항|포구|구청|시청|군청|주민센터|행정복지센터|호텔|모텔|펜션|리조트|성당|교회|사|도서관|박물관|미술관|경기장|체육관|마트|백화점|아울렛|몰|점|\d+차|\d+단지)$/;
+  // 음식·카페·관광·주유가 아닌 시설은 카카오 분류로 따로 (이걸 음식점(FD6)으로 찾던 것). 화장실은 분류가 없어 이름으로
+  const FACILITY={약국:'PM9',주차장:'PK6',편의점:'CS2',마트:'MT1',대형마트:'MT1',호텔:'AD5',모텔:'AD5',펜션:'AD5',게스트하우스:'AD5',숙소:'AD5',리조트:'AD5',병원:'HP8',은행:'BK9',ATM:'BK9',지하철역:'SW8',화장실:''};
+  // 최종 검색 종류(별점 검색의 모드). 시설은 위 FACILITY로
+  function catOfKind(q){q=String(q||'');return /주유|기름|충전|lpg|엘피지/i.test(q)?'fuel':/관광|볼거리|놀거리|명소|오름|해변|바다|폭포|숲|산책|공원|박물관|미술관|체험|전시/.test(q)?'tour':/카페|커피|찻집|디저트|빵|베이커리|케이크/.test(q)?'cafe':'food'}
+  // '찾아줘'·'근처' 떼기 — 앞의 '이·에'는 '이 근처', '근처에'처럼 붙어 있을 때만 (예전엔 '이마트'→'마트', '에버랜드'→'버랜드')
+  const NEAR_HEAD=/^(?:(?:이|요|저)\s*)?(?:근처|주변|가까운|여기)(?:\s*(?:에서|에|의))?\s*/,FIND_TAIL=/\s*(?:좀\s*)?(?:찾아\s*줘|찾아|검색해\s*줘|검색|추천해\s*줘|추천|어디\s*있어|알려\s*줘|보여\s*줘)$/;
+  function nearStrip(t){
+    t=String(t||'').trim();const m=t.match(FIND_TAIL),h=t.match(NEAR_HEAD);if(!m&&!h)return null;
+    let w=m?t.slice(0,m.index):t;if(h&&w.startsWith(h[0]))w=w.slice(h[0].length);
+    return {w:w.trim(),explicit:!!h,verb:!!m};
+  }
+  // '정짓간 국밥'처럼 '상호일 수 있는 말 + 종류말'이면 애매 (지역은 먼저 확인한 뒤) — '얼큰한 국밥' 같은 꾸밈말이면 종류
+  function ambiguousKind(w){
+    const tk=String(w||'').trim().split(/\s+/).filter(Boolean);if(tk.length<2)return false;
+    const last=tk[tk.length-1],pre=tk[tk.length-2];if(!(KIND_WORD.test(last)||KIND_END.test(last))||FACILITY[last]!==undefined)return false;
+    if(/^(맛집|집|식당|밥집|음식점|가게)$/.test(last)||KIND_WORD.test(pre)||KIND_END.test(pre))return false;   // '흑돼지 맛집'·'제육 맛집'·'돼지국밥 집'은 종류
+    if(/(한|운|는|은|인|던|싼|큰|진|된|있는|없는)$/.test(pre)||/^(근처|주변|유명|인기|현지인|24시|혼밥|가성비|분위기|아침|점심|저녁|야식|새벽)$/.test(pre))return false;
+    return true;
+  }
+  // "하단에서 3km 안에 LPG 제일 싼 데" → '하단'. 반경·조사·'로·중' 같은 남은 말은 지역으로 쓰지 않음(없으면 '')
+  function fuelArea(s0){
+    const ar=String(s0||'').replace(/(\d+(?:\.\d+)?)\s*(?:km|키로|킬로|미터|m)\s*(?:안에서|안에|이내|에서|안)?|반경/gi,' ')
+      .replace(/lpg|엘피지|전기\s*(?:차|충전)\s*(?:충전소)?|주유소|충전소|주유|기름|휘발유|경유|(?:제일|가장)\s*싼\s*(?:데|곳)?(?:로|으로)?|싼\s*(?:데|곳|순)(?:로|으로)?|최저가|저렴한\s*(?:데|곳)?|(?:가까운|평판|평점|별점)\s*순(?:으로)?|근처|주변/gi,' ');
+    const STOP=/^(로|으로|중|중에|중에서|에서|에|안|안에|이내|정도|쯤|좀|곳|데|거|것|및|랑|하고|그리고)$/;
+    const out=ar.split(/\s+/).map(w=>w.replace(/(에서|에|으로|로)$/,'')).filter(w=>w&&!STOP.test(w)).join(' ').trim();
+    return out&&out.length<=20&&/[가-힣]{2,}/.test(out)?out:'';
+  }
   function nameOrKind(w){
     const tk=String(w||'').trim().split(/\s+/).filter(Boolean),last=tk[tk.length-1]||'';
+    if(last&&Object.prototype.hasOwnProperty.call(FACILITY,last))return 'facility';
     if(!last||KIND_WORD.test(last))return 'kind';
     if(NAME_END.test(last)&&last.length>=3)return 'name';   // 신평역·연지청구2차아파트·서면점·시민공원 (공원·시장처럼 꼬리만이면 위에서 종류)
     if(KIND_END.test(last))return 'kind';                   // 제육볶음·김치찌개·고깃집
     return 'unknown';                                        // 투썸플레이스·정짓간 같은 상호
   }
   // 말 끝의 종류말(음식·카페·주유 등) — 지역 + 종류말이면 별점 검색으로
-  const KIND_TAIL=/\s(맛집|밥집|식당|음식점|카페|커피|커피숍|디저트|빵집|베이커리|국밥|돼지국밥|밀면|냉면|국수|칼국수|횟집|회|해장국|고기|고깃집|삼겹살|흑돼지|갈비|곱창|막창|치킨|피자|햄버거|술집|이자카야|포차|호프|분식|떡볶이|중국집|짜장면|짬뽕|일식|초밥|스시|라멘|우동|돈까스|돈가스|파스타|양식|한식|브런치|아침|점심|저녁|주유소|충전소|lpg|전기차\s*충전)(\s*(집|가게|맛집))?$/i;
+  const KIND_TAIL=/\s(맛집|밥집|식당|음식점|카페|커피|커피숍|디저트|빵집|베이커리|국밥|돼지국밥|밀면|냉면|국수|칼국수|횟집|회|해장국|고기|고깃집|삼겹살|흑돼지|갈비|곱창|막창|치킨|피자|햄버거|술집|이자카야|포차|호프|분식|떡볶이|중국집|짜장면|짬뽕|일식|초밥|스시|라멘|우동|돈까스|돈가스|파스타|양식|한식|브런치|아침|점심|저녁|주유소|충전소|lpg|전기차\s*충전|약국|주차장|편의점|마트|숙소|호텔|펜션|병원|은행|화장실)(\s*(집|가게|맛집))?$/i;
   const BIG=/^(서울|부산|대구|인천|광주|대전|울산|세종|제주|서귀포|경기|강원|충북|충남|전북|전남|경북|경남)/;
   const AREA_CAT=/지하철|기차역|해수욕장|관광|명소|구청|시청|군청|주민센터|읍사무소|면사무소|공항|터미널|전통시장|대학교|행정/;
   // 말에서 지역 낱말 고르기: 서울·부산·…·경상도 (시·도 이름) → 주소의 첫 칸(region_1depth)과 맞춰 봄
@@ -6922,11 +6961,47 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
         q=A.rest;if(move)centerQuiet(A.lat,A.lng,A.lv);
       }
     }
+    if(nameOrKind(q)==='facility'){dlog('시설 검색',{지역:A?(A.label||A.name):'지도 가운데',q});facilityHere(q,A);return}
+    if(!A&&o.rule&&ambiguousKind(q)){   // '정짓간 국밥'처럼 가게 이름일 수도 있으면: AI가 있으면 AI가, 없으면 사용자에게
+      const last=q.split(/\s+/).pop();
+      if(aiOn()){dlog('애매 (가게 이름 + 종류말) → AI',q);aiAsk(o.rule);return}
+      dlog('애매 (가게 이름 + 종류말) → 물음',q);
+      askChoice(`‘${q}’, 가게 이름인가요?`,[
+        {label:`‘${q}’ 가게 찾기`,say:'가게 찾기',keys:['가게','이름','찾기'],fn:()=>resolve(q,va.goIntent,{noAI:true})},
+        {label:`지도 주변 ${last} 별점 검색`,say:`주변 ${last}`,keys:['주변','근처','별점'],fn:()=>nearbyHere({q:last,cat,cond})}]);
+      return}
     dlog('별점 검색',{지역:A?(A.label||A.name):'지도 가운데',q,cat,cond});
     nearbyHere({q,cat,cond},A&&A.name);
   }
+  // 🏥 시설 찾기: 카카오 분류(약국 PM9·주차장 PK6·편의점 CS2·숙박 AD5…)로 가까운 순. 별점 검색이 아님
+  function facilityHere(w,A){
+    const my=va.seq,tk=String(w||'').trim().split(/\s+/),last=tk[tk.length-1],code=FACILITY[last]||'';
+    if(typeof ps==='undefined'||!ps||typeof kakao==='undefined'||!kakao.maps){say('지도가 아직 준비되지 않았어요.');return}
+    if(A)centerQuiet(A.lat,A.lng,A.lv);
+    const S=kakao.maps.services,c=searchCenter,opt={size:15,sort:S.SortBy.DISTANCE};if(c){opt.location=c;opt.radius=Math.max(2000,Math.min(20000,curRadius()||0))}
+    const pre=tk.slice(0,-1).join(' ');
+    state(`${A?A.name+' ':''}${last} 찾는 중…`);
+    const done=(d,st)=>{if(my!==va.seq)return;state('마이크를 누르고 말해 보세요');
+      const L=(st===S.Status.OK&&Array.isArray(d)?d:[]).slice(0,5).map(p=>({p:withDist(p),tag:''}));dlog('시설 결과',`${code||'키워드'} ${L.length}곳`);
+      if(!L.length){sayNotFound(`${A?A.name+' ':'지도 주변에서 '}${last}${jo(last,'을','를')} 찾지 못했어요.`,(A?A.name+' ':'')+w);return}
+      showCands(L,`${A?A.name+' ':'가까운 '}${last} ${L.length}곳이에요. 1번 ${L[0].p.place_name}${L[0].p._dist?' '+fmtDist(L[0].p._dist):''}.${va.goIntent?' 번호를 누르면 바로 출발해요.':''} 몇 번째로 할까요?`)};
+    try{if(code&&!pre)ps.categorySearch(code,done,opt);else{if(code)opt.category_group_code=code;ps.keywordSearch(pre&&!A?w:last,done,opt)}}catch(_){done([],'')}
+  }
+  // 고르기 질문(버튼 · "1번"·"가게"로 대답)
+  function askChoice(head,opts){
+    va.choice={opts,t:Date.now()};va.pending={fn:()=>{},noFn:()=>{va.choice=null;say('취소했어요.')}};
+    say(`<div class="vaQ">${escapeHtml(head)}<div class="vaQb vaAreaQ">${opts.map((o,i)=>`<button type="button" data-ch="${i}">${i+1}. ${escapeHtml(o.label)}</button>`).join('')}<button type="button" data-n>취소</button></div></div>`,
+      {html:true,voice:`${head} ${opts.map((o,i)=>`${i+1}번 ${o.say||o.label}`).join(', ')}.`,ask:true});
+  }
+  function choiceAnswer(t){
+    const P=va.choice;if(!P)return false;if(Date.now()-P.t>18e4){va.choice=null;return false}
+    const n=ordinal(t),k=nm(t);let i=n===-1?P.opts.length-1:n>0&&n<=P.opts.length?n-1:P.opts.findIndex(o=>(o.keys||[]).some(w=>k.includes(nm(w))));
+    if(i>=0){const o=P.opts[i];va.choice=null;va.pending=null;stop();dlog('고름',o.label);o.fn();return true}
+    if(NO.test(t)){va.choice=null;va.pending=null;say('알겠어요.');return true}
+    va.choice=null;va.pending=null;return false;
+  }
   function nearbyHere({q='',cat='',cond=null}={},areaName){
-    if(!cat||!['food','cafe','tour','fuel'].includes(cat))cat=/주유|기름|충전|LPG/i.test(q)?'fuel':/관광|볼거리|명소|오름|해변|바다|폭포|숲|공원|박물관|미술관|체험/.test(q)?'tour':/카페|커피|디저트|빵/.test(q)?'cafe':'food';
+    if(!cat||!['food','cafe','tour','fuel'].includes(cat))cat=catOfKind(q);
     quiet(()=>{
       const m=setMode(cat);
       if(m==='tour'){const k=Object.keys(TOURW).find(w=>q.includes(w));const v=k?TOURW[k]:'AT4';if($('tourTheme').value!==v){$('tourTheme').value=v;fireEv('tourTheme')}}
@@ -7219,8 +7294,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       const a=await aiCall('agent',{messages:msgs});
       if(my!==va.seq||!isOpen())return;
       if(!a.ok){
-        if(a.j.err==='quota'&&waits<2&&(a.j.wait||0)<=25){waits++;const w=Math.max(3,a.j.wait||10);state(`무료 한도(분당) 대기 중… ${w}초`);await sleep(w*1000);if(my!==va.seq||!isOpen())return;step--;continue}
-        if(a.j.err==='quota'||a.j.err==='cap')va.deepOffUntil=Date.now()+(a.j.err==='cap'||a.j.daily?36e5:Math.max(30,Math.min(300,+a.j.wait||60))*1000);aiTag(a.j);   // 잠깐만 쉬고 다시 깊게 찾기
+        if(a.j.err==='quota'&&!a.j.daily&&waits<2&&(a.j.wait||0)<=25){waits++;const w=Math.max(3,a.j.wait||10);state(`무료 한도(분당) 대기 중… ${w}초`);await sleep(w*1000);if(my!==va.seq||!isOpen())return;step--;continue}   // 분당 한도만 잠깐 기다림(하루 한도면 기다려도 소용없음)
+        if(a.j.err==='quota'||a.j.err==='cap')va.deepOffUntil=Date.now()+Math.min(216e5,a.j.err==='cap'||a.j.daily?Math.max(36e5,(+a.j.wait||0)*1000):Math.max(30,+a.j.wait||60)*1000);aiTag(a.j);   // 잠깐만 쉬고 다시 깊게 찾기
         dlog('깊게 찾기 실패 → 보통 방식',a.j.err||'?');
         say(`깊게 찾기를 못 했어요(${aiErrTxt(a.j)}). 보통 방식으로 할게요.`,{voice:''});return aiAskPlain(t);
       }
@@ -7316,8 +7391,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(Object.keys(c).length){
       const nr=t.match(/^(?:근처\s*|주변\s*)?(.+?)\s*(?:좀\s*)?(?:찾아\s*줘|찾아|검색해\s*줘|검색|추천해\s*줘|추천)$/);   // 조건 + 찾기가 같이 오면
       if(nr&&c.fuel&&!c.mode){   // "하단에서 LPG 제일 싼 데 찾아줘" → 하단으로 옮겨 LPG 최저가 (지역을 버리지 않음)
-        const ar=nr[1].replace(/lpg|엘피지|전기\s*(?:차|충전)\s*(?:충전소)?|주유소|충전소|주유|기름|휘발유|경유|(?:제일|가장)\s*싼\s*(?:데|곳)?|싼\s*(?:데|곳|순)|최저가|저렴한\s*(?:데|곳)?|(?:가까운|평판|평점|별점)\s*순으로?|근처|주변/gi,' ').replace(/(에서|에)(?=\s|$)/g,' ').replace(/\s+/g,' ').trim();
-        if(ar&&ar.length<=20)return {act:'nearby',q:'',cat:'fuel',cond:c,area:ar}}
+        const ar=fuelArea(nr[1]);if(ar)return {act:'nearby',q:'',cat:'fuel',cond:c,area:ar}}
       if(nr&&!c.mode&&!c.fuel){const q=nr[1].replace(/(\d+(?:\.\d+)?)\s*(km|키로|킬로|미터|m)\s*(?:안에서?|이내|에서|안)?|반경|프차|프랜차이즈|체인|빼고|말고|제외하고|영업\s*중인\s*(?:곳|데)?\s*(?:만)?|(?:가까운|평판|평점|별점|추천)\s*순으로?|(?:top|탑|톱)\s*\d+(?:으로|로)?/gi,'').replace(/\s+/g,' ').trim();if(q)return {act:'nearby',q,cond:c}}
       return {act:'cond',cond:c};
     }
@@ -7338,6 +7412,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(!opt.keep)$('vaText').value=t;['vaInfo','vaPick','vaKeep'].forEach(id=>$(id).style.display='');$('vaAsk').style.display='none';
     // 앞에서 물어본 것에 대한 대답 (동네 고르기 → 응 / 아니)
     if(va.areaPick&&areaAnswer(t))return;
+    if(va.choice&&choiceAnswer(t))return;
     if(va.pending){const p=va.pending;va.pending=null;
       if(YES.test(t)&&t.length<=14&&!ordinal(t)){p.fn();return}
       if(NO.test(t)&&!ordinal(t)){if(p.noFn)p.noFn();else say('알겠어요.');return}}
@@ -7389,15 +7464,16 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(/저장한|가고\s*싶은/.test(t)&&!/저장해/.test(t)){const k=t.replace(/저장한|가고\s*싶은|곳|중에|에서|거|보여 ?줘|목록|알려 ?줘/g,'').replace(GO,'').trim();let L=(Array.isArray(saved)?saved:[]).filter(x=>x&&!x.del&&x.p).map(x=>({p:withDist(x.p),tag:'가고 싶은 곳'}));if(k)L=L.filter(c=>nm(c.p.place_name+c.p.category_name).includes(nm(k)));L.sort((a,b)=>(a.p._dist||0)-(b.p._dist||0));L.length?showCands(L,`가고 싶은 곳 ${L.length}곳 중 가까운 순이에요.${wantGo?' 번호를 누르면 바로 출발해요.':''} 몇 번째로 할까요?`):say('가고 싶은 곳이 아직 없어요.');return}
     if(/아까|방금|최근|봤던|본\s*(곳|거|데|집|카페|식당)/.test(t)){const k=t.replace(/아까|방금|최근에?|봤던|본|곳|거|데|집|보여 ?줘/g,'').replace(GO,'').trim();let L=va.recent.map(p=>({p,tag:'최근 본 곳'}));if(k)L=L.filter(c=>nm(c.p.place_name+c.p.category_name).includes(nm(k)));if(!L.length){say('최근에 본 장소가 없어요.');return}if(L.length===1||wantGo){showCands(L);select(0,wantGo);return}showCands(L,`최근 본 곳 ${L.length}곳이에요. 몇 번째로 할까요?`);return}
     // 7) 근처 ○○ 찾아줘 → 별점 검색 (문장 같은 말은 AI에게)
-    const near=t.match(/^(?:이\s*)?(?:근처|주변|가까운|여기)?\s*(?:에\s*)?(.*?)\s*(?:좀\s*)?(찾아 ?줘|찾아|검색해 ?줘|검색|추천해 ?줘|추천|어디\s*있어|알려 ?줘|보여 ?줘)$/);
-    if(near||/^(근처|주변)/.test(t)){
-      const w=(near?near[1]:t.replace(/^(근처|주변)\s*/,'')).trim();
-      if(ai&&(w.split(/\s+/).length>=3||CHATTY.test(w))){aiAsk(t);return}
-      // '신평역 찾아줘'·'연지청구2차아파트 찾아줘'를 음식점 검색으로 보내던 것 → 이름이면 이름 검색 ('근처 ○○'라고 하면 그대로 근처 검색)
-      if(w&&!/^(?:이\s*)?(?:근처|주변|가까운|여기)/.test(t)){const k=nameOrKind(w);
-        if(findLocal(w).length||k==='name'){dlog('이름 검색 (○○ 찾아줘, 이름)',w);resolve(w,wantGo,{noAI:opt.noAI,raw:t,aiFirst});return}
-        if(k==='unknown'){if(ai){dlog('AI에게 (이름인지 종류인지 모름)',w);aiAsk(t);return}dlog('이름 검색 (이름인지 종류인지 모름)',w);resolve(w,wantGo,{noAI:opt.noAI,raw:t,aiFirst});return}}
-      dlog('별점 검색 (종류)',w);doNearby({q:w});return;
+    const nr=nearStrip(t);
+    if(nr&&(nr.verb||/^(?:이\s*)?(?:근처|주변)/.test(t))){
+      const w=nr.w;
+      if(ai&&(w.split(/\s+/).length>=3||CHATTY.test(w))){dlog('AI에게 (문장 같은 말)',w);aiAsk(t);return}
+      const k=w?nameOrKind(w):'kind';
+      // 이름은 '근처'가 붙어도 이름 검색(검색 중심에서 가까운 순) — '신평역 찾아줘'·'근처 신평역 찾아줘'를 음식점으로 찾던 것
+      if(w&&(findLocal(w).length||k==='name')){dlog('이름 검색 ('+(nr.explicit?'근처 + ':'')+'이름)',w);resolve(w,wantGo,{noAI:opt.noAI,raw:t,aiFirst});return}
+      if(k==='facility'){dlog('시설 검색',w);facilityHere(w);return}   // 약국·주차장·편의점·숙소… 는 음식점이 아니라 그 시설로
+      if(k==='unknown'){if(ai&&!nr.explicit){dlog('AI에게 (이름인지 종류인지 모름)',w);aiAsk(t);return}dlog('이름 검색 (이름인지 종류인지 모름)',w);resolve(w,wantGo,{noAI:opt.noAI,raw:t,aiFirst});return}
+      dlog('별점 검색 (종류)',w);doNearby({q:w,rule:t});return;
     }
     // 후보 비교·고르기는 AI가 있을 때만 (① 방식은 정렬 순서 안내)
     if(!ai&&va.cands.length&&/골라|나아|낫지|비교|어디가\s*(좋|나)|어느\s*(쪽|곳|게)/.test(t)){askCand(t,va.cands.slice(0,3).map((_,i)=>i+1));return}   // ① 방식: 위 3곳을 자료로 비교만
@@ -7407,7 +7483,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     //   앞부분이 지역으로 확인될 때만 ("정짓간 국밥"처럼 가게 이름 + 종류말은 그대로 이름 검색)
     if(name&&/\s/.test(name)&&KIND_TAIL.test(name)&&!findLocal(name).length&&typeof kakao!=='undefined'&&kakao.maps&&kakao.maps.services&&map){
       const my=va.seq;state('지역 확인 중…');
-      splitArea(name).then(A=>{if(my!==va.seq)return;dlog('지역 + 종류말',A?'지역 있음 → 별점 검색':'지역 없음 → 이름 검색');if(A){if(wantGo)va.goIntent=true;doNearby({q:name})}else resolve(name,wantGo,{noAI:opt.noAI,raw:t,aiFirst})},()=>{if(my===va.seq)resolve(name,wantGo,{noAI:opt.noAI,raw:t,aiFirst})});return}
+      splitArea(name).then(A=>{if(my!==va.seq)return;dlog('지역 + 종류말',A?'지역 있음 → 별점 검색':'지역 없음 → 이름 검색');if(A){if(wantGo)va.goIntent=true;doNearby({q:name,rule:t})}else resolve(name,wantGo,{noAI:opt.noAI,raw:t,aiFirst})},()=>{if(my===va.seq)resolve(name,wantGo,{noAI:opt.noAI,raw:t,aiFirst})});return}
     // 문장 같은 말(“애들이랑 갈 만한 데 없나”)은 바로 AI에게
     if(name&&ai&&(name.split(/\s+/).length>=4||CHATTY.test(name))&&!findLocal(name).length){dlog('AI에게 (문장 같은 말)');aiAsk(t);return}
     if(name){dlog('이름 검색',name);resolve(name,wantGo,{noAI:opt.noAI,raw:t,aiFirst});return}
