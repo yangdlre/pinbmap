@@ -5717,7 +5717,7 @@ const HELP=[
 ];
 /* 🆕 업데이트 내역 — 올릴 때마다 맨 위에 한 줄 묶음 추가 [날짜, 버전, [바뀐 것…]] */
 const CHANGELOG=[
-['10.18','v0.45',['📍 설정 → 말로 찾기에 "동네 찾는 범위"(전국·서울·부산·제주·도별, 기본 부산) — 같은 이름 동네가 다른 지역에 있어도 범위 안에서 찾음','같은 이름 동네가 여러 곳이면 버튼으로 물어봄(번호·구 이름으로 대답해도 됨) · 범위 밖에만 있으면 보여 주고 물어봄','"부산의 연지동이라는 동네"처럼 말해도 동네만 뽑고, "부산 연지동"처럼 구가 빠져도 찾음 · 깊게 찾기도 같음','옛 아이폰(iOS 16.4 미만)에서 앱이 안 열리던 것 고침','부산 "서면"처럼 행정 동네가 아닌 곳은 서면역으로(다른 지역 서면·비슷한 글자 면 이름으로 가던 것 고침)','못 찾으면 이전 결과는 치우고 🚗 티맵 · 🗺 카카오맵 · 🟢 네이버 지도 검색 버튼을 바로 아래에']],
+['10.18','v0.45',['📍 설정 → 말로 찾기에 "동네 찾는 범위"(전국·서울·부산·제주·도별, 기본 부산) — 같은 이름 동네가 다른 지역에 있어도 범위 안에서 찾음','같은 이름 동네가 여러 곳이면 버튼으로 물어봄(번호·구 이름으로 대답해도 됨) · 범위 밖에만 있으면 보여 주고 물어봄','"부산의 연지동이라는 동네"처럼 말해도 동네만 뽑고, "부산 연지동"처럼 구가 빠져도 찾음 · 깊게 찾기도 같음','옛 아이폰(iOS 16.4 미만)에서 앱이 안 열리던 것 고침','부산 "서면"처럼 행정 동네가 아닌 곳은 서면역으로(다른 지역 서면·비슷한 글자 면 이름으로 가던 것 고침)','못 찾으면 이전 결과는 치우고 🚗 티맵 · 🗺 카카오맵 · 🟢 네이버 지도 검색 버튼을 바로 아래에','"서면 커피", "하단 국밥"처럼 지역 + 종류말이면 "찾아줘" 없이도 별점 검색','남포동1가·3가·6가처럼 숫자만 다른 동은 한 동네로(묻지 않음)','깊게 찾기: 음식점으로만 찾다 못 찾으면 종류 빼고 다시(아파트·건물도 나오게), 찾던 이름 대신 엉뚱한 곳을 보여 주지 않게']],
 ['10.16','v0.45',['🔊 이름을 소리 나는 대로 받아써도("신평역"→"심평역") 비슷한 소리로 한 번 더 찾고 "이걸로 찾을까요?" 하고 물어봄 · 깊게 찾기도','🚉 AI 키가 있으면 지도 주변 지하철역 이름을 받아쓰기 참고로','깊게 찾기 답 끝에 "정보 없음"이 붙던 것 고침']],
 ['10.16','v0.45',['📱 폰 뒤로가기: 맨 위 창부터 하나씩 닫기, 첫 화면에선 "한 번 더 누르면 닫혀요"','지역이 들어간 말("부산 하단동 술집")은 그 동네로 지도를 옮겨서 찾기 · 깊게 찾기도 지역으로 · 못 찾으면 물어봄 · 키워드에 지역명이 안 남음','② 점수 네이버 호출을 NAVER API HUB 방식으로(새 키용)']],
 ['10.16','v0.45',['⭐ 지도 왼쪽 위 바로가기(주 버튼 + ＋ 메뉴, 꾹 눌러 바꾸기) · ? 는 위 줄 ⚙️ 왼쪽으로','📅 일정에 담기 방식(설정): 담기만 / 일정표로 가기 / 바로 넣기 — 카드 튕기면 바로가기(없으면 내 여행 탭)로 빨려 들어가고 3초 뒤 열림','시간 입력 하나의 규칙으로: 시작은 00:00~23:55 그대로(시간표를 넓힘), 자정을 넘는 머무름은 24:00까지로 줄이고 알려 줌, 24:00은 시작으로 안 받음 — 바로 넣기·말로 일정·예약 사진 같음, 다시 열어도 그대로',"'일 번'·'일번이랑 이번' 같은 한글 번호도 숫자 번호와 똑같이 (‘이번 여행’은 번호 아님)",'계정이 바뀌면 핀볼 꺼짐 · 기준을 모르면 거리 안 보임(0m 아님)','거리: 내 위치 / 검색 중심 나눠 표시, 상호 검색 뒤 0m 없앰','말로 찾기: "1번 주차 돼?"·"1번이랑 2번 중 어디가 나아?"는 고르지 않고 답 · 실내+평점 같은 말은 AI로(없으면 실내+평점순)','영수증·예약 빈 칸이면 입력창은 두고 칸 아래 안내','누가 보는 기록인지 한 줄(경비·가계부·사진·영수증)','🎮 핀볼은 실험실(마스터)로 · 도움말 짧은 판(20개) · 업데이트 내역은 실험실로']],
@@ -5735,9 +5735,9 @@ const CHANGELOG=[
 
 /* ----- 🧪 실험실: 📖 전체 사용 설명서 (도움말 자료를 한 번에 펼쳐 봄) ----- */
 /* ----- 🧪 실험실(마스터): 🔬 검색 시험 — 실제 카카오로 동네 찾기·주소 검색·이름 검색을 한 번에 돌려 결과를 한 화면에 (복사해서 보내기) ----- */
-const LAB_AREA=['서면','부산 서면','서면역','광안리','센텀','센텀시티','경성대','남포동','해운대','기장','다대포','하단','명지','신평','동래','부전동','연지동','부산 연지동','부산진구 연지동','부산의 연지동이라는 동네','송정동','송정','서울 연지동','명동','강남역','제주 애월','애월','성산','경주 황리단길','전주 한옥마을'];
+const LAB_AREA=['서면','부산 서면','광안리','센텀','경성대','남포동','중앙동','연산동','해운대','기장','다대포','하단','명지','신평','동래','부전동','연지동','부산 연지동','부산 진구 연지동','부산진구 연지동','부산의 연지동이라는 동네','송정동','송정','서울 연지동','명동','강남역','제주 애월','애월','성산','전주 한옥마을'];
 const LAB_ADDR=['서면','연지동','부산 연지동','해운대','광안리','송정','하단','센텀'];
-const LAB_KW=['연지동 청구 2차','연지청구2차','연지2차청구아파트','청구2차아파트','연지 청구','서면 커피','신평역 정짓간','심평역 정짓간','정짓간'];
+const LAB_KW=['연지동 청구 2차','연지청구2차','연지2차청구아파트','청구2차아파트','연지 청구','연지청구이차','연지 청구 이차 아파트','천구이차 아파트','연지동 연지2차청구아파트','부산 진구 연지동','서면 커피','신평역 정짓간','심평역 정짓간','정짓간'];
 function labSearchBox(){
   const b=document.createElement('div');b.className='rbox';b.id='labSrch';
   b.innerHTML=`<b>🔬 검색 시험 (실제 카카오)</b><div class="labNote" style="margin-top:4px">동네 찾기 ${LAB_AREA.length}개 · 주소 검색 ${LAB_ADDR.length}개 · 이름 검색 ${LAB_KW.length}개를 지금 범위(📍 ${scopeName(areaScope())})와 지도 가운데 기준으로 돌려요. 끝나면 [결과 복사]로 붙여 보내 주세요.</div>
@@ -6660,6 +6660,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   }
   // ----- 지역이 들어간 말: "부산 하단동 술집" → 하단동으로 지도를 옮기고 '술집'으로 찾기 (지역을 못 찾으면 몰래 딴 데서 찾지 않고 물음) -----
   const AREA_TAIL=/(동|읍|면|리|가|구|군|시|도|역|항|포구|해수욕장|해변|공항|터미널|시장|대학교|사거리|오거리|로터리)$/;
+  // 말 끝의 종류말(음식·카페·주유 등) — 지역 + 종류말이면 별점 검색으로
+  const KIND_TAIL=/\s(맛집|밥집|식당|음식점|카페|커피|커피숍|디저트|빵집|베이커리|국밥|돼지국밥|밀면|냉면|국수|칼국수|횟집|회|해장국|고기|고깃집|삼겹살|흑돼지|갈비|곱창|막창|치킨|피자|햄버거|술집|이자카야|포차|호프|분식|떡볶이|중국집|짜장면|짬뽕|일식|초밥|스시|라멘|우동|돈까스|돈가스|파스타|양식|한식|브런치|아침|점심|저녁|주유소|충전소|lpg|전기차\s*충전)(\s*(집|가게|맛집))?$/i;
   const BIG=/^(서울|부산|대구|인천|광주|대전|울산|세종|제주|서귀포|경기|강원|충북|충남|전북|전남|경북|경남)/;
   const AREA_CAT=/지하철|기차역|해수욕장|관광|명소|구청|시청|군청|주민센터|읍사무소|면사무소|공항|터미널|전통시장|대학교|행정/;
   // 말에서 지역 낱말 고르기: 서울·부산·…·경상도 (시·도 이름) → 주소의 첫 칸(region_1depth)과 맞춰 봄
@@ -6704,6 +6706,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       }
     }catch(_){return {}}
     if(!rest.length&&sp&&L.length){const top=L.slice().sort((x,y)=>x.lv-y.lv||x.full.length-y.full.length)[0];return {area:fin0(top,c)}}   // '제주 흑돼지'의 '제주'처럼 시·도만
+    L=mergeSubDong(L);   // 남포동1가·3가·6가, 하단1동·2동 → 한 동네
     // 같은 곳 합치기: 주소는 같은 주소, 역·관광지는 같은 구 안이면 하나로(노선별 역·해수욕장과 역). 행정 동네와 같은 구의 역은 동네 쪽을 남김
     const U=[];L.forEach(a=>{if(!U.some(b=>a.kind==='addr'?(b.full===a.full||distanceM(a.lat,a.lng,b.lat,b.lng)<300):(b.r1===a.r1&&b.r2===a.r2)))U.push(a)});
     const M=U.filter(a=>tok.every(w=>nm(a.full).includes(nm(w.replace(/(시|구|군)$/,'')))));   // "부산진구 연지동"의 '부산진구'는 주소에 있어야
@@ -6714,6 +6717,14 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(IN.length>1)return {multi:true,name:last,list:byNear(fin(IN)).slice(0,6)};
     if(M.length)return {multi:true,outside:true,scope:scope&&scope.name,name:last,list:byNear(fin(M)).slice(0,6)};
     return {};
+  }
+  // 숫자만 다른 동(○○동1가·○○1동)은 같은 구 안이면 한 동네로 — 가운데는 평균
+  function mergeSubDong(L){
+    const base=r=>String(r||'').replace(/\d+가$/,'').replace(/\d+동$/,'동'),G=new Map(),out=[];
+    L.forEach(a=>{if(a.kind!=='addr'||!a.r3||base(a.r3)===a.r3&&!L.some(b=>b!==a&&b.kind==='addr'&&b.r1===a.r1&&b.r2===a.r2&&base(b.r3)===a.r3)){out.push(a);return}
+      const k=a.r1+'|'+a.r2+'|'+base(a.r3);let g=G.get(k);if(!g){g={...a,r3:base(a.r3),full:[a.r1,a.r2,base(a.r3)].filter(Boolean).join(' '),_n:0,_la:0,_lo:0};G.set(k,g);out.push(g)}
+      g._n++;g._la+=a.lat;g._lo+=a.lng;g.lat=g._la/g._n;g.lng=g._lo/g._n});
+    return out.map(a=>{if(a._n){const {_n,_la,_lo,...r}=a;return r}return a});
   }
   function fin0(a,c){return {...a,name:c,where:[a.r1,a.r2].filter(Boolean).join(' '),label:a.kind==='place'?`${a.pname} · ${[a.r1,a.r2].filter(Boolean).join(' ')}`:[a.r1,a.r2,a.r3].filter(Boolean).join(' ')}}
   // 예전 방식 이름(하나만 필요할 때): 하나면 그것, 범위 안 여러 곳이면 가까운 것
@@ -7115,7 +7126,8 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
         const S=kakao.maps.services,opt={size:10};
         if(c){opt.location=new kakao.maps.LatLng(c[0],c[1]);opt.radius=Math.max(200,Math.min(20000,+a.radius||3000))}
         const cg={food:'FD6',cafe:'CE7',tour:'AT4',fuel:'OL7'}[a.cat];if(cg)opt.category_group_code=cg;
-        const data=await new Promise(ok=>ps.keywordSearch(q,(d,st)=>ok(st===S.Status.OK?d:[]),opt));
+        let data=await new Promise(ok=>ps.keywordSearch(q,(d,st)=>ok(st===S.Status.OK?d:[]),opt));
+        if(!data.length&&opt.category_group_code){delete opt.category_group_code;data=await new Promise(ok=>ps.keywordSearch(q,(d,st)=>ok(st===S.Status.OK?d:[]),opt))}   // 맛집 모드라 '음식점'으로만 찾아 아파트·건물이 빠지던 것
         if(!data.length){const r=await alikePlaces(q,opt);if(r)return {alike:r};found.miss=(g?near+' ':'')+q}
         return {area:g?g.label:undefined,places:data.slice(0,8).map(x=>{found.set(String(x.id),x);return {id:String(x.id),name:x.place_name,cat:(x.category_name||'').split(' > ').pop(),dist:c?Math.round(distanceM(c[0],c[1],+x.y,+x.x)):null}})};
       }
@@ -7323,6 +7335,11 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(!ai&&va.cands.length&&/골라|나아|낫지|비교|어디가\s*(좋|나)|어느\s*(쪽|곳|게)/.test(t)){askCand(t,va.cands.slice(0,3).map((_,i)=>i+1));return}   // ① 방식: 위 3곳을 자료로 비교만
     // 8) ○○ 가자 / 그냥 이름
     const name=t.replace(GO,'').trim();
+    // "서면 커피", "하단 국밥"처럼 지역 + 종류말이면 '찾아줘'가 없어도 별점 검색 (이름 검색은 별점·순서가 없음)
+    //   앞부분이 지역으로 확인될 때만 ("정짓간 국밥"처럼 가게 이름 + 종류말은 그대로 이름 검색)
+    if(name&&/\s/.test(name)&&KIND_TAIL.test(name)&&!findLocal(name).length&&typeof kakao!=='undefined'&&kakao.maps&&kakao.maps.services&&map){
+      const my=va.seq;state('지역 확인 중…');
+      splitArea(name).then(A=>{if(my!==va.seq)return;if(A){if(wantGo)va.goIntent=true;doNearby({q:name})}else resolve(name,wantGo,{noAI:opt.noAI,raw:t,aiFirst})},()=>{if(my===va.seq)resolve(name,wantGo,{noAI:opt.noAI,raw:t,aiFirst})});return}
     // 문장 같은 말(“애들이랑 갈 만한 데 없나”)은 바로 AI에게
     if(name&&ai&&(name.split(/\s+/).length>=4||CHATTY.test(name))&&!findLocal(name).length){aiAsk(t);return}
     if(name){resolve(name,wantGo,{noAI:opt.noAI,raw:t,aiFirst});return}

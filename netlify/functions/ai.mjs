@@ -67,6 +67,7 @@ const SYS_AGENT = `너는 한국 여행 지도 앱 '핀볼'의 검색 비서다.
 사용자가 지역(동네·역)을 말하면 find_places의 near에 그 지역을 넣고 q에는 넣지 않는다. 지역을 못 찾았다는 결과가 오면 지어내지 말고 answer로 어느 동네인지 묻는다.
 [말]은 받아쓴 것이라 소리 나는 대로 틀릴 수 있다(신평역→심평역). 지역 이름이 [화면] 근처역과 비슷하면 그 역 이름으로 찾는다.
 도구는 필요한 만큼만(보통 1~3번). 끝낼 때는 반드시 answer: say=한두 문장 한국어(근거 포함. 도구 결과가 null인 칸은 말하지 않고, 물어본 것을 확인 못 했으면 "확인하지 못했어요"처럼 문장으로 쓴다), ids=보여 줄 장소 id(도구 결과·[화면]에 나온 것만, 최대 5), go=가자·안내해 같은 말이면 true.
+사용자가 특정 이름(가게·아파트·건물)을 찾으면 그 이름이 들어간 장소만 ids에 넣는다. 못 찾았으면 다른 곳(근처 식당 등)을 대신 보여 주지 말고 못 찾았다고 answer한다.
 장소·점수·영업시간을 지어내지 않는다.`;
 const fn = (name, description, properties, required = []) => ({ type: 'function', function: { name, description, parameters: { type: 'object', properties, required } } });
 const TOOLS = [
