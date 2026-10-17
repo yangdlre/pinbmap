@@ -99,7 +99,7 @@ async function groqAgent(key, msgs) {
       body: JSON.stringify({ model: 'openai/gpt-oss-120b', messages: [{ role: 'system', content: SYS_AGENT }, ...msgs], tools: TOOLS, tool_choice: 'auto', temperature: 0.2, max_tokens: 900, reasoning_effort: 'low' }),
       signal: AbortSignal.timeout(15000) });
   } catch (e) { throw new AiErr(e && e.name === 'TimeoutError' ? 'timeout' : 'net'); }
-  if (r.status === 429) { const e = new AiErr('quota'); e.wait = Math.ceil(+r.headers.get('retry-after') || 0); throw e; }
+  if (r.status === 429) { const t = await r.text().catch(() => ''), e = new AiErr('quota'); e.wait = Math.ceil(+r.headers.get('retry-after') || 0); e.daily = /per.?day|daily|\bTPD\b|\bRPD\b|PerDay/i.test(t); throw e; }
   if (r.status === 401 || r.status === 403) throw new AiErr('badkey');
   if (!r.ok) throw new AiErr('fail', r.status + ' ' + (await r.text().catch(() => '')).slice(0, 200));
   const j = await r.json(), m = (j.choices && j.choices[0] && j.choices[0].message) || {};
@@ -177,7 +177,10 @@ async function call(url, opt, ms) {
   let r;
   try { r = await fetch(url, { ...opt, signal: AbortSignal.timeout(ms) }); }
   catch (e) { throw new AiErr(e && e.name === 'TimeoutError' ? 'timeout' : 'net'); }
-  if (r.status === 429) throw new AiErr('quota');
+  if (r.status === 429) {   // 다시 해도 되는 시각(초)과 하루 한도인지 같이 돌려줌 → 앱이 잠깐만 쉬고 다시 AI를 씀
+    const t = await r.text().catch(() => ''), e = new AiErr('quota');
+    e.wait = Math.ceil(+r.headers.get('retry-after') || 0); e.daily = /per.?day|daily|\bTPD\b|\bRPD\b|PerDay/i.test(t); throw e;
+  }
   if (r.status === 401 || r.status === 403) throw new AiErr('badkey');
   if (!r.ok) throw new AiErr('fail', r.status + ' ' + (await r.text().catch(() => '')).slice(0, 160));
   return r.json();
@@ -417,7 +420,7 @@ async function handle(body) {
   let last = null;
   if (act === 'agent') {
     try { const msg = await groqAgent(plain.groq, msgs); return ok({ msg, model: 'groq-oss', used: { think: 'openai/gpt-oss-120b' }, ms: Date.now() - t0, today: n, cap: CAP }); }
-    catch (e) { return ok({ err: e.code || 'fail', wait: e.wait || 0, detail: e.detail, today: n, cap: CAP }, e.code === 'quota' ? 429 : 502); }
+    catch (e) { return ok({ err: e.code || 'fail', wait: e.wait || 0, daily: !!e.daily, detail: e.detail, today: n, cap: CAP }, e.code === 'quota' ? 429 : 502); }
   }
   if (act === 'vision') {
     const today = /^\d{4}-\d{2}-\d{2}$/.test(body.today || '') ? body.today : day();
@@ -443,5 +446,5 @@ async function handle(body) {
     }
   }
   const code = last && last.code || 'fail';
-  return ok({ err: code, detail: last && last.detail, tried, today: n, cap: CAP }, code === 'quota' ? 429 : 502);
+  return ok({ err: code, detail: last && last.detail, wait: last && last.wait || 0, daily: !!(last && last.daily), tried, today: n, cap: CAP }, code === 'quota' ? 429 : 502);
 }
