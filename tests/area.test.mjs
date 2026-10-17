@@ -10,10 +10,18 @@ const DB = {
   '송정동': [A('부산 해운대구 송정동', 35.18, 129.2), A('부산 강서구 송정동', 35.09, 128.86), A('광주 광산구 송정동', 35.13, 126.79)],
   '명동': [A('서울 중구 명동', 37.56, 126.98)],
   '제주': [A('제주특별자치도', 33.4, 126.5), A('제주특별자치도 제주시', 33.5, 126.53)],
+  // 실제 카카오는 비슷한 글자도 줌 (10/18 폰 화면)
+  '서면': [A('경북 경주시 서면', 35.83, 129.04), A('경남 남해군 서면', 34.8, 127.85), A('전남광주통합특별시 순천시 서면', 35.0, 127.4), A('경북 울진군 금강송면', 36.9, 129.2), A('세종특별자치시 연서면', 36.6, 127.2), A('강원특별자치도 영월군 한반도면', 37.2, 128.3)],
+};
+const KW = {
+  '신평역': [{ place_name: '신평역 부산1호선', category_group_code: 'SW8', category_name: '교통,수송 > 지하철', y: '35.0955', x: '128.9606', address_name: '부산 사하구 신평동 590' }],
+  '서면': [{ place_name: '서면역 부산1호선', category_group_code: 'SW8', category_name: '교통,수송 > 지하철', y: '35.1578', x: '129.0592', address_name: '부산 부산진구 부전동 573-1' },
+    { place_name: '서면역 부산2호선', category_group_code: 'SW8', category_name: '교통,수송 > 지하철', y: '35.1575', x: '129.0599', address_name: '부산 부산진구 부전동 573-2' },
+    { place_name: '서면행정복지센터', category_group_code: 'PO3', category_name: '공공,사회기관 > 행정기관', y: '35.83', x: '129.04', address_name: '경북 경주시 서면 아화리 1' }],
 };
 function mk(scope) {
   const kakao = { maps: { services: { Status: { OK: 'OK' }, Geocoder: function () { this.addressSearch = (t, cb) => { const d = DB[t] || []; cb(d, d.length ? 'OK' : 'ZERO'); }; } } } };
-  const ps = { keywordSearch: (t, cb) => { const d = t === '신평역' ? [{ place_name: '신평역 부산1호선', category_group_code: 'SW8', category_name: '교통,수송 > 지하철', y: '35.0955', x: '128.9606', address_name: '부산 사하구 신평동 590' }] : []; cb(d, d.length ? 'OK' : 'ZERO'); } };
+  const ps = { keywordSearch: (t, cb) => { const d = KW[t] || []; cb(d, d.length ? 'OK' : 'ZERO'); } };
   return load(['AREA_TAIL', 'AREA_CAT', 'SPOKEN', 'spokenOf', 'AREA_FILL', 'cleanArea', 'AREA_FIX', 'resolveArea', 'fin0', 'AREA_SCOPES', 'SCOPE_RE', 'areaScope', 'scopeName', 'distanceM', 'refLL'],
     { nm, kakao, ps, searchCenter: null, lastPos: { lat: 35.08, lng: 128.88 }, lsGet: (k, d) => k === 'areaScope' ? scope : d });
 }
@@ -35,6 +43,16 @@ test('범위(기본 부산) 안에서 찾고, 같은 이름이 여러 곳이면 
   assert.equal(show(await resolveArea('명동')), '밖 서울 중구 명동');                    // 범위 밖에만 → 보여 주고 물음
   assert.equal(show(await resolveArea('제주')), '하나 제주특별자치도');                  // 시·도만 말하면 도 전체
   assert.equal(show(await resolveArea('신평역')), '하나 신평역 · 부산 사하구');           // 역 이름
+});
+
+test('행정 동네가 아닌 부산 서면은 서면역으로 (비슷한 글자 면 이름은 버림)', async () => {
+  const { resolveArea } = mk('부산');
+  assert.equal(show(await resolveArea('서면')), '하나 서면역 · 부산 부산진구');
+  assert.equal(show(await resolveArea('부산 서면')), '하나 서면역 · 부산 부산진구');
+  const all = await mk('all').resolveArea('서면');
+  assert.ok(all.multi && all.list[0].label === '서면역 · 부산 부산진구', show(all));
+  assert.ok(!show(all).includes('금강송면') && !show(all).includes('연서면'), show(all));
+  assert.equal(all.list.length, 4, show(all));   // 서면역(부산) + 경주·남해·순천 서면
 });
 
 test('전국이면 같은 이름 동네를 다 보여 주고 물음', async () => {
