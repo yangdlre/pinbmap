@@ -1022,6 +1022,8 @@ body.aiPhoto #vaCam.camOnly{display:grid!important}
 .vmArea select{font-size:15px;padding:7px 10px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--ink)}
 .vmArea small{flex-basis:100%;color:var(--muted);font-size:12px}
 .vaAreaQ{flex-direction:column;align-items:stretch}.vaAreaQ button{text-align:left}
+.vaElse{flex-wrap:wrap;margin-top:6px}.vaElse button{flex:1 1 28%;min-width:88px;font-size:14px;padding:9px 4px;white-space:nowrap}.vaElseN{display:block;margin-top:8px;color:var(--muted);font-size:12.5px}
+#lsOut table{font-size:12.5px}#lsOut td:first-child,#lsOut th:first-child{white-space:nowrap;width:2.4em}#lsOut td:nth-child(2){min-width:5.5em}
 /* 실험실: 사용 설명서 */
 #labManual details.man{border-top:1px solid var(--line);padding:2px 0}
 #labManual summary{font-weight:700;font-size:15px;padding:10px 2px;cursor:pointer}
@@ -2483,6 +2485,32 @@ function openTmapApp(p){
   if(isAndroid()) location.href=`intent://route?${tmapQuery(p)}#Intent;scheme=tmap;package=com.skt.tmap.ku;S.browser_fallback_url=${encodeURIComponent('https://play.google.com/store/apps/details?id=com.skt.tmap.ku')};end`;
   else if(isIOS()) tryApp(`tmap://route?${tmapQuery(p)}`,'https://apps.apple.com/kr/app/id431589174');
   else openUrl('https://www.tmap.co.kr/');
+}
+// 🔎 우리 앱에서 못 찾았을 때: 다른 지도 앱의 검색으로 바로 (티맵·카카오맵·네이버 지도). 카카오내비는 검색어로 여는 길이 없어 카카오맵 검색 → 거기서 길찾기
+function openSearchApp(app,q){
+  q=String(q||'').replace(/\s+/g,' ').trim();if(!q)return;const e=encodeURIComponent(q);
+  const c=typeof searchCenter!=='undefined'&&searchCenter?`${searchCenter.getLat().toFixed(6)},${searchCenter.getLng().toFixed(6)}`:'';
+  if(app==='tmap'){
+    if(isAndroid())location.href=`intent://search?name=${e}#Intent;scheme=tmap;package=com.skt.tmap.ku;S.browser_fallback_url=${encodeURIComponent('https://play.google.com/store/apps/details?id=com.skt.tmap.ku')};end`;
+    else if(isIOS())tryApp(`tmap://search?name=${e}`,'https://apps.apple.com/kr/app/id431589174');
+    else openUrl('https://www.tmap.co.kr/');
+  }else if(app==='kakao'){
+    const web='https://map.kakao.com/link/search/'+e,qs=`q=${e}${c?'&p='+c:''}`;
+    if(isAndroid())location.href=`intent://search?${qs}#Intent;scheme=kakaomap;package=net.daum.android.map;S.browser_fallback_url=${encodeURIComponent(web)};end`;
+    else if(isIOS())tryApp(`kakaomap://search?${qs}`,web);
+    else openUrl(web);
+  }else{
+    const web='https://map.naver.com/p/search/'+e,qs=`query=${e}&appname=${encodeURIComponent(location.origin)}`;
+    if(isAndroid())location.href=`intent://search?${qs}#Intent;scheme=nmap;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;package=com.nhn.android.nmap;S.browser_fallback_url=${encodeURIComponent(web)};end`;
+    else if(isIOS())tryApp(`nmap://search?${qs}`,web);
+    else openUrl(web);
+  }
+}
+// 버튼 줄: 설정에서 고른 길안내 앱을 앞에
+function elseBtns(q){
+  const L=[['tmap','🚗 티맵'],['kakao','🗺 카카오맵'],['naver','🟢 네이버 지도']],first=navApp();
+  L.sort((a,b)=>(b[0]===first)-(a[0]===first));
+  return L.map(([k,n])=>`<button type="button" data-else="${k}" data-q="${escapeHtml(String(q||'').slice(0,60))}">${n}</button>`).join('');
 }
 function kakaoRouteUrl(p){return `https://map.kakao.com/link/to/${encodeURIComponent(String(p.place_name).replace(/,/g,' '))},${p.y},${p.x}`}
 function addSourceButton(label,sub,handler,main){srcDefs.push({k:label,label:label==='TMAP'?navName():label,sub,fn:handler,main})}   // 버튼 배치 키는 'TMAP' 그대로, 보이는 이름만 고른 내비
@@ -5544,7 +5572,7 @@ function openLab(){
     <div class="labNote" style="margin-top:8px">② = 블로그 언급 30 · 최근 글 15 · 다음 블로그 15 · 검색 추세 10 · 관광공사 10 · 우리 기록 15 · 카페 5 · 유튜브 5 (연결된 것만으로 100점 환산). 요약글에 협찬·체험단·원고료 등이 보이는 글과 가게 이름이 없는 글은 아예 빼고 셉니다. 정렬할 땐 거리도 조금 반영해요.</div></div>`;
   openSheet('labEd');
   if(isM){$('labBody').append(pinBox);fillCardOpt()}else $('pinHold').append(pinBox);
-  labAiBox();labManualBox();labChangelogBox();
+  labAiBox();if(isM)labSearchBox();labManualBox();labChangelogBox();
   if(window.mapFail&&isM){const w=document.createElement('div');w.className='rbox';w.innerHTML='<b>⚠ 지도</b><div class="labNote" style="margin-top:6px">'+escapeHtml(window.mapFail)+'</div>';$('labBody').prepend(w)}
   if(isM)acctCall({action:'admin',email:acct.email,token:acct.token,lab:'5555'}).then(r=>{
     const el=$('labAdm');if(!el)return;
@@ -5633,6 +5661,7 @@ const HELP_FULL=[
 ['물어보기',`<p>"오늘 날씨 어때"(비 오는 시간대까지) · "일몰 몇 시야" · "거기 지금 영업해?" · "거기까지 얼마나 걸려?"(직선 거리) · "오늘 몇 곳 다녔어" · "오늘 얼마 썼어" · "정산 얼마야" · "할 일 남은 거 뭐야"</p>`],
 ['이어서 하기',`<p>"흑돼지 먹고 근처 카페" · "기름 넣고 숙소 가자" · "비 오는데 갈 만한 데" · 화면 열기: "위성 지도로" · "일정 열어" · "가계부" · "다녀온 곳 보여줘"</p>`],
 ['동네 이름',`<p>"하단동 술집 찾아줘", "부산진구 연지동 청구아파트"처럼 동네를 같이 말하면 그 동네로 지도를 옮겨 찾아요. "부산의 연지동이라는 동네"처럼 말해도 동네만 뽑아요.</p><ul><li>말에 시·도가 없으면 설정 → 🎤 말로 찾기 → <b>📍 동네 찾는 범위</b>(기본 부산) 안에서 찾아요. 전국·서울·부산·제주·도별로 고를 수 있어요(광역시는 둘러싼 도에 포함).</li><li>범위 안에 같은 이름 동네가 여러 곳이면(송정동: 해운대구·강서구) <b>버튼으로 물어요</b>. "1번"이나 "해운대구"라고 말해도 돼요. 고른 건 10분 동안 기억해요.</li><li>범위 안에 없으면 다른 지역 것을 보여 주고 물어요. "서울 연지동"처럼 시·도를 말하면 그쪽에서 찾아요.</li></ul>`,'set'],
+['못 찾았을 때',`<p>우리 앱에서 못 찾으면 이전 결과는 치우고, 바로 아래에 <b>🚗 티맵 · 🗺 카카오맵 · 🟢 네이버 지도</b> 버튼이 떠요. 누르면 그 앱의 검색 화면이 같은 말로 열려요(설정에서 고른 길안내 앱이 맨 앞).</p><p>카카오내비는 검색어로 바로 여는 방법이 없어서 카카오맵 검색으로 열어요. 거기서 길찾기를 누르면 카카오내비로 넘어가요.</p>`,'voice'],
 ['잘못 들었을 때',`<p>"신평역"이 "심평역"처럼 <b>소리 나는 대로</b> 적혀 못 찾으면, 받침을 바꾼 비슷한 이름으로 한 번 더 찾아서 "‘신평역’이 있어요. 이걸로 찾을까요?" 하고 물어요. "응"이나 버튼으로 골라요. 깊게 찾기도 같아요.</p><p>AI 키가 있으면 지도 주변 <b>지하철역 이름</b>을 받아쓰기에 참고로 줘서 처음부터 맞게 적힐 때가 많아요. 그래도 안 되면 입력칸에 직접 쳐서 →를 누르세요.</p>`,'voice'],
 ['AI 방식 고르기',`<p>설정 → 🎤 말로 찾기에서 골라요.</p><ul><li><b>① 브라우저 음성인식</b>(기본) — 무료, 연결 없음</li><li><b>② 브라우저 + AI</b> — 정해진 말로 안 되는 말("애들이랑 갈 만한 조용한 데")과 못 찾은 이름만 AI가 한 번 더</li><li><b>③ AI 우선</b> — AI가 녹음을 받아쓰고 해석</li></ul><p>②·③은 내 AI 키가 있어야 해요. "1번이랑 2번 중 어디가 나아?" 같은 후보 비교도 돼요.</p>`,'set'],
 ['AI 키 연결 (무료)',`<p>계정에 로그인한 뒤:</p><ul><li><b>console.groq.com</b>에 가입 → <b>API Keys</b> → <b>Create API Key</b> → 나온 키 복사</li><li>⚙️ 설정 → 🎤 말로 찾기 → 🔑 <b>[관리]</b> → Groq 칸에 붙여 넣고 <b>연결</b></li></ul><p>키는 서버에 암호화해 내 계정에만 묶이고 폰으로 다시 안 내려와요. 키는 자기 것만 쓰고, 결제(유료)를 켠 키는 쓰지 마세요.</p>`,'set'],
@@ -5688,7 +5717,7 @@ const HELP=[
 ];
 /* 🆕 업데이트 내역 — 올릴 때마다 맨 위에 한 줄 묶음 추가 [날짜, 버전, [바뀐 것…]] */
 const CHANGELOG=[
-['10.18','v0.45',['📍 설정 → 말로 찾기에 "동네 찾는 범위"(전국·서울·부산·제주·도별, 기본 부산) — 같은 이름 동네가 다른 지역에 있어도 범위 안에서 찾음','같은 이름 동네가 여러 곳이면 버튼으로 물어봄(번호·구 이름으로 대답해도 됨) · 범위 밖에만 있으면 보여 주고 물어봄','"부산의 연지동이라는 동네"처럼 말해도 동네만 뽑고, "부산 연지동"처럼 구가 빠져도 찾음 · 깊게 찾기도 같음','옛 아이폰(iOS 16.4 미만)에서 앱이 안 열리던 것 고침']],
+['10.18','v0.45',['📍 설정 → 말로 찾기에 "동네 찾는 범위"(전국·서울·부산·제주·도별, 기본 부산) — 같은 이름 동네가 다른 지역에 있어도 범위 안에서 찾음','같은 이름 동네가 여러 곳이면 버튼으로 물어봄(번호·구 이름으로 대답해도 됨) · 범위 밖에만 있으면 보여 주고 물어봄','"부산의 연지동이라는 동네"처럼 말해도 동네만 뽑고, "부산 연지동"처럼 구가 빠져도 찾음 · 깊게 찾기도 같음','옛 아이폰(iOS 16.4 미만)에서 앱이 안 열리던 것 고침','부산 "서면"처럼 행정 동네가 아닌 곳은 서면역으로(다른 지역 서면·비슷한 글자 면 이름으로 가던 것 고침)','못 찾으면 이전 결과는 치우고 🚗 티맵 · 🗺 카카오맵 · 🟢 네이버 지도 검색 버튼을 바로 아래에']],
 ['10.16','v0.45',['🔊 이름을 소리 나는 대로 받아써도("신평역"→"심평역") 비슷한 소리로 한 번 더 찾고 "이걸로 찾을까요?" 하고 물어봄 · 깊게 찾기도','🚉 AI 키가 있으면 지도 주변 지하철역 이름을 받아쓰기 참고로','깊게 찾기 답 끝에 "정보 없음"이 붙던 것 고침']],
 ['10.16','v0.45',['📱 폰 뒤로가기: 맨 위 창부터 하나씩 닫기, 첫 화면에선 "한 번 더 누르면 닫혀요"','지역이 들어간 말("부산 하단동 술집")은 그 동네로 지도를 옮겨서 찾기 · 깊게 찾기도 지역으로 · 못 찾으면 물어봄 · 키워드에 지역명이 안 남음','② 점수 네이버 호출을 NAVER API HUB 방식으로(새 키용)']],
 ['10.16','v0.45',['⭐ 지도 왼쪽 위 바로가기(주 버튼 + ＋ 메뉴, 꾹 눌러 바꾸기) · ? 는 위 줄 ⚙️ 왼쪽으로','📅 일정에 담기 방식(설정): 담기만 / 일정표로 가기 / 바로 넣기 — 카드 튕기면 바로가기(없으면 내 여행 탭)로 빨려 들어가고 3초 뒤 열림','시간 입력 하나의 규칙으로: 시작은 00:00~23:55 그대로(시간표를 넓힘), 자정을 넘는 머무름은 24:00까지로 줄이고 알려 줌, 24:00은 시작으로 안 받음 — 바로 넣기·말로 일정·예약 사진 같음, 다시 열어도 그대로',"'일 번'·'일번이랑 이번' 같은 한글 번호도 숫자 번호와 똑같이 (‘이번 여행’은 번호 아님)",'계정이 바뀌면 핀볼 꺼짐 · 기준을 모르면 거리 안 보임(0m 아님)','거리: 내 위치 / 검색 중심 나눠 표시, 상호 검색 뒤 0m 없앰','말로 찾기: "1번 주차 돼?"·"1번이랑 2번 중 어디가 나아?"는 고르지 않고 답 · 실내+평점 같은 말은 AI로(없으면 실내+평점순)','영수증·예약 빈 칸이면 입력창은 두고 칸 아래 안내','누가 보는 기록인지 한 줄(경비·가계부·사진·영수증)','🎮 핀볼은 실험실(마스터)로 · 도움말 짧은 판(20개) · 업데이트 내역은 실험실로']],
@@ -5705,6 +5734,32 @@ const CHANGELOG=[
 ];
 
 /* ----- 🧪 실험실: 📖 전체 사용 설명서 (도움말 자료를 한 번에 펼쳐 봄) ----- */
+/* ----- 🧪 실험실(마스터): 🔬 검색 시험 — 실제 카카오로 동네 찾기·주소 검색·이름 검색을 한 번에 돌려 결과를 한 화면에 (복사해서 보내기) ----- */
+const LAB_AREA=['서면','부산 서면','서면역','광안리','센텀','센텀시티','경성대','남포동','해운대','기장','다대포','하단','명지','신평','동래','부전동','연지동','부산 연지동','부산진구 연지동','부산의 연지동이라는 동네','송정동','송정','서울 연지동','명동','강남역','제주 애월','애월','성산','경주 황리단길','전주 한옥마을'];
+const LAB_ADDR=['서면','연지동','부산 연지동','해운대','광안리','송정','하단','센텀'];
+const LAB_KW=['연지동 청구 2차','연지청구2차','연지2차청구아파트','청구2차아파트','연지 청구','서면 커피','신평역 정짓간','심평역 정짓간','정짓간'];
+function labSearchBox(){
+  const b=document.createElement('div');b.className='rbox';b.id='labSrch';
+  b.innerHTML=`<b>🔬 검색 시험 (실제 카카오)</b><div class="labNote" style="margin-top:4px">동네 찾기 ${LAB_AREA.length}개 · 주소 검색 ${LAB_ADDR.length}개 · 이름 검색 ${LAB_KW.length}개를 지금 범위(📍 ${scopeName(areaScope())})와 지도 가운데 기준으로 돌려요. 끝나면 [결과 복사]로 붙여 보내 주세요.</div>
+    <div class="row" style="margin-top:8px;gap:6px;display:flex;flex-wrap:wrap"><button type="button" id="lsRun">▶ 돌려 보기</button><button type="button" id="lsCopy" disabled>📋 결과 복사</button></div><div id="lsOut" class="labNote" style="margin-top:8px"></div>`;
+  $('labBody').append(b);
+  let txt='';
+  $('lsRun').onclick=async()=>{
+    const out=$('lsOut'),btn=$('lsRun');if(typeof kakao==='undefined'||!kakao.maps||!kakao.maps.services||typeof ps==='undefined'||!ps){out.textContent='지도가 아직 안 떴어요. 지도가 뜬 뒤 다시 눌러 주세요.';return}
+    btn.disabled=true;$('lsCopy').disabled=true;const rows=[],S=kakao.maps.services,gc=new S.Geocoder();
+    const c=searchCenter?[searchCenter.getLat().toFixed(4),searchCenter.getLng().toFixed(4)].join(','):'없음';
+    const push=(k,q,r)=>{rows.push([k,q,r]);out.innerHTML=`${rows.length}/${LAB_AREA.length+LAB_ADDR.length+LAB_KW.length} 확인 중…`};
+    const R=window.vaArea&&window.vaArea.resolveArea;
+    for(const q of LAB_AREA){let r;try{const x=R?await R(q):{};r=x.area?'하나: '+x.area.label:x.multi?(x.outside?'범위 밖 ':'여러 곳 ')+x.list.length+': '+x.list.map(a=>a.label).join(' | '):'없음'}catch(e){r='오류 '+(e&&e.message||e)}push('동네',q,r)}
+    for(const q of LAB_ADDR){const d=await new Promise(ok=>{try{gc.addressSearch(q,(d,st)=>ok(st===S.Status.OK?d:[]),{size:30})}catch(_){ok([])}});push('주소',q,d.length+'건: '+d.slice(0,8).map(a=>a.address_name).join(' | '))}
+    for(const q of LAB_KW){const o={size:15};if(searchCenter)o.location=searchCenter;const d=await new Promise(ok=>{try{ps.keywordSearch(q,(d,st)=>ok(st===S.Status.OK?d:[]),o)}catch(_){ok([])}});
+      push('이름',q,d.length+'건: '+d.slice(0,4).map(p=>`${p.place_name}(${(p.category_name||'').split(' > ').pop()}${p.distance?' '+(p.distance>=1000?(p.distance/1000).toFixed(1)+'km':p.distance+'m'):''})`).join(' | '))}
+    txt=`[검색 시험] ${new Date(Date.now()+9*36e5).toISOString().slice(0,16).replace('T',' ')} · 범위 ${scopeName(areaScope())} · 지도 가운데 ${c} · ${($('appVer')&&$('appVer').textContent)||document.title}\n`+rows.map(([k,q,r])=>`${k}\t${q}\t${r}`).join('\n');
+    out.innerHTML=`<table><thead><tr><th>구분</th><th>말</th><th>결과</th></tr></thead><tbody>${rows.map(([k,q,r])=>`<tr><td>${k}</td><td>${escapeHtml(q)}</td><td>${escapeHtml(r)}</td></tr>`).join('')}</tbody></table>`;
+    btn.disabled=false;$('lsCopy').disabled=false;
+  };
+  $('lsCopy').onclick=async()=>{try{await navigator.clipboard.writeText(txt);setStatus('🔬 검색 시험 결과를 복사했어요. 대화창에 붙여 넣어 보내 주세요.')}catch(_){prompt('아래 글을 길게 눌러 복사해 주세요.',txt)}};
+}
 function labManualBox(){
   const b=document.createElement('div');b.className='rbox';b.id='labManual';
   b.innerHTML=`<b>📖 사용 설명서 <small style="font-weight:400;color:var(--muted)">${escapeHtml(appVerTxt())} · 전체</small></b>
@@ -6257,6 +6312,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     if(f){const v=f.dataset.fill;$('vaText').value=v;$('vaText').focus();const k=v.indexOf('○○');try{$('vaText').setSelectionRange(k,k+2)}catch(_){}return}
     if(r){cmdBox.classList.remove('on');cmdBtn.classList.remove('on');cmdBtn.setAttribute('aria-expanded','false');$('vaText').value=r.dataset.run;run(r.dataset.run)}};
   // 확인 칸의 [네]·[취소] 버튼
+  $('vaSay').addEventListener('click',e=>{const b=e.target.closest('[data-else]');if(!b)return;stop();openSearchApp(b.dataset.else,b.dataset.q)});
   $('vaSay').addEventListener('click',e=>{const b=e.target.closest('[data-ar]');if(!b||!va.areaPick)return;stop();pickedArea(va.areaPick,+b.dataset.ar)});
   $('vaSay').addEventListener('click',e=>{const y=e.target.closest('[data-y]'),n=e.target.closest('[data-n]');if(!y&&!n)return;const p=va.pending;va.pending=null;stop();if(!p)return;if(y)p.fn();else if(p.noFn)p.noFn();else say('취소했어요.')});
 
@@ -6512,7 +6568,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       if(L.length)return shown(L,name);
       const none=()=>{
         if(!opt.noAI&&aiOn()){aiAsk(opt.raw||name);return}   // ②: 이름을 못 찾으면 AI가 받아쓰기 오류를 고쳐 한 번 더
-        va.afterPick=null;say(`“${name}”을(를) 찾지 못했어요. 이름을 다르게 말해 보거나, 아래에서 ChatGPT에 물어볼 수 있어요.`);$('vaAct').classList.add('on');['vaTmap','vaInfo','vaPick','vaKeep','vaFuel'].forEach(id=>$(id).style.display='none');$('vaAsk').style.display=''};
+        va.afterPick=null;sayNotFound(`“${name}”을(를) 찾지 못했어요.`,name);$('vaAct').classList.add('on');['vaTmap','vaInfo','vaPick','vaKeep','vaFuel'].forEach(id=>$(id).style.display='none');$('vaAsk').style.display=''};
       if(opt.noAlike)return none();
       // 🔊 소리 나는 대로 적힌 이름(심평역 → 신평역)이면 비슷한 이름으로 한 번 더 — 바꾸기 전에 묻기
       alikePlaces(name).then(r=>{if(my!==va.seq)return;if(!r)return none();
@@ -6608,9 +6664,9 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
   const AREA_CAT=/지하철|기차역|해수욕장|관광|명소|구청|시청|군청|주민센터|읍사무소|면사무소|공항|터미널|전통시장|대학교|행정/;
   // 말에서 지역 낱말 고르기: 서울·부산·…·경상도 (시·도 이름) → 주소의 첫 칸(region_1depth)과 맞춰 봄
   const SPOKEN=[['서울',/^(서울|서울시|서울특별시)$/,/^서울/],['부산',/^(부산|부산시|부산광역시)$/,/^부산/],['대구',/^(대구|대구시|대구광역시)$/,/^대구/],['인천',/^(인천|인천시|인천광역시)$/,/^인천/],
-    ['광주',/^(광주|광주광역시)$/,/^광주/],['대전',/^(대전|대전시|대전광역시)$/,/^대전/],['울산',/^(울산|울산시|울산광역시)$/,/^울산/],['세종',/^(세종|세종시)$/,/^세종/],['제주',/^(제주|제주도|제주특별자치도)$/,/^제주/],
-    ['경기',/^(경기|경기도)$/,/^경기/],['강원',/^(강원|강원도)$/,/^강원/],['충북',/^(충북|충청북도)$/,/^충(북|청북)/],['충남',/^(충남|충청남도)$/,/^충(남|청남)/],['전북',/^(전북|전라북도)$/,/^전(북|라북)/],
-    ['전남',/^(전남|전라남도)$/,/^전(남|라남)/],['경북',/^(경북|경상북도)$/,/^경(북|상북)/],['경남',/^(경남|경상남도)$/,/^경(남|상남)/],['경상도',/^(경상도|경상)$/,/^경(북|남|상)/],['전라도',/^(전라도|전라)$/,/^전(북|남|라)/],['충청도',/^(충청도|충청)$/,/^충(북|남|청)/]];
+    ['광주',/^(광주|광주광역시)$/,/^(광주|전남광주)/],['대전',/^(대전|대전시|대전광역시)$/,/^대전/],['울산',/^(울산|울산시|울산광역시)$/,/^울산/],['세종',/^(세종|세종시)$/,/^세종/],['제주',/^(제주|제주도|제주특별자치도)$/,/^제주/],
+    ['경기',/^(경기|경기도)$/,/^경기/],['강원',/^(강원|강원도)$/,/^강원/],['충북',/^(충북|충청북도)$/,/^충(북|청북)/],['충남',/^(충남|충청남도)$/,/^(충남|충청남|대전충남)/],['전북',/^(전북|전라북도)$/,/^전(북|라북)/],
+    ['전남',/^(전남|전라남도)$/,/^전(남|라남)/],['경북',/^(경북|경상북도)$/,/^(경북|경상북|대구경북)/],['경남',/^(경남|경상남도)$/,/^경(남|상남)/],['경상도',/^(경상도|경상)$/,/^경(북|남|상)/],['전라도',/^(전라도|전라)$/,/^전(북|남|라)/],['충청도',/^(충청도|충청)$/,/^충(북|남|청)/]];
   const spokenOf=w=>{const x=SPOKEN.find(([,re])=>re.test(w));return x?{name:x[0],re:x[2]}:null};
   // "부산의 연지동이라는 동네를" → "부산 연지동"
   const AREA_FILL=/^(동네|지역|곳|데|근처|주변|쪽|부근|일대|인근)(을|를|이|가|에|에서|의|는|은|로|으로)?$/;
@@ -6627,28 +6683,33 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     const last=rest[rest.length-1]||c,tok=rest.slice(0,-1).filter(w=>w.length>1);
     const fx=AREA_FIX[nm(last)];
     if(fx&&Date.now()-fx.t<6e5){const a=fx.a;if((!sp||sp.re.test(a.r1))&&tok.every(w=>nm(a.full).includes(nm(w.replace(/(시|구|군)$/,'')))))return {area:{...a}}}
+    const sc=areaScope(),scope=sp?{re:sp.re,name:sp.name}:sc==='all'?null:{re:SCOPE_RE[sc],name:scopeName(sc)};
+    const inScope=a=>!scope||scope.re.test(a.r1);
+    // 카카오 주소 검색은 비슷한 글자도 줌('서면' → 금강송면·연서면) → 이름이 같은 것만(해운대→해운대구, 하단→하단동처럼 끝 글자만 붙은 건 같다고 봄)
+    const ln=nm(last),same=a=>[a.r3,a.r2,a.r1].filter(Boolean).map(nm).some(n=>n===ln||(n.startsWith(ln)&&/^(동|읍|면|리|구|군|시|도|가|\d+가|\d+동)$/.test(n.slice(ln.length))));
     let L=[];
     try{
       const S=kakao.maps.services,gc=new S.Geocoder();
       for(const q of [...new Set([c,rest.join(' '),last].filter(Boolean))]){
         const r=await new Promise(res=>{try{gc.addressSearch(q,(d,st)=>res(st===S.Status.OK&&Array.isArray(d)?d:[]),{size:30})}catch(_){res([])}});
         r.forEach(a=>{const ad=a.address||a.road_address||{};L.push({lat:+a.y,lng:+a.x,r1:ad.region_1depth_name||'',r2:ad.region_2depth_name||'',r3:ad.region_3depth_name||'',lv:ad.region_3depth_name?3:ad.region_2depth_name?2:1,full:a.address_name||'',kind:'addr'})});
+        if(rest.length)L=L.filter(same);
         if(L.length)break;
       }
-      if(!L.length&&typeof ps!=='undefined'&&ps){
+      // 범위 안에 행정 동네가 없으면(전국이면 늘) 역·해수욕장·관광지·관공서 이름으로도 (부산 '서면' → 서면역)
+      if((!L.length||!scope||(rest.length&&!L.some(inScope)))&&typeof ps!=='undefined'&&ps){
         const d=await new Promise(res=>{try{ps.keywordSearch(rest.join(' ')||c,(d,s2)=>res(s2===S.Status.OK&&Array.isArray(d)?d:[]))}catch(_){res([])}});
         d.slice(0,15).filter(p=>(/^(SW8|AT4|PO3)$/.test(p.category_group_code||'')||AREA_CAT.test(p.category_name||''))&&String(p.place_name).includes(last)).forEach(p=>{
           const full=String(p.address_name||p.road_address_name||''),ad=full.split(' ');L.push({lat:+p.y,lng:+p.x,r1:ad[0]||'',r2:ad[1]||'',r3:'',lv:3,full,kind:'place',pname:String(p.place_name).split(' ')[0]})});
       }
     }catch(_){return {}}
-    // 같은 곳 합치기: 주소는 같은 주소, 역·관광지는 같은 구 안이면 하나로(노선별 역·해수욕장과 역)
     if(!rest.length&&sp&&L.length){const top=L.slice().sort((x,y)=>x.lv-y.lv||x.full.length-y.full.length)[0];return {area:fin0(top,c)}}   // '제주 흑돼지'의 '제주'처럼 시·도만
+    // 같은 곳 합치기: 주소는 같은 주소, 역·관광지는 같은 구 안이면 하나로(노선별 역·해수욕장과 역). 행정 동네와 같은 구의 역은 동네 쪽을 남김
     const U=[];L.forEach(a=>{if(!U.some(b=>a.kind==='addr'?(b.full===a.full||distanceM(a.lat,a.lng,b.lat,b.lng)<300):(b.r1===a.r1&&b.r2===a.r2)))U.push(a)});
     const M=U.filter(a=>tok.every(w=>nm(a.full).includes(nm(w.replace(/(시|구|군)$/,'')))));   // "부산진구 연지동"의 '부산진구'는 주소에 있어야
-    const sc=areaScope(),scope=sp?{re:sp.re,name:sp.name}:sc==='all'?null:{re:SCOPE_RE[sc],name:scopeName(sc)};
-    const IN=scope?M.filter(a=>scope.re.test(a.r1)):M;
     const fin=A=>A.map(a=>fin0(a,c));
     const byNear=A=>{const r=refLL();return r?A.slice().sort((x,y)=>distanceM(r[0],r[1],x.lat,x.lng)-distanceM(r[0],r[1],y.lat,y.lng)):A};
+    const IN=M.filter(inScope);
     if(IN.length===1)return {area:fin(IN)[0]};
     if(IN.length>1)return {multi:true,name:last,list:byNear(fin(IN)).slice(0,6)};
     if(M.length)return {multi:true,outside:true,scope:scope&&scope.name,name:last,list:byNear(fin(M)).slice(0,6)};
@@ -6733,6 +6794,12 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
     return nearestOf(R,r=>[+r.data[0].y,+r.data[0].x]);
   }
   const jo=(w,a,b)=>{const c=String(w||'').slice(-1).charCodeAt(0)-0xAC00;return c>=0&&c<11172&&c%28?a:b};
+  // 🔎 못 찾았을 때: 이전 결과는 치우고, 다른 지도 앱(티맵·카카오맵·네이버 지도) 검색 버튼을 바로 아래에
+  const cleanQ=t=>String(t||'').replace(/[?？!.~]+$/,'').replace(/\s*(좀\s*)?(찾아\s*줘|찾아\s*봐|찾아|검색해\s*줘|검색|알려\s*줘|보여\s*줘|어디\s*있어|어디야|어디|가자|가고\s*싶어|추천해\s*줘|추천)$/,'').trim();
+  function sayNotFound(msg,q){
+    q=cleanQ(q);showCands([]);
+    say(`<div class="vaQ">${escapeHtml(msg)}${q?`<small class="vaElseN">“${escapeHtml(q)}”${jo(q,'으로','로')} 다른 지도 앱에서 찾기</small><div class="vaQb vaElse">${elseBtns(q)}</div>`:''}</div>`,{html:true,voice:msg+(q?' 아래 버튼으로 다른 지도 앱에서 찾아볼 수 있어요.':''),ask:false});
+  }
   // “‘심평역’은 못 찾았어요. ‘신평역’(부산 사하구)이 있어요. 이걸로 찾을까요?”
   function askAlike(r,yes,no){
     va.pending={fn:yes,noFn:no};
@@ -6775,7 +6842,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
       if(area){state(`‘${area}’ 찾는 중…`);const R=await resolveArea(area);if(my!==va.seq)return;
         if(R.multi){state('마이크를 누르고 말해 보세요');askArea(R,()=>doNearby(o));return}   // 고르면 그 동네로 다시
         A=R.area||null;
-        if(!A){const miss=()=>say(`‘${area}’${jo(area,'이','가')} 어디인지 못 찾았어요. 위 📍 칸에 동네를 넣고 이동한 뒤 다시 말해 주세요.`);
+        if(!A){const miss=()=>sayNotFound(`‘${area}’${jo(area,'이','가')} 어디인지 못 찾았어요. 위 📍 칸에 동네를 넣고 이동한 뒤 다시 말해 줘도 돼요.`,[area,o.q].filter(Boolean).join(' '));
           const B=await alikeArea(area);if(my!==va.seq)return;state('마이크를 누르고 말해 보세요');
           if(B){askAlike(B,()=>doNearby({...o,area:B.to,q:String(o.q||'').split(B.ft).join(B.tt)}),miss);return}
           miss();return}
@@ -7042,14 +7109,14 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
           else{const R=await resolveArea(near);
             if(R.multi)return {areaAsk:R};   // 같은 이름 동네 여러 곳 → 앱이 사용자에게 물음
             g=R.area||null;
-            if(!g){const B=await alikeArea(near);if(B)return {alike:B};return {err:`'${near}' 위치를 못 찾았어요. 지어내지 말고 어느 동네인지 사용자에게 물어보세요.`}}   // 심평역 → 신평역? 앱이 사용자에게 먼저 물음
+            if(!g){const B=await alikeArea(near);if(B)return {alike:B};found.miss=near+' '+q;return {err:`'${near}' 위치를 못 찾았어요. 지어내지 말고 어느 동네인지 사용자에게 물어보세요.`}}   // 심평역 → 신평역? 앱이 사용자에게 먼저 물음
             found.area=g}}   // 지역 이름(예: 부산 하단동)
         if(g)c=[g.lat,g.lng];else if(p&&hasLoc(p))c=[+p.y,+p.x];else if(searchCenter)c=[searchCenter.getLat(),searchCenter.getLng()];else if(lastPos)c=[lastPos.lat,lastPos.lng];
         const S=kakao.maps.services,opt={size:10};
         if(c){opt.location=new kakao.maps.LatLng(c[0],c[1]);opt.radius=Math.max(200,Math.min(20000,+a.radius||3000))}
         const cg={food:'FD6',cafe:'CE7',tour:'AT4',fuel:'OL7'}[a.cat];if(cg)opt.category_group_code=cg;
         const data=await new Promise(ok=>ps.keywordSearch(q,(d,st)=>ok(st===S.Status.OK?d:[]),opt));
-        if(!data.length){const r=await alikePlaces(q,opt);if(r)return {alike:r}}
+        if(!data.length){const r=await alikePlaces(q,opt);if(r)return {alike:r};found.miss=(g?near+' ':'')+q}
         return {area:g?g.label:undefined,places:data.slice(0,8).map(x=>{found.set(String(x.id),x);return {id:String(x.id),name:x.place_name,cat:(x.category_name||'').split(' > ').pop(),dist:c?Math.round(distanceM(c[0],c[1],+x.y,+x.x)):null}})};
       }
       if(name==='place_info'){
@@ -7099,6 +7166,7 @@ function blobB64(b){return new Promise((ok,no)=>{const r=new FileReader();r.onlo
         if(L.length){showCands(L.map(p=>{const s=scoreOf(p);return {p:withDist(p),tag:s?s.tag:''}}),'',L.length>1?'':'');
           if(L.length===1){select(0,!!args.go);say(`${String(args.say||'')} ${hasLoc(L[0])?'길안내는 아래 버튼을 눌러 주세요.':''}`,{ask:false});return}
           say(`${String(args.say||'')}${va.goIntent?' 번호를 누르면 바로 출발해요.':''} 몇 번째로 할까요?`);return}
+        if(found.miss){sayNotFound(String(args.say||'찾지 못했어요.'),found.miss);return}   // 찾다가 못 찾고 끝났으면 다른 지도 앱 버튼
         say(String(args.say||'답을 못 찾았어요.'));return}
       const res=await runTool(tc.function.name,args,found);
       if(my!==va.seq||!isOpen())return;
